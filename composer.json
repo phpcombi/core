@@ -1,0 +1,26 @@
+{
+    "name": "combi/core",
+    "description": "combi core libs",
+    "keywords": ["framework", "core", "libs"],
+    "license": "LGPL3.0",
+    "authors": [
+        {
+            "name": "Andares Merigold",
+            "email": "andares@outlook.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "ext-msgpack": "*",
+        "psr/container": "dev-master",
+        "kevinlebrun/colors.php": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {"Combi\\": "src/classes/"},
+        "files": [
+            "src/bootstrap.php"
+        ]
+    },
+    "bin": ["chord"],
+    "minimum-stability": "dev"
+}
