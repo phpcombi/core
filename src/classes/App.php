@@ -1,6 +1,6 @@
 <?php
 
-namespace Combi;
+namespace Combi\Core;
 
 /**
  * Description of App
@@ -8,5 +8,7 @@ namespace Combi;
  * @author andares
  */
 class App {
-    //put your code here
+    public function run() {
+        echo 'best';
+    }
 }

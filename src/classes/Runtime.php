@@ -1,6 +1,6 @@
 <?php
 
-namespace Combi;
+namespace Combi\Core;
 
 
 /**
@@ -9,5 +9,9 @@ namespace Combi;
  * @author andares
  */
 class Runtime {
-    //put your code here
+    use Components\Instancable;
+
+    public function app(string $src) {
+        return new App($src);
+    }
 }

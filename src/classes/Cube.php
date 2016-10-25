@@ -1,12 +1,12 @@
 <?php
 
-namespace Combi;
+namespace Combi\Core;
 
 /**
- * Description of Package
+ * Description of Cube
  *
  * @author andares
  */
-class Package {
+class Cube {
     //put your code here
 }

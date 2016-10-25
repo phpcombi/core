@@ -1,6 +1,6 @@
 <?php
 
-namespace Combi;
+namespace Combi\Core;
 
 /**
  * Description of Container
