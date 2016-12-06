@@ -11,7 +11,7 @@ use Combi\Meta;
  * @author andares
  */
 abstract class Collection implements Interfaces\Collection, \IteratorAggregate {
-    use Meta\IteratorAggregate;
+    use Meta\IteratorAggregate, Meta\ToArray;
 
     /**
      * 数据
@@ -110,28 +110,5 @@ abstract class Collection implements Interfaces\Collection, \IteratorAggregate {
      */
     public function count(): int {
         return count($this->_data);
-    }
-
-    /**
-     * 将整个集合展开为一个数组
-     *
-     * @param callable $filter
-     * @return array
-     */
-    public function toArray(callable $filter = null): array {
-        $result = [];
-        foreach ($this->_data as $key => $value) {
-            // 完全展开
-            if (is_object($value) && $value instanceof Interfaces\Arrayable) {
-                $value = $value->toArray();
-            }
-
-            // 过滤器
-            $filter && $value = $filter($value);
-
-            // 过滤器支持跳过
-            $value !== null && $result[$key] = $value;
-        }
-        return $result;
     }
 }

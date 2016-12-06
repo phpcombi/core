@@ -10,17 +10,9 @@ use Combi\Interfaces;
  */
 trait Serializable {
     /**
-     * 当前版本号
-     *
-     * @return int|string
+     * 待扩展的解包后复苏方法
      */
-    protected static function version() {
-        return 1;
-    }
-
-    protected static function renew(array $data, $last_version) {
-        return $data;
-    }
+    protected function afterUnpack() {}
 
     /**
      * 获取编解码器
@@ -30,21 +22,38 @@ trait Serializable {
     abstract protected static function getEncoder(): Interfaces\Encoder;
 
     /**
-     * 根据数字下标的array填充
-     * @param array $arr
-     * @param boolean $allow_default
+     * 当前版本号。
+     * 因为加入了deprecated机制，在不减少或变更字段顺序，并且字段类型一致的情况下可尽量减少version和renew的使用
+     *
+     * @return int|string
+     */
+    protected static function version() {
+        return 1;
+    }
+
+    /**
+     * 结合version时用的扩展方法，通过增加迁移代码实现解包时的数据一致性维护。
+     *
+     * @param array $data
+     * @param int|string $last_version
      * @return array
      */
-    public function fillByArray(array $arr, $allow_default = false) {
+    protected static function renew(array $data, $last_version) {
+        return $data;
+    }
+
+    /**
+     * 根据数字下标的array填充
+     * @param array $arr
+     * @return self
+     */
+    public function fillByArray(array $arr): self {
         $count  = 0;
-        foreach ($this->defaults() as $name => $default) {
-            if ($allow_default && !isset($arr[$count])) {
-                $this->$name = $default;
-                continue;
-            }
-            $this->$name = $arr[$count];
+        foreach ($this->defaults(true) as $key => $default) {
+            isset($arr[$count]) && $this->set($key, $arr[$count]);
             $count++;
         }
+        return $this;
     }
 
     /**
@@ -52,16 +61,22 @@ trait Serializable {
      * @return string
      */
     public function serialize() {
-        $arr[] = static::$_version;
-        foreach ($this->defaults() as $name => $default) {
-            $arr[] = isset($this->$name) ? $this->$name : $default;
+        $arr['#'] = static::version();
+        $count = -1;
+        foreach ($this->all(true) as $key => $value) {
+            $count++;
+            // 跳过弃用
+            if ($this->isKeyDeprecated($key)) {
+                continue;
+            }
+            $arr[$count] = $value;
         }
         return static::_pack($arr);
     }
 
     /**
      *
-     * @param type $data
+     * @param string $data
      * @throws \UnexpectedValueException
      */
     public function unserialize($data) {
@@ -69,17 +84,18 @@ trait Serializable {
         if (!$arr) {
             throw new \UnexpectedValueException("unpack fail");
         }
-        $last_version = array_shift($arr);
+        $last_version = $arr['#'];
+        unset($arr['#']);
 
         // 触发升级勾子
-        if ($last_version != static::$_version) {
-            $arr = static::_renew($arr, $last_version);
+        if ($last_version != static::version()) {
+            $arr = static::renew($arr, $last_version);
         }
         if (!$arr) {
             throw new \UnexpectedValueException("unserialize fail");
         }
 
-        $this->fillByArray($arr);
+        $this->fillByArray($arr)->afterUnpack();
     }
 
     /**

@@ -3,13 +3,10 @@
 namespace Combi\Interfaces;
 
 /**
- * Collection Interface
  *
- * @package Slim
- * @since   3.0.0
+ * @author andares
  */
-interface Collection extends Arrayable, \Countable
-{
+interface Collection extends Arrayable, \Countable {
     public function set($key, $value);
 
     public function get($key, $default = null);

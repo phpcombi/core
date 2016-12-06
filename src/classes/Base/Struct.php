@@ -9,17 +9,26 @@ use Combi\Meta;
  *
  * 一个原则：读取单个动态属性时不判断default结构中是否存在，但写入时限制。
  *
+ * deprecated的策略是当单个存取的时候不受影响，但批量读取、处理、填充时将默认跳过。
+ *
  * @author andares
  */
 abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
-    use Meta\IteratorAggregate;
+    use Meta\IteratorAggregate, Meta\ToArray;
 
     /**
      * 基础数据结构
      *
      * @var array
      */
-    private $_defaults = [];
+    protected static $_defaults = [];
+
+    /**
+     * 已弃用字段
+     *
+     * @var array
+     */
+    protected static $_deprecated = [];
 
     /**
      * 数据
@@ -32,8 +41,28 @@ abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
      * 获取基础数据结构
      * @return array
      */
-    public function defaults(): array {
-        return $this->_defaults;
+    public function defaults(bool $include_deprecated = false): array {
+        static $enabled = [];
+        if ($include_deprecated) {
+            return static::$_defaults;
+        }
+
+        if (!$enabled) {
+            foreach (static::$_defaults as $key => $default) {
+                !$this->isKeyDeprecated($key) && $enabled[$key] = $default;
+            }
+        }
+        return $enabled;
+    }
+
+    /**
+     * 是否为已弃用字段
+     *
+     * @param int|string $key
+     * @return bool
+     */
+    public function isKeyDeprecated($key): bool {
+        return isset(static::$_deprecated[$key]);
     }
 
     /**
@@ -43,7 +72,7 @@ abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
      * @return self
      */
     public function set($key, $value): self {
-        isset($this->defaults()[$key]) && $this->_data[$key] = $value;
+        array_key_exists($key, $this->defaults(true)) && $this->_data[$key] = $value;
         return $this;
     }
 
@@ -53,8 +82,19 @@ abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
      * @return mixed
      */
     public function get($key) {
-        $default = $this->defaults()[$key] ?? null;
-        return $this->_data[$key] ?? $default;
+        return $this->_data[$key] ?? ($this->defaults(true)[$key] ?? null);
+    }
+
+    /**
+     * 返回一个遍历内部数据的迭代器
+     *
+     * @param bool $include_deprecated
+     * @return iterable
+     */
+    public function all(bool $include_deprecated = false) {
+        foreach ($this->defaults($include_deprecated) as $key => $default) {
+            yield $key => $this->_data[$key] ?? $default;
+        }
     }
 
     /**
@@ -88,19 +128,15 @@ abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
     /**
      *
      * @return self
-     * @throws \InvalidArgumentException
+     * @throws \UnexpectedValueException
      */
     public function confirm(): self {
-        foreach ($this->defaults() as $key => $default) {
-            $value = $this->get($key);
-
+        foreach ($this->all() as $key => $value) {
             $method = "_confirm_$key";
             if (method_exists($this, $method)) {
-                $value = $this->$method($value, $default);
-            }
-
-            if ($value === null) {
-                throw new \InvalidArgumentException(
+                $value = $this->$method($value);
+            } elseif ($value === null) {
+                throw new \UnexpectedValueException(
                     "meta:" . static::class . " field [$key] could not be empty");
             }
 
@@ -121,28 +157,4 @@ abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
      */
     protected function afterConfirm() {}
 
-    /**
-     * 将对象展开为一个数组
-     *
-     * @param callable $filter
-     * @return array
-     */
-    public function toArray(callable $filter = null): array {
-        $result = [];
-        foreach ($this->defaults() as $key => $default) {
-            $value = $this->get($key) ?: $default;
-
-            // 完全展开
-            if (is_object($value) && $value instanceof Interfaces\Arrayable) {
-                $value = $value->toArray();
-            }
-
-            // 过滤器
-            $filter && $value = $filter($value);
-
-            // 过滤器支持跳过
-            $value !== null && $result[$key] = $value;
-        }
-        return $result;
-    }
 }

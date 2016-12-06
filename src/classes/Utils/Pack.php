@@ -13,7 +13,7 @@ class Pack {
      *
      * @var array
      */
-    protected $encoders = [];
+    protected static $encoders = [];
 
     /**
      *
@@ -41,10 +41,10 @@ class Pack {
      * @return Interfaces\Encoder
      */
     public static function getEncoder(string $name): Interfaces\Encoder {
-        if (!isset($this->encoders[$name])) {
+        if (!isset(static::$encoders[$name])) {
             $class = static::class . '\\' . ucfirst($name);
-            $this->encoders[$name] = new $class();
+            static::$encoders[$name] = new $class();
         }
-        return $this->encoders[$name];
+        return static::$encoders[$name];
     }
 }
