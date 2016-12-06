@@ -3,10 +3,10 @@
 namespace Combi\Core;
 
 /**
- * Description of Cube
+ * Description of Config
  *
  * @author andares
  */
-class Cube {
+class Config {
     //put your code here
 }

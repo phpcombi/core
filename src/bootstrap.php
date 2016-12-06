@@ -1,6 +1,6 @@
 <?php
-namespace Combi;
+namespace Combi\Core;
 
-Runtime::instance();
+$runtime = Runtime::instance();
 
 require __DIR__ . '/helpers.php';

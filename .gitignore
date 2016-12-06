@@ -1,2 +1,4 @@
+/tests/tmp/
+/tests/Playground.phpt
 /vendor/
 /composer.lock
