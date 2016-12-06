@@ -10,9 +10,9 @@ namespace Combi\Meta;
 trait IteratorAggregate {
     /**
      *
-     * @return \ArrayIterator
+     * @return iterable
      */
-    public function getIterator(): \ArrayIterator {
-        return new \ArrayIterator($this->toArray());
+    public function getIterator() {
+        return $this->all();
     }
 }
