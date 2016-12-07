@@ -12,7 +12,7 @@ use Combi\Interfaces;
  * @author andares
  *
  * @property string $name
- * @property int $father
+ * @property string $father
  * @property int $age
  */
 class Model extends Struct

@@ -49,7 +49,7 @@ trait Serializable {
      */
     public function fillByArray(array $arr): self {
         $count  = 0;
-        foreach ($this->defaults(true) as $key => $default) {
+        foreach (static::defaults(true) as $key => $default) {
             isset($arr[$count]) && $this->set($key, $arr[$count]);
             $count++;
         }
@@ -66,7 +66,7 @@ trait Serializable {
         foreach ($this->all(true) as $key => $value) {
             $count++;
             // 跳过弃用
-            if ($this->isKeyDeprecated($key)) {
+            if (static::isKeyDeprecated($key)) {
                 continue;
             }
             $arr[$count] = $value;

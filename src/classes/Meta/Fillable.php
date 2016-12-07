@@ -31,7 +31,7 @@ trait Fillable {
         }
 
         // 兼容struct与collection
-        foreach ($this instanceof Interfaces\Struct ? $this->defaults() : $data
+        foreach ($this instanceof Interfaces\Struct ? static::defaults() : $data
             as $key => $value) {
 
             if (isset($this->_exclude_keys[$key])) {

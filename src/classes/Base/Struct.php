@@ -41,7 +41,7 @@ abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
      * 获取基础数据结构
      * @return array
      */
-    public function defaults(bool $include_deprecated = false): array {
+    public static function defaults(bool $include_deprecated = false): array {
         static $enabled = [];
         if ($include_deprecated) {
             return static::$_defaults;
@@ -49,7 +49,7 @@ abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
 
         if (!$enabled) {
             foreach (static::$_defaults as $key => $default) {
-                !$this->isKeyDeprecated($key) && $enabled[$key] = $default;
+                !static::isKeyDeprecated($key) && $enabled[$key] = $default;
             }
         }
         return $enabled;
@@ -61,7 +61,7 @@ abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
      * @param int|string $key
      * @return bool
      */
-    public function isKeyDeprecated($key): bool {
+    public static function isKeyDeprecated($key): bool {
         return isset(static::$_deprecated[$key]);
     }
 
@@ -72,7 +72,8 @@ abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
      * @return self
      */
     public function set($key, $value): self {
-        array_key_exists($key, $this->defaults(true)) && $this->_data[$key] = $value;
+        array_key_exists($key, static::defaults(true)) &&
+            $this->_data[$key] = $value;
         return $this;
     }
 
@@ -82,7 +83,7 @@ abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
      * @return mixed
      */
     public function get($key) {
-        return $this->_data[$key] ?? ($this->defaults(true)[$key] ?? null);
+        return $this->_data[$key] ?? (static::defaults(true)[$key] ?? null);
     }
 
     /**
@@ -92,7 +93,7 @@ abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
      * @return iterable
      */
     public function all(bool $include_deprecated = false) {
-        foreach ($this->defaults($include_deprecated) as $key => $default) {
+        foreach (static::defaults($include_deprecated) as $key => $default) {
             yield $key => $this->_data[$key] ?? $default;
         }
     }
@@ -127,11 +128,12 @@ abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
 
     /**
      *
+     * @param bool $include_deprecated
      * @return self
      * @throws \UnexpectedValueException
      */
-    public function confirm(): self {
-        foreach ($this->all() as $key => $value) {
+    public function confirm(bool $include_deprecated = false): self {
+        foreach ($this->all($include_deprecated) as $key => $value) {
             $method = "_confirm_$key";
             if (method_exists($this, $method)) {
                 $value = $this->$method($value);

@@ -7,9 +7,9 @@ namespace Combi\Interfaces;
  * @author andares
  */
 interface Struct extends Arrayable {
-    public function defaults(bool $include_deprecated = false): array;
+    public static function defaults(bool $include_deprecated = false): array;
 
-    public function isKeyDeprecated($key): bool;
+    public static function isKeyDeprecated($key): bool;
 
     public function set($key, $value);
 
@@ -23,5 +23,5 @@ interface Struct extends Arrayable {
 
     public function clear();
 
-    public function confirm();
+    public function confirm(bool $include_deprecated = false);
 }
