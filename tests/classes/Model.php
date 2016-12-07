@@ -15,7 +15,7 @@ use Combi\Interfaces;
  * @property string $father
  * @property int $age
  */
-class Model extends Struct
+class Person extends Struct
     implements \ArrayAccess, \JsonSerializable, \Serializable {
 
     use Meta\Fillable,

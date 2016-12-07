@@ -60,7 +60,7 @@ trait Serializable {
      * 序列化相关
      * @return string
      */
-    public function serialize() {
+    public function serialize(): ?string {
         $arr['#'] = static::version();
         $count = -1;
         foreach ($this->all(true) as $key => $value) {
@@ -79,7 +79,7 @@ trait Serializable {
      * @param string $data
      * @throws \UnexpectedValueException
      */
-    public function unserialize($data) {
+    public function unserialize($data): void {
         $arr = static::_unpack($data);
         if (!$arr) {
             throw new \UnexpectedValueException("unpack fail");
@@ -104,7 +104,7 @@ trait Serializable {
      * @param array $value
      * @return string
      */
-    protected static function _pack(array $value) {
+    protected static function _pack(array $value): ?string {
         return static::getEncoder()->encode($value);
     }
 
@@ -114,7 +114,7 @@ trait Serializable {
      * @param string $data
      * @return mixed
      */
-    protected static function _unpack($data) {
+    protected static function _unpack(string $data) {
         return static::getEncoder()->decode($data);
     }
 

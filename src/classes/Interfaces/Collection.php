@@ -13,7 +13,7 @@ interface Collection extends Arrayable, \Countable {
 
     public function replace(array $items);
 
-    public function all();
+    public function all(): iterable;
 
     public function has($key): bool;
 

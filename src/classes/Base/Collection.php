@@ -58,7 +58,7 @@ abstract class Collection implements Interfaces\Collection, \IteratorAggregate {
      *
      * @return iterable
      */
-    public function all() {
+    public function all(): iterable {
         foreach ($this->_data as $key => $value) {
             yield $key => $value;
         }

@@ -92,7 +92,7 @@ abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
      * @param bool $include_deprecated
      * @return iterable
      */
-    public function all(bool $include_deprecated = false) {
+    public function all(bool $include_deprecated = false): iterable {
         foreach (static::defaults($include_deprecated) as $key => $default) {
             yield $key => $this->_data[$key] ?? $default;
         }
@@ -157,6 +157,6 @@ abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
     /**
      * 待扩展的整体confirm方法
      */
-    protected function afterConfirm() {}
+    protected function afterConfirm(): void {}
 
 }

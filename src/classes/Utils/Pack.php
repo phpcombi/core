@@ -19,9 +19,9 @@ class Pack {
      *
      * @param string $format
      * @param mixed $value
-     * @return mixed
+     * @return string
      */
-    public static function encode(string $format, $value) {
+    public static function encode(string $format, $value): ?string {
         return self::getEncoder($format)->encode($value);
     }
 
@@ -31,7 +31,7 @@ class Pack {
      * @param mixed $data
      * @return mixed
      */
-    public static function decode(string $format, $data) {
+    public static function decode(string $format, string $data) {
         return self::getEncoder($format)->decode($data);
     }
 
