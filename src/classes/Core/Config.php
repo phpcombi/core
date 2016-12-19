@@ -7,6 +7,7 @@ namespace Combi\Core;
  *
  * @author andares
  */
-class Config {
+class Config
+{
     //put your code here
 }

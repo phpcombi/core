@@ -3,6 +3,8 @@
 namespace Combi\Core;
 
 use Combi\Traits;
+use Combi\Meta;
+use Combi\Base\Container;
 
 
 /**
@@ -10,28 +12,28 @@ use Combi\Traits;
  *
  * @author andares
  */
-class Runtime {
-    use Traits\Instancable;
+class Runtime extends Container {
+    use Traits\Instancable,
+        Meta\Overloaded;
 
-    private $packages = [];
+    /**
+     * 注册一个package到runtime
+     *
+     * @param string $class
+     * @return bool
+     */
+    public function register(string $class): bool {
+        $pid = $class::pid();
+        if ($this->has($pid)) {
+            return false;
+        }
 
-    public function register(string $class) {
         $package = $class::instance();
         if ($package->bootstrap()) {
-            $uri = $package->uri();
-            $this->$uri = $package;
+            $this->set($pid, $package);
+            return true;
         }
+        return false;
     }
 
-    public function __get(string $name) {
-        return $this->packages[$name] ?? null;
-    }
-
-    public function __set(string $name, Package $package) {
-        $this->packages[$name] = $package;
-    }
-
-    public function __isset(string $name): bool {
-        return isset($this->packages[$name]);
-    }
 }
