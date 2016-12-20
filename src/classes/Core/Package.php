@@ -17,6 +17,15 @@ abstract class Package extends Container {
         Meta\Overloaded;
 
     /**
+     * @var array
+     */
+    protected $_path = [];
+
+    public function __construct(string $src_path) {
+        $this->_path['src'] = $src_path;
+    }
+
+    /**
      * 待扩展的引导方法
      */
     abstract public function bootstrap(): bool;
@@ -54,6 +63,13 @@ abstract class Package extends Container {
 
     public function config() {
 
+    }
+
+    public function path(string $category, ?string $suffix = null): string {
+        $prefix = $this->_path[$category] ??
+            combi()->config()['path'][$category] ?? '';
+
+        return $suffix ? ($prefix . DIRECTORY_SEPARATOR . $suffix) : $prefix;
     }
 
     /**

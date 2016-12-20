@@ -9,7 +9,8 @@ namespace Combi\Traits;
 trait Instancable {
     protected static $_instances = [];
 
-    public static function instance($id = 0): self {
-        return static::$_instances[$id] ?? (static::$_instances[$id] = new static());
+    public static function instance($id = 0, ...$args): self {
+        return static::$_instances[$id] ??
+            (static::$_instances[$id] = new static(...$args));
     }
 }

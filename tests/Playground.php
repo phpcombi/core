@@ -9,18 +9,18 @@ class Package extends \Combi\Core\Package {
         return true;
     }
 }
-rt()->register(Package::class);
+combi()->register(Package::class);
 
-rt()->test_playground->container()->abc = function() {
+combi()->test_playground->container()->abc = function() {
     return 'xxvvff';
 };
-rt()->test_playground->container()->def = new class {
+combi()->test_playground->container()->def = new class {
     public function __invoke() {
         return 'wwwffff';
     }
 };
-var_dump(rt()->test_playground->container()->abc);
-var_dump(rt()->test_playground->container()->def);
+var_dump(combi()->test_playground->container()->abc);
+var_dump(combi()->test_playground->container()->def);
 
 \Tester\Assert::equal(1, 1);
 
