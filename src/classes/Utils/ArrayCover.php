@@ -25,7 +25,7 @@ class ArrayCover
                 (!isset($source[$key]) || !is_array($source[$key])) &&
                     $source[$key] = [];
                 $this->cover($source[$key], $value);
-            } else {
+            } elseif ($value !== null) {
                 $source[$key] = $value;
             }
         }
