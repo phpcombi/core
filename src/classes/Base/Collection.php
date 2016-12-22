@@ -17,7 +17,7 @@ abstract class Collection implements Interfaces\Collection, \IteratorAggregate {
      * 数据
      * @var array
      */
-    private $_data = [];
+    protected $_data = [];
 
     /**
      *

@@ -21,6 +21,26 @@ abstract class Package extends Container {
      */
     protected $_path = [];
 
+    /**
+     * @var \stdClass[]
+     */
+    protected $_services = [];
+
+    /**
+     * @var string
+     */
+    protected $_pid = null;
+
+    /**
+     * @var Factory
+     */
+    protected $_factory = null;
+
+    /**
+     * @var Config[]
+     */
+    protected $_configs = [];
+
     public function __construct(string $src_path) {
         $this->_path['src'] = $src_path;
     }
@@ -36,12 +56,11 @@ abstract class Package extends Container {
      * @return string
      */
     public static function pid(): string {
-        static $pid = null;
-        if (!$pid) {
+        if (!$this->_pid) {
             $namespace = substr(static::class, 0, strrpos(static::class, '\\'));
-            $pid = strtolower(str_replace('\\', '_', $namespace));
+            $this->_pid = strtolower(str_replace('\\', '_', $namespace));
         }
-        return $pid;
+        return $this->_pid;
     }
 
     /**
@@ -57,19 +76,34 @@ abstract class Package extends Container {
 
     }
 
-    public function resource() {
-
+    public function dir(string $category, ?string $path = null): Resource\Directory {
+        return combi()->dir($this->path($category, $path));
     }
 
-    public function config() {
+    public function config(string $name): Config {
+        !isset($this->_configs[$name]) &&
+            $this->_configs[$name] = new Config(
+                $name,
+                $this->dir('src', 'config'),
+                $this->dir('tmp', 'config')
+            );
 
+        return $this->_configs[$name];
     }
 
-    public function path(string $category, ?string $suffix = null): string {
+    public function path(string $category, ?string $path = null): string {
         $prefix = $this->_path[$category] ??
             combi()->config()['path'][$category] ?? '';
 
-        return $suffix ? ($prefix . DIRECTORY_SEPARATOR . $suffix) : $prefix;
+        return $path ? ($prefix . DIRECTORY_SEPARATOR . $path) : $prefix;
+    }
+
+    public function __call(string $name, array $arguments = []) {
+
+    }
+
+    public static function __callStatic(string $name, array $arguments = []) {
+
     }
 
     /**

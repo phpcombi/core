@@ -1,0 +1,23 @@
+package:
+    name:   app
+    info:   my app powered by combi.
+
+value:  gogogo
+prod < value: sexy
+test < value: woman
+
+service:
+    a:
+        a1: 100
+        a2: 200
+    b: 300
+    c: Andares(gender=male)
+
+prod < service:
+    a:
+        a1: 999
+
+test < service:
+    a:
+        a2: 333
+    c: Triss(gender=female)

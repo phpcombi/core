@@ -9,7 +9,7 @@ class Package extends \Combi\Core\Package {
         return true;
     }
 }
-combi()->register(Package::class);
+combi()->register(Package::class, __DIR__);
 
 combi()->test_playground->container()->abc = function() {
     return 'xxvvff';
@@ -24,7 +24,7 @@ var_dump(combi()->test_playground->container()->def);
 
 \Tester\Assert::equal(1, 1);
 
-die(1);
+// die(1);
 
 
 // 以下是测meta的

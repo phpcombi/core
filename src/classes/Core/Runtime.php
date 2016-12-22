@@ -24,8 +24,12 @@ class Runtime extends Container {
      * @return self
      */
     public function setup(array $config): self {
-        $this->_config = $config;
+        $this->_config = array_merge($this->_config, $config);
         return $this;
+    }
+
+    public function is_prod(): bool {
+        return  $this->_config['is_prod'];
     }
 
     /**
@@ -42,6 +46,14 @@ class Runtime extends Container {
     }
 
     /**
+     * @param string $dir
+     * @return Resource\Directory
+     */
+    public function dir(string $dir): Resource\Directory {
+        return Resource\Directory::instance($dir);
+    }
+
+    /**
      * 注册一个package到runtime
      *
      * @param string $class
@@ -54,7 +66,7 @@ class Runtime extends Container {
             return false;
         }
 
-        $package = $class::instance(0, $src_path);
+        $package = $class::instance($src_path);
         if ($package->bootstrap()) {
             $this->set($pid, $package);
             return true;

@@ -35,7 +35,7 @@ abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
      *
      * @var array
      */
-    private $_data = [];
+    protected $_data = [];
 
     /**
      * 获取基础数据结构

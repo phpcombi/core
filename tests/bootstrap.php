@@ -24,3 +24,15 @@ if (extension_loaded('xdebug')) {
 	xdebug_disable();
 }
 
+// init combi
+combi()->setup([
+	'scene'     => 'dev',
+    'is_prod'   => false,
+
+    'path'      => [
+        'tmp'   => TEMP_DIR . '/tmp',
+        'logs'  => TEMP_DIR . '/logs',
+        'docs'  => TEMP_DIR . '/docs',
+        'tests' => TEMP_DIR . '/tests',
+    ],
+]);
