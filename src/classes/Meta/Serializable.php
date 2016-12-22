@@ -69,7 +69,11 @@ trait Serializable {
             if (static::isKeyDeprecated($key)) {
                 continue;
             }
-            $arr[$count] = $value;
+            if ($value instanceof \Serializable) {
+                $arr[$count] = serialize($value);
+            } else {
+                $arr[$count] = $value;
+            }
         }
         return static::_pack($arr);
     }
@@ -93,6 +97,16 @@ trait Serializable {
         }
         if (!$arr) {
             throw new \UnexpectedValueException("unserialize fail");
+        }
+
+        // 恢复可被反序列化的对象
+        foreach ($arr as $key => $value) {
+            if (is_string($value) && strlen($value) > 15 &&
+                preg_match('/^C:[0-9]{1,2}:"[^:"]+":[0-9]+:\{/', $value)) {
+
+                $unpacked = @unserialize($value);
+                $unpacked && $arr[$key] = $unpacked;
+            }
         }
 
         $this->fillByArray($arr)->afterUnpack();

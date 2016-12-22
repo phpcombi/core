@@ -29,6 +29,7 @@ class Person extends Struct
         'name'      => null,
         'father'    => null,
         'age'       => 18,
+        'child'     => '',
     ];
 
     protected static $_deprecated = [
@@ -43,4 +44,3 @@ class Person extends Struct
         return $value > 38 ? 36 : $value;
     }
 }
-

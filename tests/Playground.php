@@ -4,28 +4,7 @@ namespace Test\Playground;
 require __DIR__ . '/bootstrap.php';
 require __DIR__ . '/classes/Model.php';
 
-class Package extends \Combi\Core\Package {
-    public function bootstrap(): bool {
-        return true;
-    }
-}
-combi()->register(Package::class, __DIR__);
-
-combi()->test_playground->container()->abc = function() {
-    return 'xxvvff';
-};
-combi()->test_playground->container()->def = new class {
-    public function __invoke() {
-        return 'wwwffff';
-    }
-};
-var_dump(combi()->test_playground->container()->abc);
-var_dump(combi()->test_playground->container()->def);
-
 \Tester\Assert::equal(1, 1);
-
-// die(1);
-
 
 // 以下是测meta的
 
@@ -62,6 +41,14 @@ $bin = $person->toBin();
 var_dump($bin);
 
 // serializable
+$packed = serialize($person);
+var_dump($packed);
+var_dump(unserialize($packed));
+
+$person->child = new Person();
+$person->child->name = 'max';
+$person->confirm();
+var_dump("=============================");
 $packed = serialize($person);
 var_dump($packed);
 var_dump(unserialize($packed));
