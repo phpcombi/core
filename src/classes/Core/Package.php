@@ -13,8 +13,7 @@ use Combi\Base\Container;
  * @author andares
  */
 abstract class Package extends Container {
-    use Traits\Instancable,
-        Meta\Overloaded;
+    use Meta\Overloaded;
 
     /**
      * @var array
@@ -27,11 +26,6 @@ abstract class Package extends Container {
     protected $_services = [];
 
     /**
-     * @var string
-     */
-    protected $_pid = null;
-
-    /**
      * @var Factory
      */
     protected $_factory = null;
@@ -41,26 +35,28 @@ abstract class Package extends Container {
      */
     protected $_configs = [];
 
+    /**
+     * @param string $src_path
+     */
     public function __construct(string $src_path) {
         $this->_path['src'] = $src_path;
     }
 
     /**
      * 待扩展的引导方法
+     *
+     * @return bool
      */
     abstract public function bootstrap(): bool;
 
     /**
-     * 获取package的全局唯一id，在runtime中调用
+     * 获取package的全局唯一id
      *
      * @return string
      */
-    public static function pid(): string {
-        if (!$this->_pid) {
-            $namespace = substr(static::class, 0, strrpos(static::class, '\\'));
-            $this->_pid = strtolower(str_replace('\\', '_', $namespace));
-        }
-        return $this->_pid;
+    public function pid(): string {
+        $namespace = substr(static::class, 0, strrpos(static::class, '\\'));
+        return strtolower(str_replace('\\', '_', $namespace));
     }
 
     /**
@@ -76,10 +72,19 @@ abstract class Package extends Container {
 
     }
 
+    /**
+     * @param string $category
+     * @param ?string $path
+     * @return Resource\Directory
+     */
     public function dir(string $category, ?string $path = null): Resource\Directory {
         return combi()->dir($this->path($category, $path));
     }
 
+    /**
+     * @param string $name
+     * @return Config
+     */
     public function config(string $name): Config {
         !isset($this->_configs[$name]) &&
             $this->_configs[$name] = new Config(
@@ -91,6 +96,11 @@ abstract class Package extends Container {
         return $this->_configs[$name];
     }
 
+    /**
+     * @param string $category
+     * @param ?string $path
+     * @return string
+     */
     public function path(string $category, ?string $path = null): string {
         $prefix = $this->_path[$category] ??
             combi()->config()['path'][$category] ?? '';

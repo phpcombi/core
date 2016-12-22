@@ -61,14 +61,9 @@ class Runtime extends Container {
      * @return bool
      */
     public function register(string $class, string $src_path): bool {
-        $pid = $class::pid();
-        if ($this->has($pid)) {
-            return false;
-        }
-
-        $package = $class::instance($src_path);
+        $package = new $class($src_path);
         if ($package->bootstrap()) {
-            $this->set($pid, $package);
+            $this->set($package->pid(), $package);
             return true;
         }
         return false;
