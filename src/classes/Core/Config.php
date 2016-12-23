@@ -50,6 +50,13 @@ class Config extends Container
     }
 
     /**
+     * @return array
+     */
+    public function raw(): array {
+        return $this->_data;
+    }
+
+    /**
      *
      * @return array
      */

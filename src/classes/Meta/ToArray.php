@@ -2,7 +2,7 @@
 
 namespace Combi\Meta;
 
-use Combi\Utils\Pack;
+use Combi\Interfaces;
 
 /**
  *
