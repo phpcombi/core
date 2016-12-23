@@ -5,6 +5,7 @@ namespace Combi\Core;
 use Combi\Traits;
 use Combi\Meta;
 use Combi\Base\Container;
+use Nette\DI;
 
 /**
  * Description of Package
@@ -21,14 +22,9 @@ abstract class Package extends Container {
     protected $_path = [];
 
     /**
-     * @var \stdClass[]
+     * @var DI\Container
      */
-    protected $_services = [];
-
-    /**
-     * @var Factory
-     */
-    protected $_factory = null;
+    protected $_di = null;
 
     /**
      * @var Config[]
@@ -68,10 +64,6 @@ abstract class Package extends Container {
         return $this;
     }
 
-    public function factory() {
-
-    }
-
     /**
      * @param string $category
      * @param ?string $path
@@ -108,8 +100,23 @@ abstract class Package extends Container {
         return $path ? ($prefix . DIRECTORY_SEPARATOR . $path) : $prefix;
     }
 
+    /**
+     * @param string $name
+     * @param array $arguments
+     */
     public function __call(string $name, array $arguments = []) {
+        if (!$this->_di) {
+            $loader = new DI\ContainerLoader($this->path('tmp', 'di'),
+                !combi()->is_prod());
 
+            $class = $loader->load(function($compiler) {
+                $config = $this->config('di')->raw();
+                $compiler->addConfig(
+                    (new DI\Config\Adapters\NeonAdapter)->process($config));
+            });
+            $this->_di = new $class;
+        }
+        return $this->di->getService($name);
     }
 
     public static function __callStatic(string $name, array $arguments = []) {
