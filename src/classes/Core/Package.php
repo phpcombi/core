@@ -116,7 +116,7 @@ abstract class Package extends Container {
             });
             $this->_di = new $class;
         }
-        return $this->di->getService($name);
+        return $this->_di->getService($name);
     }
 
     public static function __callStatic(string $name, array $arguments = []) {
