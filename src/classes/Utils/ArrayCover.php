@@ -1,7 +1,6 @@
 <?php
 
 namespace Combi\Utils;
-use Symfony\Component\Translation\Util\ArrayConverter;
 
 class ArrayCover
 {

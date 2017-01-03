@@ -20,6 +20,9 @@ class Runtime extends Container {
 
     private $_package_index = [];
 
+    /**
+     * @var bool
+     */
     private $_is_ready = false;
 
     /**

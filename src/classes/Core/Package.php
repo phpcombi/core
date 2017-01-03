@@ -34,6 +34,11 @@ abstract class Package extends Container {
     protected $_configs = [];
 
     /**
+     * @var string
+     */
+    protected $_pid = null;
+
+    /**
      * @param string $src_path
      */
     public function __construct(string $src_path) {
@@ -53,8 +58,9 @@ abstract class Package extends Container {
      * @return string
      */
     public function pid(): string {
-        $namespace = \combi\get_namespace(static::class);
-        return strtolower(str_replace('\\', '_', $namespace));
+        !$this->_pid && $this->_pid =
+            strtolower(str_replace('\\', '_', static::namespace()));
+        return $this->_pid;
     }
 
     /**
@@ -84,7 +90,7 @@ abstract class Package extends Container {
             $this->_configs[$name] = new Config(
                 $name,
                 $this->dir('src', 'config'),
-                $this->dir('tmp', 'config')
+                $this->dir('tmp', 'config' . DIRECTORY_SEPARATOR . $this->pid())
             );
 
         return $this->_configs[$name];
