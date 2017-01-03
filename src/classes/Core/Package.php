@@ -14,7 +14,8 @@ use Nette\DI;
  * @author andares
  */
 abstract class Package extends Container {
-    use Meta\Overloaded;
+    use Traits\Instancable,
+        Meta\Overloaded;
 
     /**
      * @var array
@@ -39,11 +40,11 @@ abstract class Package extends Container {
     }
 
     /**
-     * 待扩展的引导方法
-     *
-     * @return bool
+     * @return void
      */
-    abstract public function bootstrap(): bool;
+    public function run(): void {
+        combi()->ready();
+    }
 
     /**
      * 获取package的全局唯一id
@@ -51,7 +52,7 @@ abstract class Package extends Container {
      * @return string
      */
     public function pid(): string {
-        $namespace = substr(static::class, 0, strrpos(static::class, '\\'));
+        $namespace = \combi\get_namespace(static::class);
         return strtolower(str_replace('\\', '_', $namespace));
     }
 
@@ -110,7 +111,7 @@ abstract class Package extends Container {
                 !combi()->is_prod());
 
             $class = $loader->load(function($compiler) {
-                $config = $this->config('di')->raw();
+                $config = $this->config('services')->raw();
                 $compiler->addConfig(
                     (new DI\Config\Adapters\NeonAdapter)->process($config));
             });

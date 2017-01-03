@@ -18,6 +18,10 @@ class Runtime extends Container {
 
     private $_config = [];
 
+    private $_package_index = [];
+
+    private $_is_ready = false;
+
     /**
      *
      * @param array $config
@@ -28,6 +32,24 @@ class Runtime extends Container {
         return $this;
     }
 
+    /**
+     * package->run()时初发的后初始化。
+     * 该方法需要保证只运行一次。
+     *
+     * @return self
+     */
+    public function ready(): self {
+        if ($this->_is_ready) {
+            return $this;
+        }
+
+        $this->_is_ready = true;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
     public function is_prod(): bool {
         return  $this->_config['is_prod'];
     }
@@ -56,17 +78,16 @@ class Runtime extends Container {
     /**
      * 注册一个package到runtime
      *
-     * @param string $class
-     * @param string $src_path
-     * @return bool
+     * @param Package $package
+     * @return self
      */
-    public function register(string $class, string $src_path): bool {
-        $package = new $class($src_path);
-        if ($package->bootstrap()) {
-            $this->set($package->pid(), $package);
-            return true;
-        }
-        return false;
+    public function register(Package $package): self {
+        $pid = $package->pid();
+        var_dump($pid);
+        var_dump(\combi\get_namespace($class));
+
+        $this->set($pid, $package);
+        return $this;
     }
 
 }
