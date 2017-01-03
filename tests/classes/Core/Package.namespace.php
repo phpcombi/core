@@ -11,6 +11,6 @@ class Package extends \Combi\Core\Package {
     }
 }
 
-combi()->register(Package::class, __DIR__);
+combi()->register(Package::instance(__DIR__));
 
 die(1);

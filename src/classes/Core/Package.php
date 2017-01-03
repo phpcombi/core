@@ -15,6 +15,7 @@ use Nette\DI;
  */
 abstract class Package extends Container {
     use Traits\Instancable,
+        Traits\GetNamespace,
         Meta\Overloaded;
 
     /**

@@ -84,7 +84,7 @@ class Runtime extends Container {
     public function register(Package $package): self {
         $pid = $package->pid();
         var_dump($pid);
-        var_dump(\combi\get_namespace($class));
+        var_dump($package::namespace());
 
         $this->set($pid, $package);
         return $this;

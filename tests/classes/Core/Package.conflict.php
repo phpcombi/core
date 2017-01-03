@@ -19,8 +19,8 @@ class P extends \Combi\Core\Package {
     }
 }
 
-combi()->register(\A\P::class, __DIR__);
-combi()->register(\B\P::class, __DIR__);
+combi()->register(\A\P::instance('a dir'));
+combi()->register(\B\P::instance('b dir'));
 
 var_dump(combi());
 
