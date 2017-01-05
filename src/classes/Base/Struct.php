@@ -38,6 +38,15 @@ abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
     protected $_data = [];
 
     /**
+     * 返回当前拥有数据（而非定义）的 keys 列表
+     *
+     * @return array
+     */
+    public function keys(): array {
+        return array_keys($this->_data);
+    }
+
+    /**
      * 获取基础数据结构
      * @return array
      */

@@ -20,6 +20,13 @@ abstract class Collection implements Interfaces\Collection, \IteratorAggregate {
     protected $_data = [];
 
     /**
+     * @return array
+     */
+    public function keys(): array {
+        return array_keys($this->_data);
+    }
+
+    /**
      *
      * @param int|string $key
      * @param mixed $value

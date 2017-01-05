@@ -15,7 +15,6 @@
         "psr/container": "dev-master",
         "nette/di": "^2.4",
         "nette/neon": "^2.4",
-        "andares/adarts": "^1.3",
         "kevinlebrun/colors.php": "^1.0"
     },
     "require-dev": {

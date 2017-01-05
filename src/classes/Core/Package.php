@@ -114,7 +114,9 @@ abstract class Package extends Container {
      */
     public function __call(string $name, array $arguments = []) {
         if (!$this->_di) {
-            $loader = new DI\ContainerLoader($this->path('tmp', 'di'),
+            $loader = new DI\ContainerLoader(
+                $this->path('tmp',
+                    'di' . DIRECTORY_SEPARATOR . combi()->config('scene')),
                 !combi()->is_prod());
 
             $class = $loader->load(function($compiler) {
