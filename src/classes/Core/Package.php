@@ -114,11 +114,16 @@ abstract class Package extends Container {
      */
     public function __call(string $name, array $arguments = []) {
         if (!$this->_di) {
-            $loader = new DI\ContainerLoader(
-                $this->path('tmp',
-                    'di' . DIRECTORY_SEPARATOR . combi()->config('scene')),
-                !combi()->is_prod());
+            // 检查缓存目录
+            $tmp_path   = $this->path('tmp',
+                'di' . DIRECTORY_SEPARATOR . combi()->config('scene'));
+            if (!file_exists($tmp_path)) {
+                @mkdir($tmp_path, 0755, true);
+            }
 
+            // 载入di管理器
+            $loader = new DI\ContainerLoader($tmp_path,
+                !combi()->is_prod());
             $class = $loader->load(function($compiler) {
                 $config = $this->config('services')->raw();
                 $compiler->addConfig(
