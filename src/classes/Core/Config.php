@@ -65,6 +65,9 @@ class Config extends Container
         $scene = combi()->config('scene');
         // 配置文件路径
         $source_file = $this->_source->select("$this->_name.neon");
+        if (!file_exists($source_file)) {
+            return [];
+        }
 
         // 检查缓存
         if ($this->_cache) {

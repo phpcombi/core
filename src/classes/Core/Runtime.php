@@ -24,6 +24,11 @@ class Runtime extends Container {
     private $_is_ready = false;
 
     /**
+     * @var Package
+     */
+    private $_main_package = null;
+
+    /**
      *
      * @param array $config
      * @return self
@@ -37,15 +42,25 @@ class Runtime extends Container {
      * package->run()时初发的后初始化。
      * 该方法需要保证只运行一次。
      *
+     * @param Package $package
      * @return self
      */
-    public function ready(): self {
+    public function ready(Package $package): self {
         if ($this->_is_ready) {
             return $this;
         }
 
+        $this->_main_package = $package;
+
         $this->_is_ready = true;
         return $this;
+    }
+
+    /**
+     * @return Package
+     */
+    public function main(): Package {
+        return $this->_main_package;
     }
 
     /**

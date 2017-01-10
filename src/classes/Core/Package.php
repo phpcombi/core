@@ -49,7 +49,7 @@ abstract class Package extends Container {
      * @return void
      */
     public function run(): void {
-        combi()->ready();
+        combi()->ready($this);
     }
 
     /**
@@ -61,15 +61,6 @@ abstract class Package extends Container {
         !$this->_pid && $this->_pid =
             strtolower(str_replace('\\', '_', static::namespace()));
         return $this->_pid;
-    }
-
-    /**
-     * 作为容器返回自身
-     *
-     * @return Container
-     */
-    public function container(): Container {
-        return $this;
     }
 
     /**
@@ -86,12 +77,24 @@ abstract class Package extends Container {
      * @return Config
      */
     public function config(string $name): Config {
-        !isset($this->_configs[$name]) &&
-            $this->_configs[$name] = new Config(
+        if (!isset($this->_configs[$name])) {
+            // 继承 main package 覆盖配置的问题
+            $config = new Config(
                 $name,
-                $this->dir('src', 'config'),
+                combi()->main()->dir('src', 'config'),
                 $this->dir('tmp', 'config' . DIRECTORY_SEPARATOR . $this->pid())
             );
+
+            if ($config->raw()) {
+                $this->_configs[$name] = $config;
+            } else {
+                $this->_configs[$name] = new Config(
+                    $name,
+                    $this->dir('src', 'config'),
+                    $this->dir('tmp', 'config' . DIRECTORY_SEPARATOR . $this->pid())
+                );
+            }
+        }
 
         return $this->_configs[$name];
     }
