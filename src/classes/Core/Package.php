@@ -81,7 +81,8 @@ abstract class Package extends Container {
             // 继承 main package 覆盖配置的问题
             $config = new Config(
                 $name,
-                combi()->main()->dir('src', 'config'),
+                combi()->main()->dir('src', 'config' .
+                    DIRECTORY_SEPARATOR . $this->pid()),
                 $this->dir('tmp', 'config' . DIRECTORY_SEPARATOR . $this->pid())
             );
 
