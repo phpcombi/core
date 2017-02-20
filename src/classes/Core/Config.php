@@ -12,9 +12,10 @@ use Nette\Neon\{Neon, Entity};
  *
  * @author andares
  */
-class Config extends Container
+class Config extends Container implements \ArrayAccess
 {
-    use Meta\Overloaded;
+    use Meta\Overloaded,
+        Meta\ArrayAccess;
 
     protected $_name;
 

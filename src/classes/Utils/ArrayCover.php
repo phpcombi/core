@@ -2,6 +2,11 @@
 
 namespace Combi\Utils;
 
+/**
+ * 数组合并功能类。
+ *
+ * 可将两个任意深度的数组完全合并到一起。
+ */
 class ArrayCover
 {
     private $data;

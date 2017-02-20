@@ -8,7 +8,10 @@ use Combi\Base\Container;
 
 
 /**
- * Description of Runtime
+ * # 框架运行时对象
+ *
+ * 自动创建唯一单例。
+ * 可通过```combi()```方法获取。
  *
  * @author andares
  */
@@ -16,45 +19,20 @@ class Runtime extends Container {
     use Traits\Instancable,
         Meta\Overloaded;
 
+    /**
+     * @var array
+     */
     private $_config = [];
 
     /**
      * @var bool
      */
-    private $_is_ready = false;
+    private $_is_running = false;
 
     /**
      * @var Package
      */
     private $_main_package = null;
-
-    /**
-     *
-     * @param array $config
-     * @return self
-     */
-    public function setup(array $config): self {
-        $this->_config = array_merge($this->_config, $config);
-        return $this;
-    }
-
-    /**
-     * package->run()时初发的后初始化。
-     * 该方法需要保证只运行一次。
-     *
-     * @param Package $package
-     * @return self
-     */
-    public function ready(Package $package): self {
-        if ($this->_is_ready) {
-            return $this;
-        }
-
-        $this->_main_package = $package;
-
-        $this->_is_ready = true;
-        return $this;
-    }
 
     /**
      * @return Package
@@ -99,8 +77,46 @@ class Runtime extends Container {
      */
     public function register(Package $package): self {
         $pid = $package->pid();
+
+        if ($this->has($pid)) {
+            throw \abort(new \RuntimeException('package id conflict'))
+                ->set('pid', $pid);
+        }
         $this->set($pid, $package);
         return $this;
+    }
+
+    /**
+     * @param string $pid
+     * @param array $config
+     * @return self
+     */
+    public function run(string $pid, array $config): self {
+        if ($this->_is_running) {
+            return $this;
+        }
+
+        // 基础配置
+        $this->_config = array_merge($this->_config, $config);
+
+        $this->ready($this->$pid);
+        $this->_is_running = true;
+        return $this;
+    }
+
+    /**
+     *
+     * @param Package $package
+     * @return void
+     */
+    private function ready(Package $package): void {
+        $this->_main_package = $package;
+
+        $this->core->hook->take(\Combi\HOOK_READY);
+
+        register_shutdown_function(function() {
+            combi()->core->hook->take(\Combi\HOOK_SHUTDOWN);
+        });
     }
 
 }

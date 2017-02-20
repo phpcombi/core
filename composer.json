@@ -13,8 +13,11 @@
         "php": ">=7.1.0",
         "ext-msgpack": "*",
         "psr/container": "dev-master",
-        "nette/di": "^2.4",
-        "nette/neon": "^2.4",
+        "psr/log": "^1.0",
+        "psr/simple-cache": "dev-master",
+        "psr/http-message": "^1.0",
+        "nette/di": "^2.4.0",
+        "nette/neon": "^2.4.0",
         "kevinlebrun/colors.php": "^1.0"
     },
     "require-dev": {

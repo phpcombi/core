@@ -1,0 +1,8 @@
+dumper:
+    provider:   Combi\Tris\Dumper
+
+logger:
+    default:
+        provider:           Combi\Tris\Logger   # set Combi\Tris\NullLogger to disable log function
+        to_file:            true
+        datetime_format:    c

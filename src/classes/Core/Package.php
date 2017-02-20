@@ -13,7 +13,7 @@ use Nette\DI;
  *
  * @author andares
  */
-abstract class Package extends Container {
+class Package extends Container {
     use Traits\Instancable,
         Traits\GetNamespace,
         Meta\Overloaded;
@@ -43,13 +43,6 @@ abstract class Package extends Container {
      */
     public function __construct(string $src_path) {
         $this->_path['src'] = $src_path;
-    }
-
-    /**
-     * @return void
-     */
-    public function run(): void {
-        combi()->ready($this);
     }
 
     /**
@@ -136,10 +129,6 @@ abstract class Package extends Container {
             $this->_di = new $class;
         }
         return $this->_di->getService($name);
-    }
-
-    public static function __callStatic(string $name, array $arguments = []) {
-
     }
 
     /**
