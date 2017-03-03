@@ -35,9 +35,7 @@ class Directory implements Resource, \IteratorAggregate
         $file   = $this->select($path);
 
         $dir    = dirname($file);
-        if (!file_exists($dir)) {
-            mkdir($dir, 0755, true);
-        }
+        !file_exists($dir) && mkdir($dir, 0755, true);
         return file_put_contents($file, $data);
     }
 

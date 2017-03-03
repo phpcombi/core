@@ -2,11 +2,13 @@
 
 namespace Combi\Base;
 
+use Combi\Meta;
+
 /**
  * Description of Container
  *
  * @author andares
  */
-abstract class Container extends Collection
-    implements \Psr\Container\ContainerInterface {
+class Container extends Collection implements \Psr\Container\ContainerInterface
+{
 }

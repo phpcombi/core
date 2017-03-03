@@ -8,7 +8,7 @@ use Combi\Utils\Pack;
  *
  * @author andares
  */
-trait JsonSerialize {
+trait JsonSerializable {
     /**
      *
      * @return string

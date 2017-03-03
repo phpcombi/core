@@ -26,7 +26,7 @@ namespace {
 
     if (!function_exists('du')) {
         function du($var, $title = 0): void {
-            Combi\Tris::du($var, $title);
+            Combi\Tris::dump($var, $title);
         }
     }
 
@@ -37,16 +37,26 @@ namespace combi {
     /**
      * @param string $template
      * @param array $vars
-     * @return string
+     * @return ?string
      */
-    function padding(string $template, array $vars): string {
-        $result = preg_replace_callback('/:([A-Za-z0-9_\.]+) |\{([A-Za-z0-9_\.]+)\}/',
-            function($matches) use ($vars) {
-                $key = $matches[2] ?? $matches[1];
-                return $vars[$key] ?? $matches[0];
-            }, $template);
-        return $result;
-    }
+     function padding(string $template, array $vars): ?string {
+         $result = preg_replace_callback(
+             '/(\s?):([A-Za-z0-9_\.]+)(\s?)|(.?)(\{)([A-Za-z0-9_\.]+)(\})(.?)/',
+
+             function($matches) use ($vars) {
+                 $key = $matches[6] ?? $matches[2];
+                 if (isset($matches[8]) && $matches[4] == '{' && $matches[8] == '}') {
+                     return $matches[5].$matches[6].$matches[7];
+                 } elseif (isset($vars[$key])) {
+                     return isset($matches[8])
+                         ? ($matches[4].$vars[$key].$matches[8])
+                         : ($matches[1].$vars[$key].$matches[3]);
+                 } else {
+                     return $matches[0];
+                 }
+             }, $template);
+         return $result;
+     }
 
     /**
      * @param string $class

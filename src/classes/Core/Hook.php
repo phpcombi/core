@@ -26,6 +26,7 @@ class Hook
                 foreach ($handlers as $handler) {
                     $handler(...$args);
                 }
+                return null;
             };
         }
         $this->takers[$name] = $taker;
@@ -40,12 +41,13 @@ class Hook
     }
 
     public function take(string $name, ...$args) {
-        if (!isset($this->takers[$name]) || !isset($this->handlers[$name])) {
-            return;
+        if (!isset($this->takers[$name])) {
+            throw abort(new \UnexpectedValueException("hook {name} is undefined"))
+                ->set('name', $name);
         }
 
         $taker = $this->takers[$name];
-        $taker($this->handlers[$name], ...$args);
+        return $taker($this->handlers[$name] ?? [], ...$args);
     }
 
 }

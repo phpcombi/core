@@ -13,6 +13,6 @@ trait IteratorAggregate {
      * @return iterable
      */
     public function getIterator() {
-        return $this->all();
+        return $this->iterate();
     }
 }

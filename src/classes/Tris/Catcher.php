@@ -2,11 +2,34 @@
 
 namespace Combi\Tris;
 
+use Combi\Traits;
+
 /**
- * @todo 在全局违例捕获里暂不记日志，以防出现死循环。这里将作为一个额外方案，使用不同的通道记录违例
+ * @todo 在全局违例捕获里暂不记日志，以防出现死循环。这里将设计一个额外方案，使用不同的通道记录违例
  */
 class Catcher
 {
+    use Traits\Instancable;
+
+    /**
+     * @var array
+     */
+    protected $config = [];
+
+    public function __construct($id, array $config) {
+        set_error_handler([$this, 'errorHandler']);
+        set_exception_handler([$this, 'exceptionHandler']);
+
+        if ($config['shutdown_hook']) {
+            register_shutdown_function([$this, 'shutdownHandler']);
+        }
+
+        $this->config = $config;
+    }
+
+    public function shutdownHandler() {
+        combi()->core->hook->take(\Combi\HOOK_SHUTDOWN);
+    }
 
     /**
      *
@@ -15,44 +38,57 @@ class Catcher
      * @param string $file
      * @param int $line
      * @param string $context
-     * @throws \ErrorException
+     * @throws ErrorException
+     * @return void
      */
-    public static function errorHandler(int $severity, string $message,
-        string $file, int $line, $context) {
+    public function errorHandler(int $severity, string $message,
+        string $file, int $line, array $context): void {
 
-        $exc        = new \ErrorException($message, 0, $severity, $file, $line);
-        $exc->context = $context;
+        $exc = new ErrorException($message, 0, $severity, $file, $line);
+        $exc->setContext($context);
         throw $exc;
     }
 
     /**
      *
-     * @param \Error $throwed
+     * @param \Error $thrown
      * @param bool $exit
-     * @return string|null exception file path
      */
-    public static function exceptionHandler(\Throwable $throwed,
-        bool $exit = true) {
+    public function exceptionHandler(\Throwable $thrown, $exit = true): void {
 
-        if ($throwed instanceof \ErrorException) {
-            /* @var $throwed \ErrorException|\Error */
-            $severity = $throwed->getSeverity();
-            $priority = (($severity & E_NOTICE) || ($severity & E_WARNING)) ?
-                'warning' : 'error';
-        } elseif ($throwed instanceof \Error) {
-            $priority = 'error';
-        } elseif ($throwed instanceof \Exception) {
-            $priority = 'exception';
+        // 处理方案
+        // 记日志
+        // 如果是非生产环境条件允许打印输出
+        \Combi\Log::exc($thrown);
+
+        // 是否输出
+        if (combi()->isProd() || $this->isPrintable($thrown)) {
+            $this->printThrown($thrown);
+        }
+
+        if ($exit) {
+            die(0);
+        }
+    }
+
+    protected function printThrown(\Throwable $thrown) {
+        if ($thrown instanceof \Combi\Abort) {
+            $context = $thrown->all();
+            $thrown  = $thrown->getPrevious();
+        } elseif ($thrown instanceof ErrorException) {
+            $context = $thrown->getContext();
         } else {
-            $priority = 'warning';
+            $context = [];
         }
-        $file = self::log($throwed, $priority);
+        $sample     = new ExceptionSample('p', $thrown, $context);
+        \Combi\Tris::dump($sample->render(), "Ooooooooooooooooooops!!");
+    }
 
-        // 是否使用tracy debug handler
-        if (is_prod() || $throwed->getCode() || !self::$debug_in_web) {
-            return $file;
+    protected function isPrintable(\Throwable $thrown): bool {
+        if ($this->config['print_exc']) {
+            return true;
         }
-        TracyDebugger::exceptionHandler($throwed, $exit);
+        return false;
     }
 
 }

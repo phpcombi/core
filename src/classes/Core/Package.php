@@ -4,7 +4,9 @@ namespace Combi\Core;
 
 use Combi\Traits;
 use Combi\Meta;
+use Combi\Utils;
 use Combi\Base\Container;
+use Combi\NetteFixer\DI\ContainerLoader;
 use Nette\DI;
 
 /**
@@ -27,6 +29,11 @@ class Package extends Container {
      * @var DI\Container
      */
     protected $_di = null;
+
+    /**
+     * @var Utils\Dictionary[]
+     */
+    protected $_dictionaries = [];
 
     /**
      * @var Config[]
@@ -65,28 +72,61 @@ class Package extends Container {
         return combi()->dir($this->path($category, $path));
     }
 
+    public function dict(string $name, $key = null, ...$values) {
+        $locale = combi()->config('locale');
+
+        // 取字典对象
+        if (!isset($this->_dictionaries[$locale][$name])) {
+            $tmp_dir = $this->dir('tmp', 'i18n'.
+            DIRECTORY_SEPARATOR.$locale.
+            DIRECTORY_SEPARATOR.$this->pid());
+
+            // 继承 main package 覆盖
+            $dictionary = new Utils\Dictionary(
+                $name,
+                combi()->main()->dir('src', 'i18n'.
+                    DIRECTORY_SEPARATOR.$locale.
+                    DIRECTORY_SEPARATOR.$this->pid()), $tmp_dir);
+
+            if ($dictionary->raw()) { // 尝试访问main package的覆盖配置
+                $this->_dictionaries[$name] = $dictionary;
+            } else {
+                $this->_dictionaries[$name] = new Utils\Dictionary(
+                    $name,
+                    $this->dir('src', 'i18n'.DIRECTORY_SEPARATOR.$locale),
+                    $tmp_dir);
+            }
+        }
+
+        // 根据参数处理
+        if ($key) {
+            return $this->_dictionaries[$name]->translate($key, ...$values);
+        }
+        return $this->_dictionaries[$name];
+    }
+
     /**
      * @param string $name
      * @return Config
      */
     public function config(string $name): Config {
         if (!isset($this->_configs[$name])) {
-            // 继承 main package 覆盖配置的问题
+            $tmp_dir = $this->dir('tmp', 'config'.DIRECTORY_SEPARATOR.$this->pid());
+
+            // 继承 main package 覆盖
             $config = new Config(
                 $name,
-                combi()->main()->dir('src', 'config' .
-                    DIRECTORY_SEPARATOR . $this->pid()),
-                $this->dir('tmp', 'config' . DIRECTORY_SEPARATOR . $this->pid())
-            );
+                combi()->main()->dir('src', 'config'.
+                    DIRECTORY_SEPARATOR.$this->pid()),
+                $tmp_dir);
 
-            if ($config->raw()) {
+            if ($config->raw()) { // 尝试访问main package的覆盖配置
                 $this->_configs[$name] = $config;
             } else {
                 $this->_configs[$name] = new Config(
                     $name,
                     $this->dir('src', 'config'),
-                    $this->dir('tmp', 'config' . DIRECTORY_SEPARATOR . $this->pid())
-                );
+                    $tmp_dir);
             }
         }
 
@@ -102,7 +142,7 @@ class Package extends Container {
         $prefix = $this->_path[$category] ??
             combi()->config()['path'][$category] ?? '';
 
-        return $path ? ($prefix . DIRECTORY_SEPARATOR . $path) : $prefix;
+        return $path ? ($prefix.DIRECTORY_SEPARATOR.$path) : $prefix;
     }
 
     /**
@@ -112,20 +152,17 @@ class Package extends Container {
     public function __call(string $name, array $arguments = []) {
         if (!$this->_di) {
             // 检查缓存目录
-            $tmp_path   = $this->path('tmp',
-                'di' . DIRECTORY_SEPARATOR . combi()->config('scene'));
-            if (!file_exists($tmp_path)) {
-                @mkdir($tmp_path, 0755, true);
-            }
+            $tmp_dir    = $this->path('tmp',
+                'di'.DIRECTORY_SEPARATOR.combi()->config('scene'));
 
             // 载入di管理器
-            $loader = new DI\ContainerLoader($tmp_path,
-                !combi()->is_prod());
+            $loader = new ContainerLoader($tmp_dir,
+                !combi()->isProd());
             $class = $loader->load(function($compiler) {
                 $config = $this->config('services')->raw();
                 $compiler->addConfig(
                     (new DI\Config\Adapters\NeonAdapter)->process($config));
-            });
+            }, $this->pid());
             $this->_di = new $class;
         }
         return $this->_di->getService($name);

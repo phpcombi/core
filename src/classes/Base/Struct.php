@@ -13,8 +13,10 @@ use Combi\Meta;
  *
  * @author andares
  */
-abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
-    use Meta\IteratorAggregate, Meta\ToArray;
+abstract class Struct
+    implements Interfaces\Struct, \IteratorAggregate, \JsonSerializable
+{
+    use Meta\IteratorAggregate, Meta\ToArray, Meta\JsonSerializable;
 
     /**
      * 基础数据结构
@@ -101,10 +103,24 @@ abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
      * @param bool $include_deprecated
      * @return iterable
      */
-    public function all(bool $include_deprecated = false): iterable {
+    public function iterate(bool $include_deprecated = false): iterable {
         foreach (static::defaults($include_deprecated) as $key => $default) {
             yield $key => $this->_data[$key] ?? $default;
         }
+    }
+
+    /**
+     * 返回全部属性
+     *
+     * @param bool $include_deprecated
+     * @return array
+     */
+    public function all(bool $include_deprecated = false): array {
+        $result = [];
+        foreach ($this->iterate($include_deprecated) as $key => $value) {
+            $result[$key] = $value;
+        }
+        return $result;
     }
 
     /**
@@ -142,7 +158,7 @@ abstract class Struct implements Interfaces\Struct, \IteratorAggregate {
      * @throws \UnexpectedValueException
      */
     public function confirm(bool $include_deprecated = false): self {
-        foreach ($this->all($include_deprecated) as $key => $value) {
+        foreach ($this->iterate($include_deprecated) as $key => $value) {
             $method = "_confirm_$key";
             if (method_exists($this, $method)) {
                 $value = $this->$method($value);

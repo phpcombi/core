@@ -10,8 +10,10 @@ use Combi\Meta;
  *
  * @author andares
  */
-abstract class Collection implements Interfaces\Collection, \IteratorAggregate {
-    use Meta\IteratorAggregate, Meta\ToArray;
+abstract class Collection
+    implements Interfaces\Collection, \IteratorAggregate, \JsonSerializable
+{
+    use Meta\IteratorAggregate, Meta\ToArray, Meta\JsonSerializable;
 
     /**
      * 数据
@@ -65,10 +67,17 @@ abstract class Collection implements Interfaces\Collection, \IteratorAggregate {
      *
      * @return iterable
      */
-    public function all(): iterable {
+    public function iterate(): iterable {
         foreach ($this->_data as $key => $value) {
             yield $key => $value;
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function all(): array {
+        return $this->_data;
     }
 
     /**

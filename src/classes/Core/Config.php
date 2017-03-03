@@ -44,7 +44,7 @@ class Config extends Container implements \ArrayAccess
         $source && $this->_source   = $source;
         $cache  && $this->_cache    = $cache;
 
-        // 未设置源时不载入
+        // 未设置源时不载入 这是为了测试方便
         if ($this->_source) {
             $this->_data = $this->load();
         }
@@ -99,7 +99,7 @@ return ' . var_export($data, true) . ';');
     protected function loadByCache(string $cache_file, string $source_file): ?array {
         $data = null;
 
-        if (combi()->is_prod()) {
+        if (combi()->isProd()) {
             // 生产环境直接载入
             $data = @include $cache_file;
         } else {

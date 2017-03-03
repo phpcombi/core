@@ -63,7 +63,7 @@ trait Serializable {
     public function serialize(): ?string {
         $arr['#'] = static::version();
         $count = -1;
-        foreach ($this->all(true) as $key => $value) {
+        foreach ($this->iterate(true) as $key => $value) {
             $count++;
             // 跳过弃用
             if (static::isKeyDeprecated($key)) {

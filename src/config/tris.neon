@@ -5,4 +5,23 @@ logger:
     default:
         provider:           Combi\Tris\Logger   # set Combi\Tris\NullLogger to disable log function
         to_file:            true
+        file_suffix:        ".{level}.log"
         datetime_format:    c
+        slice_format:       Y.W
+
+sample:
+    levels:
+        emergency:  1
+        alert:      1
+        critical:   1
+        error:      1
+        warning:    1
+        #notice:     1      # 通过关闭notice级别，可避免记录 LogicException 的样本
+    whitelist:
+    blacklist:
+
+
+catcher:
+    provider:   Combi\Tris\Catcher
+    shutdown_hook:  true
+    print_exc:      true

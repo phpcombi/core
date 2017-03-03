@@ -8,83 +8,62 @@ use Combi\Meta;
 /**
  * Description of Abort
  *
+ * 在Log类中预留的context约定：
+ * - level 设定日志级别，默认 LogicException 为 notice, RuntimeException 为 critical, ErrorException 和 Error 为 error, 其他均为warning
+ *
  * @author andares
  */
-class Abort extends \Exception {
+class Abort extends \Exception implements \JsonSerializable
+{
     use Meta\Overloaded;
 
     /**
      * 数据
-     * @var array
+     * @var Base\Container
      */
-    protected $_data = [];
+    protected $extra;
 
     public function __construct(\Throwable $e) {
         parent::__construct($e->getMessage(), $e->getCode(), $e);
-    }
 
-    public function __invoke(): \Throwable {
-        return $this->getPrevious();
+        $this->extra = new Base\Container;
     }
 
 	public function __toString(): string {
-        $e = $this->getPrevious();
-        return "$e";
+        return json_encode($this);
+    }
+
+    public function jsonSerialize(): array {
+        $extra  = $this->toArray();
+        $exc    = $this->getPrevious();
+        $result = [
+            'message'   => $exc->getMessage(),
+            'code'      => $exc->getCode(),
+            'file'      => $exc->getFile(),
+            'line'      => $exc->getLine(),
+            'extra'     => $extra,
+        ];
+        return $result;
     }
 
     public function class(): string {
         return get_class($this->getPrevious());
     }
 
-    /**
-     *
-     * @param int|string $key
-     * @param mixed $value
-     * @return self
-     */
+    public function getExtra(): Base\Container {
+        return $this->extra;
+    }
+
     public function set($key, $value): self {
-        $this->_data[$key] = $value;
+        $this->extra->set($key, $value);
         return $this;
     }
 
-    /**
-     *
-     * @param int|string $key
-     * @param mixed $default
-     * @return mixed
-     */
-    public function get($key, $default = null) {
-        return $this->_data[$key] ?? $default;
+    public function __call(string $name, array $arguments = []) {
+        return $this->extra->$name(...$arguments);
     }
 
-    /**
-     *
-     * @param int|string $key
-     * @return bool
-     */
-    public function has($key): bool {
-        return isset($this->_data[$key]);
-    }
-
-    /**
-     * 移除一个单元
-     *
-     * @param int|string $key
-     * @return self
-     */
-    public function remove($key): self {
-        unset($this->_data[$key]);
-        return $this;
-    }
-
-    /**
-     * 返回一个遍历内部数据的迭代器
-     *
-     * @return iterable
-     */
-    public function all(): iterable {
-        foreach ($this->_data as $key => $value) {
-            yield $key => $value;
-        }
+    public function __debugInfo() {
+        return $this->jsonSerialize();
     }
 }

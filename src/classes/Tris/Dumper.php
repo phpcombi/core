@@ -23,7 +23,7 @@ class Dumper implements Interfaces\Dumper
     }
 
     public function dump($var, $title = null): self {
-        if (combi()->is_prod()) {
+        if (combi()->isProd()) {
             return $this;
         }
 

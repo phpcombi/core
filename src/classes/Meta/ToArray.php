@@ -17,7 +17,7 @@ trait ToArray {
      */
     public function toArray(callable $filter = null): array {
         $result = [];
-        foreach ($this->all() as $key => $value) {
+        foreach ($this->iterate() as $key => $value) {
             // 完全展开
             if (is_object($value) && $value instanceof Interfaces\Arrayable) {
                 $value = $value->toArray();

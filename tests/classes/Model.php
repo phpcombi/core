@@ -16,12 +16,12 @@ use Combi\Interfaces;
  * @property int $age
  */
 class Person extends Struct
-    implements \ArrayAccess, \JsonSerializable, \Serializable {
-
+    implements \ArrayAccess, \JsonSerializable, \Serializable
+{
     use Meta\Fillable,
         Meta\Overloaded,
         Meta\ArrayAccess,
-        Meta\JsonSerialize,
+        Meta\JsonSerializable,
         Meta\ToBin,
         Meta\Serializable;
 

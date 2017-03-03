@@ -27,7 +27,7 @@ class Runtime extends Container {
     /**
      * @var bool
      */
-    private $_is_running = false;
+    private $_is_ready = false;
 
     /**
      * @var Package
@@ -44,7 +44,7 @@ class Runtime extends Container {
     /**
      * @return bool
      */
-    public function is_prod(): bool {
+    public function isProd(): bool {
         return  $this->_config['is_prod'];
     }
 
@@ -52,10 +52,12 @@ class Runtime extends Container {
      *
      *
      * @param ?string $key
+     * @param mixed $value
      * @return mixed
      */
-    public function config(?string $key = null) {
+    public function config(?string $key = null, $value = null) {
         if ($key) {
+            $value !== null && $this->_config[$key] = $value;
             return $this->_config[$key] ?? null;
         }
         return $this->_config;
@@ -79,7 +81,7 @@ class Runtime extends Container {
         $pid = $package->pid();
 
         if ($this->has($pid)) {
-            throw \abort(new \RuntimeException('package id conflict'))
+            throw abort(new \RuntimeException('package id conflict'))
                 ->set('pid', $pid);
         }
         $this->set($pid, $package);
@@ -91,32 +93,23 @@ class Runtime extends Container {
      * @param array $config
      * @return self
      */
-    public function run(string $pid, array $config): self {
-        if ($this->_is_running) {
+    public function ready(string $pid, array $config): self {
+        // 检查状态
+        if ($this->_is_ready) {
             return $this;
         }
 
         // 基础配置
         $this->_config = array_merge($this->_config, $config);
 
-        $this->ready($this->$pid);
-        $this->_is_running = true;
-        return $this;
-    }
+        // 设置主包
+        $this->_main_package = $this->$pid;
 
-    /**
-     *
-     * @param Package $package
-     * @return void
-     */
-    private function ready(Package $package): void {
-        $this->_main_package = $package;
-
+        // 勾子
         $this->core->hook->take(\Combi\HOOK_READY);
 
-        register_shutdown_function(function() {
-            combi()->core->hook->take(\Combi\HOOK_SHUTDOWN);
-        });
+        // 设置状态
+        $this->_is_ready = true;
+        return $this;
     }
-
 }

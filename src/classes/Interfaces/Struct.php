@@ -15,7 +15,9 @@ interface Struct extends Arrayable {
 
     public function get($key);
 
-    public function all(bool $include_deprecated = false): iterable;
+    public function iterate(bool $include_deprecated = false): iterable;
+
+    public function all(bool $include_deprecated = false): array;
 
     public function has($key): bool;
 
