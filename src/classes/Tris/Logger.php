@@ -2,6 +2,13 @@
 
 namespace Combi\Tris;
 
+use Combi\Facades\Runtime as rt;
+use Combi\Facades\Tris as tris;
+use Combi\Facades\Helper as helper;
+use Combi\Package as core;
+use Combi\Package as inner;
+use Combi\Core\Abort as abort;
+
 use Psr;
 use ErrorException;
 use Combi\Traits;
@@ -18,11 +25,6 @@ class Logger extends \Psr\Log\AbstractLogger
      * @var string
      */
     protected $name;
-
-    /**
-     * @var \DateTimeZone
-     */
-    protected $timezone = null;
 
     /**
      * @var bool
@@ -69,23 +71,6 @@ class Logger extends \Psr\Log\AbstractLogger
     }
 
     /**
-     * @param \DateTimeZone $timezone
-     * @return void
-     */
-    public function setTimeZone(\DateTimeZone $timezone): void {
-        $this->timezone = $timezone;
-    }
-
-    /**
-     * @return \DateTimeZone
-     */
-    public function getTimeZone(): \DateTimeZone {
-        !$this->timezone
-            && $this->timezone = new \DateTimeZone(date_default_timezone_get() ?: 'UTC');
-        return $this->timezone;
-    }
-
-    /**
      * 如果message是一个对象，那么其必须有```__toString()```方法。
      *
      * 支持```{key}```和```:key```两种风格的替换符，可以传```$context```参数作为一个数组，
@@ -111,7 +96,7 @@ class Logger extends \Psr\Log\AbstractLogger
     public function log($level, $message, array $context = []): void
     {
         // 参数初始化
-        $datetime   = new \DateTimeImmutable('now', $this->getTimeZone());
+        $datetime   = core::now() ?: new \DateTimeImmutable('now');
 
         $exception  = $context['exception'] ?? $context['error'] ?? null;
         if ($exception instanceof \Throwable) {
@@ -129,7 +114,7 @@ class Logger extends \Psr\Log\AbstractLogger
         unset($context['error']);
 
         // 触发勾子处理context
-        $context = combi()->core->hook->take(\Combi\HOOK_LOG_CONTEXT, $context);
+        $context = core::hook()->take(\Combi\HOOK_LOG_CONTEXT, $context);
 
         // 构造数据
         $record = [
@@ -144,7 +129,7 @@ class Logger extends \Psr\Log\AbstractLogger
         $this->to_file && $this->toFile($record);
 
         // 触发勾子扩展
-        combi()->core->hook->take(\Combi\HOOK_LOG, $record);
+        core::hook()->take(\Combi\HOOK_LOG, $record);
     }
 
     /**
@@ -172,13 +157,13 @@ class Logger extends \Psr\Log\AbstractLogger
         $record['datetime'] = $record['datetime']->format($this->datetime_format);
 
         (is_string($record['message']) && $record['context'])
-            && $record['message'] = \combi\padding($record['message'], $record['context']);
+            && $record['message'] = helper::padding($record['message'], $record['context']);
 
         $sample_file && $record['sample'] = $sample_file;
 
         // 记日志
         $line = json_encode($record);
-        $file = $path . \combi\padding($this->file_suffix, $record);
+        $file = $path.helper::padding($this->file_suffix, $record);
         if (!@file_put_contents($file,
             $line . \PHP_EOL, FILE_APPEND | LOCK_EX)) {
 
@@ -198,6 +183,6 @@ class Logger extends \Psr\Log\AbstractLogger
      * @return string
      */
     protected function getBaseDir(): string {
-        return combi()->core->path('logs', $this->name);
+        return core::path('logs', $this->name);
     }
 }

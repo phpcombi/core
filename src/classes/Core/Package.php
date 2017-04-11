@@ -2,10 +2,16 @@
 
 namespace Combi\Core;
 
+use Combi\Facades\Runtime as rt;
+use Combi\Facades\Tris as tris;
+use Combi\Facades\Helper as helper;
+use Combi\Package as core;
+use Combi\Package as inner;
+use Combi\Core\Abort as abort;
+
 use Combi\Traits;
 use Combi\Meta;
 use Combi\Utils;
-use Combi\Base\Container;
 use Combi\NetteFixer\DI\ContainerLoader;
 use Nette\DI;
 
@@ -15,10 +21,9 @@ use Nette\DI;
  *
  * @author andares
  */
-class Package extends Container {
+class Package extends Meta\Container {
     use Traits\Instancable,
-        Traits\GetNamespace,
-        Meta\Overloaded;
+        Meta\Extensions\Overloaded;
 
     /**
      * @var array
@@ -48,32 +53,30 @@ class Package extends Container {
     /**
      * @param string $src_path
      */
-    public function __construct(string $src_path) {
+    public function __construct(string $pid, string $src_path) {
+        $this->_pid = $pid;
         $this->_path['src'] = $src_path;
     }
 
     /**
-     * 获取package的全局唯一id
      *
      * @return string
      */
     public function pid(): string {
-        !$this->_pid && $this->_pid =
-            strtolower(str_replace('\\', '_', static::namespace()));
         return $this->_pid;
     }
 
     /**
      * @param string $category
-     * @param ?string $path
+     * @param string|null $path
      * @return Resource\Directory
      */
     public function dir(string $category, ?string $path = null): Resource\Directory {
-        return combi()->dir($this->path($category, $path));
+        return rt::dir($this->path($category, $path));
     }
 
     public function dict(string $name, $key = null, ...$values) {
-        $locale = combi()->config('locale');
+        $locale = rt::config('locale');
 
         // 取字典对象
         if (!isset($this->_dictionaries[$locale][$name])) {
@@ -84,7 +87,7 @@ class Package extends Container {
             // 继承 main package 覆盖
             $dictionary = new Utils\Dictionary(
                 $name,
-                combi()->main()->dir('src', 'i18n'.
+                rt::main()->dir('src', 'i18n'.
                     DIRECTORY_SEPARATOR.$locale.
                     DIRECTORY_SEPARATOR.$this->pid()), $tmp_dir);
 
@@ -116,7 +119,7 @@ class Package extends Container {
             // 继承 main package 覆盖
             $config = new Config(
                 $name,
-                combi()->main()->dir('src', 'config'.
+                rt::main()->dir('src', 'config'.
                     DIRECTORY_SEPARATOR.$this->pid()),
                 $tmp_dir);
 
@@ -135,12 +138,12 @@ class Package extends Container {
 
     /**
      * @param string $category
-     * @param ?string $path
+     * @param string|null $path
      * @return string
      */
     public function path(string $category, ?string $path = null): string {
         $prefix = $this->_path[$category] ??
-            combi()->config()['path'][$category] ?? '';
+            rt::config('path')[$category] ?? '';
 
         return $path ? ($prefix.DIRECTORY_SEPARATOR.$path) : $prefix;
     }
@@ -148,16 +151,25 @@ class Package extends Container {
     /**
      * @param string $name
      * @param array $arguments
+     * @return \stdClass
      */
-    public function __call(string $name, array $arguments = []) {
+    public function __call(string $name, array $arguments) {
+        return $this->service($name);
+    }
+
+    /**
+     * @param string $name
+     * @return \stdClass
+     */
+    public function service($name): \stdClass {
         if (!$this->_di) {
             // 检查缓存目录
             $tmp_dir    = $this->path('tmp',
-                'di'.DIRECTORY_SEPARATOR.combi()->config('scene'));
+                'di'.DIRECTORY_SEPARATOR.rt::config('scene'));
 
             // 载入di管理器
             $loader = new ContainerLoader($tmp_dir,
-                !combi()->isProd());
+                !rt::isProd());
             $class = $loader->load(function($compiler) {
                 $config = $this->config('services')->raw();
                 $compiler->addConfig(
@@ -169,13 +181,13 @@ class Package extends Container {
     }
 
     /**
-     * 扩展重载方法__get()以支持闭包初始化
+     * 扩展get()以支持闭包初始化
      *
      * @param string|int $key
      * @return mixed
      */
-    public function __get($key) {
-        $value = $this->get($key);
+    public function get($key) {
+        $value = parent::get($key);
 
         if ($value instanceof \Closure) {
             $value = $value();

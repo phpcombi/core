@@ -1,38 +1,35 @@
 <?php
 
-// The Nette Tester command-line runner can be
-// invoked through the command: ../vendor/bin/tester .
+use Combi\Facades\Runtime as rt;
+use Combi\Facades\Tris as tris;
+use Combi\Facades\Helper as helper;
+use Combi\Package as core;
+use Combi\Package as inner;
+use Combi\Core\Abort as abort;
 
-if (@!include __DIR__ . '/../vendor/autoload.php') {
-	echo 'Install Nette Tester using `composer install`';
-	exit(1);
-}
-
-
-// configure environment
-Tester\Environment::setup();
-date_default_timezone_set('Asia/Shanghai');
-$_GET = $_POST = $_COOKIE = [];
-
-
-// create temporary directory
+// set temp dir & init nette tester
 define('TEMP_DIR', __DIR__ . '/tmp/' . getmypid());
-@mkdir(dirname(TEMP_DIR)); // @ - directory may already exist
-Tester\Helpers::purge(TEMP_DIR);
-
-if (extension_loaded('xdebug')) {
-	xdebug_disable();
-}
+require __DIR__ . '/init_tester.php';
 
 // init combi
-combi()->setup([
-	'scene'     => 'dev',
+const TESTING = true;
+rt::ready('core', [
+	'scene'     => 'default',
     'is_prod'   => false,
 
     'path'      => [
         'tmp'   => TEMP_DIR . '/tmp',
-        'logs'  => TEMP_DIR . '/logs',
+        'logs'  => __DIR__ . '/logs',
         'docs'  => TEMP_DIR . '/docs',
         'tests' => TEMP_DIR . '/tests',
     ],
 ]);
+
+// 补包
+class TestPackage extends \Combi\Facades\Package
+{
+    protected static $pid = 'test';
+}
+rt::register(TestPackage::instance(__DIR__ . '/test_package_src'),
+    'helpers')
+        ->ready('test');

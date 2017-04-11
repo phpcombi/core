@@ -2,11 +2,18 @@
 
 namespace Combi\Tris;
 
+use Combi\Facades\Runtime as rt;
+use Combi\Facades\Tris as tris;
+use Combi\Facades\Helper as helper;
+use Combi\Package as core;
+use Combi\Package as inner;
+use Combi\Core\Abort as abort;
+
 use Combi\Traits;
 
 class Dumper implements Interfaces\Dumper
 {
-    use Traits\Instancable;
+    use Traits\Singleton;
 
     /**
      * @var Providers\Dumper\Base
@@ -23,13 +30,14 @@ class Dumper implements Interfaces\Dumper
     }
 
     public function dump($var, $title = null): self {
-        if (combi()->isProd()) {
+        if (rt::isProd()) {
             return $this;
         }
 
         if (PHP_SAPI !== 'cli'
             && !preg_match('#^Content-Type: (?!text/html)#im',
-                implode("\n", headers_list()))) {
+                implode("\n", headers_list()))
+            && !defined('TESTING')) {
 
             // html
             if ($title) {

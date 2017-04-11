@@ -21,7 +21,7 @@ class ContainerLoader
 	protected $tmp_dir;
 
 	/**
-	 * @var ?string
+	 * @var string|null
 	 */
 	protected $updated_meta = null;
 

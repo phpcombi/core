@@ -2,6 +2,13 @@
 
 namespace Combi\Tris;
 
+use Combi\Facades\Runtime as rt;
+use Combi\Facades\Tris as tris;
+use Combi\Facades\Helper as helper;
+use Combi\Package as core;
+use Combi\Package as inner;
+use Combi\Core\Abort as abort;
+
 class ExceptionSample
 {
     /**
@@ -42,7 +49,7 @@ class ExceptionSample
     /**
      * @var string
      */
-    private $joiner = "\n++++++++++++++++\n";
+    private $joiner = "\n^--------------^\n";
 
     public function __construct(string $type, \Throwable $thrown, array $context = []) {
         $this->type     = $type;
@@ -75,10 +82,10 @@ class ExceptionSample
     }
 
     public function render(): string {
-        $current = \combi\padding($this->template, $this->makeVars($this->thrown, $this->context));
+        $current = helper::padding($this->template, $this->makeVars($this->thrown, $this->context));
         $exc = $this->thrown->getPrevious();
         if ($exc) {
-            $previous = \combi\padding($this->template, $this->makeVars($exc));
+            $previous = helper::padding($this->template, $this->makeVars($exc));
         } else {
             $previous = '';
         }
@@ -87,7 +94,7 @@ class ExceptionSample
     }
 
     private function isAllowSave(): bool {
-        $config = combi()->core->config('tris')['sample'];
+        $config = core::config('tris')->sample;
         if ($this->level && !isset($config['levels'][$this->level])) {
             return false;
         }
@@ -130,7 +137,8 @@ class ExceptionSample
             $this->type,
             $this->thrown->getCode(),
             get_class($this->thrown),
-            basename($this->thrown->getFile()) . ":" . $this->thrown->getLine(),
+            basename($this->thrown->getFile()),
+            $this->thrown->getLine(),
             $this->context['primary'] ?? '',
             substr(md5(preg_replace('~(Resource id #)\d+~', '$1', $this->thrown)), 0, 5),
         ];

@@ -2,6 +2,13 @@
 
 namespace Combi\Tris;
 
+use Combi\Facades\Runtime as rt;
+use Combi\Facades\Tris as tris;
+use Combi\Facades\Helper as helper;
+use Combi\Package as core;
+use Combi\Package as inner;
+use Combi\Core\Abort as abort;
+
 use Combi\Traits;
 
 /**
@@ -9,14 +16,14 @@ use Combi\Traits;
  */
 class Catcher
 {
-    use Traits\Instancable;
+    use Traits\Singleton;
 
     /**
      * @var array
      */
     protected $config = [];
 
-    public function __construct($id, array $config) {
+    public function __construct(array $config) {
         set_error_handler([$this, 'errorHandler']);
         set_exception_handler([$this, 'exceptionHandler']);
 
@@ -28,7 +35,7 @@ class Catcher
     }
 
     public function shutdownHandler() {
-        combi()->core->hook->take(\Combi\HOOK_SHUTDOWN);
+        core::hook()->take(\Combi\HOOK_SHUTDOWN);
     }
 
     /**
@@ -59,10 +66,10 @@ class Catcher
         // 处理方案
         // 记日志
         // 如果是非生产环境条件允许打印输出
-        \Combi\Log::exc($thrown);
+        tris::ml($thrown)->exc();
 
         // 是否输出
-        if (combi()->isProd() || $this->isPrintable($thrown)) {
+        if (!rt::isProd() && $this->isPrintable($thrown)) {
             $this->printThrown($thrown);
         }
 
@@ -71,8 +78,12 @@ class Catcher
         }
     }
 
+    /**
+     * @param \Throwable $thrown
+     * @todo 这里用tris::du()不是最合适
+     */
     protected function printThrown(\Throwable $thrown) {
-        if ($thrown instanceof \Combi\Abort) {
+        if ($thrown instanceof abort) {
             $context = $thrown->all();
             $thrown  = $thrown->getPrevious();
         } elseif ($thrown instanceof ErrorException) {
@@ -81,7 +92,7 @@ class Catcher
             $context = [];
         }
         $sample     = new ExceptionSample('p', $thrown, $context);
-        \Combi\Tris::dump($sample->render(), "Ooooooooooooooooooops!!");
+        tris::du($sample->render(), "Ooooooooooooooooooops!!");
     }
 
     protected function isPrintable(\Throwable $thrown): bool {

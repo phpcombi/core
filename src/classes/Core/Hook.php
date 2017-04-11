@@ -2,11 +2,18 @@
 
 namespace Combi\Core;
 
+use Combi\Facades\Runtime as rt;
+use Combi\Facades\Tris as tris;
+use Combi\Facades\Helper as helper;
+use Combi\Package as core;
+use Combi\Package as inner;
+use Combi\Core\Abort as abort;
+
 use Combi\Traits;
 
 class Hook
 {
-    use Traits\Instancable;
+    use Traits\Singleton;
 
     /**
      *
@@ -42,7 +49,7 @@ class Hook
 
     public function take(string $name, ...$args) {
         if (!isset($this->takers[$name])) {
-            throw abort(new \UnexpectedValueException("hook {name} is undefined"))
+            throw abort::unexpectedValue("hook {name} is undefined")
                 ->set('name', $name);
         }
 

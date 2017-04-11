@@ -2,7 +2,13 @@
 
 namespace Combi\Core;
 
-use Combi\Base\Container;
+use Combi\Facades\Runtime as rt;
+use Combi\Facades\Tris as tris;
+use Combi\Facades\Helper as helper;
+use Combi\Package as core;
+use Combi\Package as inner;
+use Combi\Core\Abort as abort;
+
 use Combi\Meta;
 use Combi\Utils\ArrayCover;
 use Nette\Neon\{Neon, Entity};
@@ -12,10 +18,10 @@ use Nette\Neon\{Neon, Entity};
  *
  * @author andares
  */
-class Config extends Container implements \ArrayAccess
+class Config extends Meta\Container implements \ArrayAccess
 {
-    use Meta\Overloaded,
-        Meta\ArrayAccess;
+    use Meta\Extensions\Overloaded,
+        Meta\Extensions\ArrayAccess;
 
     protected $_name;
 
@@ -63,7 +69,7 @@ class Config extends Container implements \ArrayAccess
      */
     protected function load(): array {
         // 场景获取
-        $scene = combi()->config('scene');
+        $scene = rt::config('scene');
         // 配置文件路径
         $source_file = $this->_source->select("$this->_name.neon");
         if (!file_exists($source_file)) {
@@ -99,7 +105,7 @@ return ' . var_export($data, true) . ';');
     protected function loadByCache(string $cache_file, string $source_file): ?array {
         $data = null;
 
-        if (combi()->isProd()) {
+        if (rt::isProd()) {
             // 生产环境直接载入
             $data = @include $cache_file;
         } else {

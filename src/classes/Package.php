@@ -2,9 +2,7 @@
 
 namespace Combi;
 
-class Package extends Core\Package
+class Package extends Facades\Package
 {
-    public function pid(): string {
-        return 'core';
-    }
+    protected static $pid = 'core';
 }
