@@ -34,3 +34,32 @@ helper::register('namespace', function(string $class): string {
     is_object($class) && $class = get_class($class);
     return substr($class, 0, strrpos($class, '\\'));
 });
+
+helper::register('object2array',
+    function($data, int $depth = 3, int $current_depth = 0)
+    {
+        is_object($data) && $data = (array)$data;
+        $current_depth++;
+
+        foreach($data as $key => $val){
+
+            if (is_object($val)) {
+                if (method_exists($val, 'toArray')) {
+                    $data[$key] = $val->toArray();
+                } else {
+                    $data[$key] = $current_depth < $depth
+                        ? helper::object2array($val, $depth, $current_depth)
+                        : "#Object:".get_class($val);
+                }
+            } elseif (is_array($val)) {
+                $data[$key] =  $current_depth <= $depth
+                    ? helper::object2array($val, $depth, $current_depth)
+                    : "#Array:".count($val);
+            } elseif (is_resource($val)) {
+                $data[$key] = "#Resource";
+            } elseif (is_callable($val)) {
+                $data[$key] = "#Callable";
+            }
+        }
+        return $data;
+    });

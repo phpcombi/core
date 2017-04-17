@@ -9,10 +9,9 @@ use Combi\Package as core;
 use Combi\Package as inner;
 use Combi\Core\Abort as abort;
 
-use Combi\Traits;
+use Combi\Common\Traits;
 use Combi\Meta;
 use Combi\Utils;
-use Combi\NetteFixer\DI\ContainerLoader;
 use Nette\DI;
 
 /**
@@ -168,7 +167,7 @@ class Package extends Meta\Container {
                 'di'.DIRECTORY_SEPARATOR.rt::config('scene'));
 
             // 载入di管理器
-            $loader = new ContainerLoader($tmp_dir,
+            $loader = new NetteFixer\DI\ContainerLoader($tmp_dir,
                 !rt::isProd());
             $class = $loader->load(function($compiler) {
                 $config = $this->config('services')->raw();

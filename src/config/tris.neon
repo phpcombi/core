@@ -10,16 +10,14 @@ logger:
         slice_format:       Y.W
 
 sample:
+    enable:         true
     levels:
-        emergency:  1
-        alert:      1
-        critical:   1
-        error:      1
-        warning:    1
-        #notice:     1      # 通过关闭notice级别，可避免记录 LogicException 的样本
-    whitelist:
-    blacklist:
-
+        emergency:  true
+        alert:      true
+        critical:   true
+        error:      true
+        warning:    true
+        #notice:     true      # 通过关闭notice级别，可避免记录 LogicException 的样本
 
 catcher:
     provider:   Combi\Tris\Catcher

@@ -70,36 +70,18 @@ class Log
      * @return void
      */
     protected function apply(string $level): void {
-        if (is_object($this->message)) {
-            if ($this->message instanceof abort) {
-                // 这里取出的 $exc 下面会用到
-                $exc = $this->message->getPrevious();
-
-                $message = $exc->getMessage();
-                $context = $this->context
-                    ? array_merge($this->context, $this->message->all())
-                    : $this->message->all();
-
-            } elseif ($this->message instanceof \Throwable) {
-                $exc = $this->message;
-
-                $message = $exc->getMessage();
-                $context = $this->context;
-            } else {
-                throw abort::invalidAgrument("log message must implements \Throwable when it was object")
-                    ->set('class', get_class($this->message));
-            }
+        if ($this->message instanceof abort) {
+            $context = array_merge($this->message->all());
+            $message = $this->message->getPrevious();
         } else {
-            $exc = null;
-            $message = $this->message;
             $context = $this->context;
+            $message = $this->message;
         }
 
         if (!defined("Psr\Log\LogLevel::" . strtoupper($level))) {
-            $level = $exc ? $this->gainLevelByException($exc) : Level::DEBUG;
+            $level = $message instanceof \Throwable
+                ? $this->gainLevelByException($message) : Level::DEBUG;
         }
-
-        $exc && !isset($context['exception']) && $context['exception'] = $exc;
 
         tris::log($message, $context, $level, $this->channel);
     }

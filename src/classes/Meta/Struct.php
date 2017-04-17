@@ -1,7 +1,7 @@
 <?php
 namespace Combi\Meta;
 
-use Combi\Interfaces;
+use Combi\Common\Interfaces;
 
 /**
  * 标准Struct基类

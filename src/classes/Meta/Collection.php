@@ -2,7 +2,7 @@
 
 namespace Combi\Meta;
 
-use Combi\Interfaces;
+use Combi\Common\Interfaces;
 
 /**
  * 标准Collection基类

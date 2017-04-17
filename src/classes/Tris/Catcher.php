@@ -9,7 +9,7 @@ use Combi\Package as core;
 use Combi\Package as inner;
 use Combi\Core\Abort as abort;
 
-use Combi\Traits;
+use Combi\Common\Traits;
 
 /**
  * @todo 在全局违例捕获里暂不记日志，以防出现死循环。这里将设计一个额外方案，使用不同的通道记录违例
@@ -74,11 +74,12 @@ class Catcher
         }
 
         if ($exit) {
-            die(0);
+            die(1);
         }
     }
 
     /**
+     *
      * @param \Throwable $thrown
      * @todo 这里用tris::du()不是最合适
      */
@@ -91,7 +92,7 @@ class Catcher
         } else {
             $context = [];
         }
-        $sample     = new ExceptionSample('p', $thrown, $context);
+        $sample     = new ExceptionSample('info', $thrown, $context);
         tris::du($sample->render(), "Ooooooooooooooooooops!!");
     }
 

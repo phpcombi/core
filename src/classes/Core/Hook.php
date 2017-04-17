@@ -9,7 +9,7 @@ use Combi\Package as core;
 use Combi\Package as inner;
 use Combi\Core\Abort as abort;
 
-use Combi\Traits;
+use Combi\Common\Traits;
 
 class Hook
 {

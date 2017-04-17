@@ -9,7 +9,7 @@ use Combi\Package as core;
 use Combi\Package as inner;
 use Combi\Core\Abort as abort;
 
-use Combi\Traits;
+use Combi\Common\Traits;
 
 class Dumper implements Interfaces\Dumper
 {
@@ -32,6 +32,20 @@ class Dumper implements Interfaces\Dumper
     public function dump($var, $title = null): self {
         if (rt::isProd()) {
             return $this;
+        }
+
+        if (is_object($var)) {
+            if (method_exists($var, '__debugInfo')) {
+                // 啥也不做直接输出
+            } elseif (method_exists($var, 'toArray')) {
+                $var = $var->toArray();
+            } elseif (method_exists($var, '__toString')) {
+                $var = (string)$var;
+            } else {
+                $var = helper::object2array($var);
+            }
+        } elseif (is_array($var)) {
+            $var = helper::object2array($var);
         }
 
         if (PHP_SAPI !== 'cli'

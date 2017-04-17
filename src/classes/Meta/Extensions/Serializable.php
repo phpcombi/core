@@ -1,7 +1,7 @@
 <?php
 namespace Combi\Meta\Extensions;
 
-use Combi\Interfaces;
+use Combi\Common\Interfaces;
 
 /**
  * （仅为）Struct接口实现类赋加重载访问属性支持

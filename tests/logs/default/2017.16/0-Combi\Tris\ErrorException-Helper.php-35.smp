@@ -1,0 +1,15 @@
+
+- message: oooo
+- code: 0
+- file: /home/andares/src/combi/combi-core/tests/src/classes/Core/Helper.php
+- line: 35
+- info:
+{}
+<<<<<<<<
+
+#0 [internal function]: Combi\Tris\Catcher->errorHandler(256, 'oooo', '/home/andares/s...', 35, Array)
+#1 /home/andares/src/combi/combi-core/tests/src/classes/Core/Helper.php(35): trigger_error('oooo', 256)
+#2 /home/andares/src/combi/combi-core/tests/src/classes/Core/Helper.php(37): Combi\Core\{closure}()
+#3 {main}
+
+^--------------^

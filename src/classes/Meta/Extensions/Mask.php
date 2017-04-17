@@ -2,7 +2,7 @@
 
 namespace Combi\Meta\Extensions;
 
-use Combi\Interfaces;
+use Combi\Common\Interfaces;
 
 /**
  * 遮罩类Struct实现
@@ -12,6 +12,7 @@ use Combi\Interfaces;
  * 方法代理
  * 访问权限穿透
  *
+ * @todo 未实现
  * @author andares
  */
 trait Mask {

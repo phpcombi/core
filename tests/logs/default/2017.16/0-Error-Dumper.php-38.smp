@@ -1,0 +1,15 @@
+
+- message: Call to undefined function Combi\Tris\method_exsis()
+- code: 0
+- file: /home/andares/src/combi/combi-core/src/classes/Tris/Dumper.php
+- line: 38
+- info:
+{}
+<<<<<<<<
+
+#0 /home/andares/src/combi/combi-core/src/classes/Facades/Tris.php(42): Combi\Tris\Dumper->dump(Object(DateTimeImmutable), 'dt output')
+#1 /home/andares/src/combi/combi-core/src/classes/Facades/Tris.php(70): Combi\Facades\Tris::du(Object(DateTimeImmutable), 'dt output')
+#2 /home/andares/src/combi/combi-core/tests/src/classes/Core/Helper.php(25): Combi\Facades\Tris::dt(Object(DateTimeImmutable), 'dt output')
+#3 {main}
+
+^--------------^

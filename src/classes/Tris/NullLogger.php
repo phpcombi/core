@@ -3,7 +3,7 @@
 namespace Combi\Tris;
 
 use Psr;
-use Combi\Traits;
+use Combi\Common\Traits;
 
 class Logger extends \Psr\Log\NullLogger
 {

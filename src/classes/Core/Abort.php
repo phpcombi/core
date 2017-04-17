@@ -55,11 +55,11 @@ class Abort extends \Exception implements \JsonSerializable
         return json_encode($this);
     }
 
-    public function jsonSerialize(): array {
-        $extra  = $this->toArray();
+    public function toArray(): array {
+        $extra  = $this->all();
         $exc    = $this->getPrevious();
         $result = [
-            'message'   => helper::padding($exc->getMessage(), $this->all()),
+            'message'   => helper::padding($exc->getMessage(), $extra),
             'code'      => $exc->getCode(),
             'file'      => $exc->getFile(),
             'line'      => $exc->getLine(),
@@ -68,11 +68,15 @@ class Abort extends \Exception implements \JsonSerializable
         return $result;
     }
 
+    public function jsonSerialize(): array {
+        return $this->toArray();
+    }
+
     public function class(): string {
         return get_class($this->getPrevious());
     }
 
-    public function getExtra(): Meta\Container {
+    public function extra(): Meta\Container {
         return $this->extra;
     }
 
@@ -86,6 +90,6 @@ class Abort extends \Exception implements \JsonSerializable
     }
 
     public function __debugInfo() {
-        return $this->jsonSerialize();
+        return $this->toArray();
     }
 }

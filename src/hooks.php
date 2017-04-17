@@ -9,6 +9,8 @@ use Combi\Package as core;
 use Combi\Package as inner;
 use Combi\Core\Abort as abort;
 
+use Combi\Tris\ExceptionSample;
+
 $hook = core::hook();
 
 // add hook
@@ -18,14 +20,14 @@ $hook = core::hook();
  */
 
 // ==================== Core
-const HOOK_ACTION_BEGIN     = ':action_break';
-const HOOK_ACTION_END       = ':action_end';
-const HOOK_ACTION_BROKEN    = ':action_broken';
+const HOOK_ACTION_BEGIN     = ':action/break';
+const HOOK_ACTION_END       = ':action/end';
+const HOOK_ACTION_BROKEN    = ':action/broken';
 
 const HOOK_READY        = ':ready';
 const HOOK_TICK         = ':tick';
 const HOOK_LOG          = ':log';
-const HOOK_LOG_CONTEXT  = ':log/context';
+const HOOK_LOG_PREPARE  = ':log/prepare';
 const HOOK_SHUTDOWN     = ':shutdown';
 
 $hook
@@ -38,12 +40,14 @@ $hook
     ->add(HOOK_LOG)
     ->add(HOOK_SHUTDOWN);
 
-$hook->add(HOOK_LOG_CONTEXT, function(array $handlers, array $context): array {
-    foreach ($handlers as $handler) {
-        $context = $handler($context);
-    }
-    return $context;
-});
+$hook->add(HOOK_LOG_PREPARE,
+    function(array $handlers,array $record, string $to_flie_path): array
+    {
+        foreach ($handlers as $handler) {
+            $record = $handler($record, $to_flie_path);
+        }
+        return $record;
+    });
 
 
 // attach hook taker
@@ -65,4 +69,18 @@ if ($slowlog_limit = core::config('base')->log['slowlog_limit']) {
             tris::ml("slowlog: $time ms")->warning();
         }
     });
+}
+
+// exception sample
+$sample_config = core::config('tris')->sample;
+if ($sample_config['enable']) {
+    core::hook()->attach(HOOK_LOG_PREPARE,
+        function(array $record, string $to_flie_path) use ($sample_config)
+        {
+            if ($sample_config['levels'][$record['level']] ?? false) {
+                $record['sample'] = ExceptionSample::createByRecord($record)
+                    ->save($to_flie_path);
+            }
+            return $record;
+        });
 }
