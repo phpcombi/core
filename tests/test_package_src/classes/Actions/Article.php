@@ -1,6 +1,6 @@
 <?php
 
-namespace Test;
+namespace Test\Actions;
 
 use Combi\Facades\Runtime as rt;
 use Combi\Facades\Tris as tris;
@@ -9,4 +9,7 @@ use Combi\Package as core;
 use Test\Package as inner;
 use Combi\Core\Abort as abort;
 
-tris::du('test package is ready.');
+class Article extends \Combi\Core\Business\Group
+{
+
+}

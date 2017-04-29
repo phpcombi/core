@@ -41,11 +41,11 @@ class Dumper implements Interfaces\Dumper
                 $var = $var->toArray();
             } elseif (method_exists($var, '__toString')) {
                 $var = (string)$var;
-            } else {
-                $var = helper::object2array($var);
+            // } else {
+            //     $var = helper::object2array($var);
             }
-        } elseif (is_array($var)) {
-            $var = helper::object2array($var);
+        // } elseif (is_array($var)) {
+        //     $var = helper::object2array($var);
         }
 
         if (PHP_SAPI !== 'cli'

@@ -1,0 +1,13 @@
+
+- message: Return value of Combi\Core\Business\Dispatcher::call() must be an instance of Combi\Core\Business\Result, null returned
+- code: 0
+- file: /home/andares/src/combi/combi-core/src/classes/Core/Business/Dispatcher.php
+- line: 108
+- info:
+{}
+<<<<<<<<
+
+#0 /home/andares/src/combi/combi-core/tests/src/classes/Core/Helper.php(42): Combi\Core\Business\Dispatcher->call('api.user.info', Object(Combi\Core\Business\Params))
+#1 {main}
+
+^--------------^

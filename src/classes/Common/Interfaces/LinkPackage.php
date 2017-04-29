@@ -1,6 +1,6 @@
 <?php
 
-namespace Combi\Common\Traits;
+namespace Combi\Common\Interfaces;
 
 use Combi\Facades\Runtime as rt;
 use Combi\Facades\Tris as tris;
@@ -9,12 +9,13 @@ use Combi\Package as core;
 use Combi\Package as inner;
 use Combi\Core\Abort as abort;
 
+use Combi\Core\Package;
+
 /**
  *
  * @author andares
  */
-trait GetNamespace {
-    public static function namespace(): string {
-        return helper::namespace(static::class);
-    }
+interface LinkPackage {
+    public function linkPackage(Package $package, string $name);
+    public function innerPackage(): Package;
 }

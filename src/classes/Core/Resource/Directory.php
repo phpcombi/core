@@ -31,12 +31,32 @@ class Directory implements Interfaces\Resource, \IteratorAggregate
         return $file ? file_get_contents($file) : '';
     }
 
+    public function writeWhenNotExists($path, $data): bool {
+        $file   = $this->select($path);
+        if ($file && file_exists($file)) {
+            return true;
+        }
+
+        // 生成数据
+        is_callable($data) && $data = $data();
+        if (is_bool($data)) {
+            return $data;
+        }
+
+        $dir    = dirname($file);
+        !file_exists($dir) && mkdir($dir, 0755, true);
+        if (file_put_contents($file, $data, \LOCK_EX)) {
+            return true;
+        }
+        return false;
+    }
+
     public function write($path, $data) {
         $file   = $this->select($path);
 
         $dir    = dirname($file);
         !file_exists($dir) && mkdir($dir, 0755, true);
-        return file_put_contents($file, $data);
+        return file_put_contents($file, $data, \LOCK_EX);
     }
 
     public function exists($path): bool {
@@ -46,9 +66,9 @@ class Directory implements Interfaces\Resource, \IteratorAggregate
 
     /**
      * @param string $path
-     * @return ?string
+     * @return string
      */
-    public function select($path): ?string {
+    public function select($path): string {
         if (isset($this->replaces[$path])) {
             return $this->replaces[$path];
         }

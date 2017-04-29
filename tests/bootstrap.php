@@ -13,7 +13,9 @@ require __DIR__ . '/init_tester.php';
 
 // init combi
 const TESTING = true;
-rt::ready('core', [
+include __DIR__ . '/init_package.php';
+
+rt::ready('test', [
 	'scene'     => 'default',
     'is_prod'   => false,
 
@@ -24,12 +26,3 @@ rt::ready('core', [
         'tests' => TEMP_DIR . '/tests',
     ],
 ]);
-
-// 补包
-class TestPackage extends \Combi\Facades\Package
-{
-    protected static $pid = 'test';
-}
-rt::register(TestPackage::instance(__DIR__ . '/test_package_src'),
-    'helpers')
-        ->ready('test');

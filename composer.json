@@ -19,6 +19,7 @@
         "google/protobuf": "^3.2",
         "nette/di": "^2.4",
         "nette/neon": "^2.4",
+        "andares/adarts": "^1.5",
         "kevinlebrun/colors.php": "^1.0"
     },
     "require-dev": {

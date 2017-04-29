@@ -9,6 +9,7 @@ use Combi\Package as core;
 use Combi\Package as inner;
 use Combi\Core\Abort as abort;
 
+use Combi\Common\Interfaces;
 use Combi\Common\Traits;
 use Combi\Meta;
 use Combi\Utils;
@@ -193,6 +194,22 @@ class Package extends Meta\Container {
             $this->set($key, $value);
         }
         return $value;
+    }
+
+
+    /**
+     *
+     * @param int|string $key
+     * @param mixed $value
+     * @return self
+     */
+    public function set($key, $value): self {
+        if (is_object($value) && $value instanceof Interfaces\LinkPackage) {
+            $value->linkPackage($this, $key);
+        }
+
+        $this->_data[$key] = $value;
+        return $this;
     }
 
 }

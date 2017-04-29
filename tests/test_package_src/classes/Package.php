@@ -9,4 +9,7 @@ use Combi\Package as core;
 use Test\Package as inner;
 use Combi\Core\Abort as abort;
 
-tris::du('test package is ready.');
+class Package extends \Combi\Facades\Package
+{
+    protected static $pid = 'test';
+}

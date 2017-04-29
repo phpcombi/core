@@ -1,5 +1,4 @@
 <?php
-
 namespace Test;
 
 use Combi\Facades\Runtime as rt;
@@ -9,4 +8,5 @@ use Combi\Package as core;
 use Test\Package as inner;
 use Combi\Core\Abort as abort;
 
-tris::du('test package is ready.');
+rt::register(Package::instance(__DIR__),
+    /*'dependencies', 'hooks',*/ 'helpers', 'business');

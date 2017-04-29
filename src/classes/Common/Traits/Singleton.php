@@ -1,4 +1,5 @@
 <?php
+
 namespace Combi\Common\Traits;
 
 use Combi\Core\Runtime;

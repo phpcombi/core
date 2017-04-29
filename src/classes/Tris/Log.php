@@ -10,23 +10,26 @@ use Combi\Package as inner;
 use Combi\Core\Abort as abort;
 
 use Psr\Log\LogLevel as Level;
+use Combi\Meta;
+use Combi\Common\Traits;
 
-class Log
+class Log extends Meta\Collection
 {
+
     /**
      * @var string|int|abort|\Throwable
      */
-    protected $message;
+    protected $_message;
 
     /**
      * @var array
      */
-    protected $context;
+    protected $_context;
 
     /**
      * @var string
      */
-    protected $channel = 'default';
+    protected $_channel = 'default';
 
     /**
      * @param string $name
@@ -44,8 +47,8 @@ class Log
      * @param array $context
      */
     public function __construct($message, array $context = []) {
-        $this->message  = $message;
-        $this->context  = $context;
+        $this->_message = $message;
+        $this->_context  = $context;
     }
 
     /**
@@ -53,7 +56,7 @@ class Log
      * @return self
      */
     public function setChannel(string $channel): self {
-        $this->channel = $channel;
+        $this->_channel = $channel;
         return $this;
     }
 
@@ -70,20 +73,22 @@ class Log
      * @return void
      */
     protected function apply(string $level): void {
-        if ($this->message instanceof abort) {
-            $context = array_merge($this->message->all());
-            $message = $this->message->getPrevious();
+        if ($this->_message instanceof abort) {
+            $context = array_merge($this->_message->all());
+            $message = $this->_message->getPrevious();
         } else {
-            $context = $this->context;
-            $message = $this->message;
+            $context = $this->_context;
+            $message = $this->_message;
         }
+
+        $this->count() && $context = array_merge($context, $this->all());
 
         if (!defined("Psr\Log\LogLevel::" . strtoupper($level))) {
             $level = $message instanceof \Throwable
                 ? $this->gainLevelByException($message) : Level::DEBUG;
         }
 
-        tris::log($message, $context, $level, $this->channel);
+        tris::log($message, $context, $level, $this->_channel);
     }
 
     protected function gainLevelByException(\Throwable $exc): string {

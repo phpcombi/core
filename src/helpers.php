@@ -36,7 +36,7 @@ helper::register('namespace', function(string $class): string {
 });
 
 helper::register('object2array',
-    function($data, int $depth = 3, int $current_depth = 0)
+    function($data, int $depth = 6, int $current_depth = 0)
     {
         is_object($data) && $data = (array)$data;
         $current_depth++;

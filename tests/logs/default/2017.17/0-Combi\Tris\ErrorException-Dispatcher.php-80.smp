@@ -1,0 +1,16 @@
+
+- message: Creating default object from empty value
+- code: 0
+- file: /home/andares/src/combi/combi-core/src/classes/Core/Business/Dispatcher.php
+- line: 80
+- info:
+{}
+<<<<<<<<
+
+#0 /home/andares/src/combi/combi-core/src/classes/Core/Business/Dispatcher.php(80): Combi\Tris\Catcher->errorHandler(2, 'Creating defaul...', '/home/andares/s...', 80, Array)
+#1 /home/andares/src/combi/combi-core/src/classes/Core/Business/Dispatcher.php(58): Combi\Core\Business\Dispatcher->getMappingDict()
+#2 /home/andares/src/combi/combi-core/src/classes/Core/Business/Dispatcher.php(38): Combi\Core\Business\Dispatcher->dispatch('user:info')
+#3 /home/andares/src/combi/combi-core/tests/src/classes/Core/Helper.php(42): Combi\Core\Business\Dispatcher->call('user:info', Object(Combi\Core\Business\Params))
+#4 {main}
+
+^--------------^

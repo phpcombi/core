@@ -1,0 +1,10 @@
+version:  1.0
+service:
+  - space:  Test\Actions
+    prefix: api
+    mappings:
+      - alias:  user
+        class:  User
+      - alias:  article
+        class:  Article
+

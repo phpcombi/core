@@ -1,0 +1,24 @@
+parameters:
+    log_file:   dev
+
+prod < parameters:
+    log_file:   prod
+
+test < parameters:
+    log_file:   test
+
+services:
+    my_provider:
+        class: App\Play\Provider
+    my_sender:
+        class: App\Play\SenderFake
+    my_logger:
+        class: App\Play\Logger(%log_file%.log)
+
+prod < services:
+    my_sender:
+        class: App\Play\Sender
+
+test < services:
+    my_sender:
+        class: App\Play\Sender
