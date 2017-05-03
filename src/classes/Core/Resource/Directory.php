@@ -31,10 +31,10 @@ class Directory implements Interfaces\Resource, \IteratorAggregate
         return $file ? file_get_contents($file) : '';
     }
 
-    public function writeWhenNotExists($path, $data): bool {
+    public function writeWhenNotExists($path, $data) {
         $file   = $this->select($path);
         if ($file && file_exists($file)) {
-            return true;
+            return $file;
         }
 
         // 生成数据
@@ -46,9 +46,9 @@ class Directory implements Interfaces\Resource, \IteratorAggregate
         $dir    = dirname($file);
         !file_exists($dir) && mkdir($dir, 0755, true);
         if (file_put_contents($file, $data, \LOCK_EX)) {
-            return true;
+            return $file;
         }
-        return false;
+        return null;
     }
 
     public function write($path, $data) {
@@ -56,7 +56,10 @@ class Directory implements Interfaces\Resource, \IteratorAggregate
 
         $dir    = dirname($file);
         !file_exists($dir) && mkdir($dir, 0755, true);
-        return file_put_contents($file, $data, \LOCK_EX);
+        if (file_put_contents($file, $data, \LOCK_EX)) {
+            return $file;
+        }
+        return null;
     }
 
     public function exists($path): bool {

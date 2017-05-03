@@ -1,0 +1,15 @@
+
+- message: substr() expects parameter 1 to be string, array given
+- code: 0
+- file: /home/andares/src/combi/core/src/classes/Core/Business/Dispatch/Mapping.php
+- line: 122
+- info:
+{}
+<<<<<<<<
+
+#0 [internal function]: Combi\Tris\Catcher->errorHandler(2, 'substr() expect...', '/home/andares/s...', 122, Array)
+#1 /home/andares/src/combi/core/src/classes/Core/Business/Dispatch/Mapping.php(122): substr(Array, 12)
+#2 /home/andares/src/combi/core/tests/src/classes/Core/Helper.php(57): Combi\Core\Business\Dispatch\Mapping->__invoke('a.b.c.d.e.f.gog...')
+#3 {main}
+
+^--------------^

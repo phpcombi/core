@@ -14,7 +14,6 @@
         "ext-msgpack": "*",
         "psr/container": "dev-master",
         "psr/log": "^1.0",
-        "psr/simple-cache": "dev-master",
         "psr/http-message": "^1.0",
         "google/protobuf": "^3.2",
         "nette/di": "^2.4",

@@ -9,7 +9,6 @@ use Combi\Package as core;
 use Combi\Package as inner;
 use Combi\Core\Abort as abort;
 
-
 /**
  * Description of Aware
  *
@@ -17,14 +16,10 @@ use Combi\Core\Abort as abort;
  */
 trait Aware {
     /**
-     * Add middlewares
-     *
-     * @param callable $middleware Any callable that accepts three arguments:
-     *                           1. A Params object
-     *                           2. A Result object
-     *                           3. A "next" middleware callable
+     * @param array $middlewares
+     * @return void
      */
-    public static function addMiddlewares(...$middlewares)
+    public static function addMiddlewares(...$middlewares): void
     {
         $stack = static::getMiddlewareStack();
         foreach ($middlewares as $middleware) {
@@ -32,16 +27,17 @@ trait Aware {
         }
     }
 
+    /**
+     * @return Stack
+     */
     public static function getMiddlewareStack(): Stack {
         return Stack::instance(static::class);
     }
 
     /**
      *
-     * @param  Params $params A request object
-     * @param  Result $res A response object
-     *
-     * @return Result
+     * @param  array $arguments
+     * @return Stack
      */
     public function callMiddlewareStack(...$arguments): Stack
     {
@@ -50,6 +46,11 @@ trait Aware {
         return $stack;
     }
 
+    /**
+     * @param Stack $stack
+     * @param array $arguments
+     * @return void
+     */
     abstract protected function setMiddlewareStackKernel(Stack $stack,
         ...$arguments): void;
 

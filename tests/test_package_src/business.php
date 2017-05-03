@@ -15,9 +15,9 @@ use Combi\Core\Business;
 // dispatcher
 
 inner::instance()->dispatcher = new Business\Dispatcher(
-    function(Business\Dispatcher $dispatcher)
+    function(Business\Dispatch\Mapping $mapping)
 {
-    $dispatcher
+    $mapping
         ->mapping('user',       Actions\User::class)
         ->mapping('article',    Actions\Article::class)
 
@@ -28,8 +28,6 @@ inner::instance()->dispatcher = new Business\Dispatcher(
 
         ->space()->prefix();
 });
-
-tris::dd(inner::dispatcher());
 
 // middlewares
 

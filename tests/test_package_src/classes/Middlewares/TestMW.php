@@ -26,7 +26,7 @@ use Combi\Core\Business\{
 class TestMW extends Middleware {
     private $value;
 
-    public function __construct(int $value) {
+    public function __construct(string $value) {
         $this->value = $value;
     }
 

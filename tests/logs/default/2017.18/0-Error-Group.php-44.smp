@@ -1,0 +1,18 @@
+
+- message: Class 'Test\Actions\Article\Aaa' not found
+- code: 0
+- file: /home/andares/src/combi/core/src/classes/Core/Business/Group.php
+- line: 44
+- info:
+{}
+<<<<<<<<
+
+#0 /home/andares/src/combi/core/src/classes/Core/Business/Group.php(54): Combi\Core\Business\Group->createAction('aaa')
+#1 /home/andares/src/combi/core/src/classes/Core/Business/Middleware/Aware.php(45): Combi\Core\Business\Group->setMiddlewareStackKernel(Object(Combi\Core\Business\Middleware\Stack), 'aaa')
+#2 /home/andares/src/combi/core/src/classes/Core/Business/Dispatcher.php(127): Combi\Core\Business\Group->callMiddlewareStack('aaa')
+#3 /home/andares/src/combi/core/src/classes/Core/Business/Middleware/Aware.php(45): Combi\Core\Business\Dispatcher->setMiddlewareStackKernel(Object(Combi\Core\Business\Middleware\Stack), 'article.aaa')
+#4 /home/andares/src/combi/core/src/classes/Core/Business/Dispatcher.php(81): Combi\Core\Business\Dispatcher->callMiddlewareStack('article.aaa')
+#5 /home/andares/src/combi/core/tests/src/classes/Core/Helper.php(27): Combi\Core\Business\Dispatcher->call('article.aaa', Object(Combi\Core\Business\Params))
+#6 {main}
+
+^--------------^

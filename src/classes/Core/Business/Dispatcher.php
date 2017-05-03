@@ -19,13 +19,13 @@ use Combi\Core\Resource;
  *  -   直接调用，会触发路径上所有中间件:
  *
  *  ```php
- *  $result = $dispatcher->call($rpc, [$params, [$result]]);
+ *  $result = $dispatcher->call($command, [$params, [$result]]);
  *  ```
  *
  *  -   外层access调用：
  *
  *  ```php
- *  $stack = $dispatcher->callMiddlewareStack($rpc);
+ *  $stack = $dispatcher->callMiddlewareStack($command);
  *  $parent_stack->kernel($stack);
  *  $parent_stack($params, $result);
  *  ```
@@ -40,9 +40,9 @@ class Dispatcher implements Interfaces\LinkPackage
         Middleware\Aware;
 
     /**
-     * @var array
+     * @var Dispatch\Mapping
      */
-    protected $mappings = [];
+    protected $mapping = null;
 
     /**
      * @var \Adarts\Dictionary
@@ -50,182 +50,79 @@ class Dispatcher implements Interfaces\LinkPackage
     protected $mapping_dict = null;
 
     /**
-     * @var string
+     * @param callable|string $builder
      */
-    protected $current_space    = '';
-
-    /**
-     * @var string
-     */
-    protected $current_prefix   = '';
-
-    /**
-     * @param callable|string $build
-     */
-    public function __construct($build) {
+    public function __construct(callable $builder = null) {
         // TODO 这里要加上路由缓存
-        if (is_callable($build)) {
-            $build($this);
-        } else {
-            // 这里build为字串，即msghub路由配置名
+        if ($builder) {
+            $mapping = $this->getMapping();
+            if (rt::isProd()) {
+                $mapping->load($builder);
+            } else {
+                $builder($mapping);
+            }
         }
-    }
-
-    /**
-     * @param string $space
-     * @return self
-     */
-    public function space(string $space = ''): self {
-        $this->current_space = $space;
-        return $this;
-    }
-
-    /**
-     * @param string $prefix
-     * @return self
-     */
-    public function prefix(string $prefix = ''): self {
-        $this->current_prefix = $prefix;
-        return $this;
-    }
-
-    /**
-     * 映射别名
-     *
-     * @param string $alias
-     * @param string $class
-     * @return self
-     */
-    public function mapping(string $alias, string $class): self {
-        $this->current_prefix   && $alias   = "$this->current_prefix.$alias";
-        $this->current_space    && $class = "$this->current_space\\$class";
-        $this->mappings[$alias] = $class;
-        return $this;
     }
 
     /**
      * 根据rpc字串调用方法
      *
-     * @param string $rpc
+     * @param string $command
      * @param Params $params
      * @param Result $params
      * @return Result
      */
-    public function call(string $rpc,
+    public function call(string $command,
         Params $params = null, Result $result = null): Result
     {
         !$params && $params = new Params();
         !$result && $result = new Result();
 
-        $stack = $this->callMiddlewareStack($rpc);
+        $stack = $this->callMiddlewareStack($command);
 
         return $stack($params, $result);
+    }
+
+    protected function getMapping(): Dispatch\Mapping {
+        !$this->mapping && $this->mapping = new Dispatch\Mapping($this);
+        return $this->mapping;
     }
 
     /**
      * 根据字串调度
      *
-     * @param string $rpc
+     * @param string $command
      * @return array
      */
-    protected function dispatch(string $rpc): array {
-        // mapping替换
-        if ($this->mappings) {
-            $dict = $this->getMappingDict();
-
-            $state = $dict->seek($rpc, 1)->current();
-            if ($state) {
-                $alias  = $dict->getWordByState($state);
-                $rpc    = str_replace($alias, $this->mappings[$alias], $rpc);
-            }
-        }
+    protected function dispatch(string
+     $command): array {
+        $mapping = $this->getMapping();
+        $command = $mapping($command);
 
         // 获取action
-        $pos = strrpos($rpc, '.', -2);
-        if ($pos) {
-            $action  = substr($rpc, $pos + 1);
-            $group = substr($rpc, 0, $pos);
+        $pos = strrpos($command, '\\');
+        if ($pos && $pos < (strlen($command) - 1)) {
+            $action  = lcfirst(substr($command, $pos + 1));
+            $group   = substr($command, 0, $pos);
         } else {
             $action  = 'default';
-            $group = $rpc;
+            $group   = $command[-1] == '\\' ? substr($command, 0, -1) : $command;
         }
 
         return [$group, $action];
     }
 
     /**
-     * 获取映射字典对象
-     *
-     * @param bool $no_cache
-     * @return \Adarts\Dictionary
-     */
-    protected function getMappingDict(bool $no_cache = false): \Adarts\Dictionary {
-        if (!$this->mapping_dict) {
-            $dir    = $this->getCacheDir();
-            $maker  = function() {
-                return $this->makeMappingDictCache();
-            };
-
-            $filename = $this->getCacheFilename();
-            if (!$dir->writeWhenNotExists($filename, $maker)) {
-                throw abort::runtime("Dispatch cache file can not create");
-            }
-
-            $this->mapping_dict = unserialize(include $dir->select($filename));
-        }
-        return $this->mapping_dict;
-    }
-
-    /**
-     * 生成映射字典对象缓存文件
-     *
-     * @return string
-     */
-    protected function makeMappingDictCache(): string {
-        if (rt::isProd()) {
-            return true;
-        }
-
-        // 构建词典
-        $dict = new \Adarts\Dictionary();
-        foreach ($this->mappings as $alias => $replace) {
-            $dict->add($alias);
-        }
-        $dict->confirm();
-
-        return "<?php\nreturn '".serialize($dict)."';";
-    }
-
-    /**
-     * 获取映射缓存目录
-     *
-     * @return Resource\Directory
-     */
-    protected function getCacheDir(): Resource\Directory {
-        return $this->innerPackage()->dir('tmp', 'dispatcher'.
-            DIRECTORY_SEPARATOR.'mapping');
-    }
-
-    /**
-     * 生成映射缓存名
-     *
-     * @return string
-     */
-    protected function getCacheFilename(): string {
-        return $this->innerPackage()->pid().'-'.$this->innerName().'.php';
-    }
-
-    /**
      * for traits middleware aware
      */
     protected function setMiddlewareStackKernel(
-        Middleware\Stack $stack, string $rpc): void
+        Middleware\Stack $stack, string $command): void
     {
         // 先做一次调度，获取group和action
         [
             $group,
             $action,
-        ] = $this->dispatch($rpc);
+        ] = $this->dispatch($command);
 
         $stack->kernel($this->getSubInstance($group)->callMiddlewareStack($action));
     }
