@@ -16,7 +16,7 @@ trait Fillable {
      *
      * @var array
      */
-    protected $_exclude_keys = [];
+    private $_exclude_keys = [];
 
     /**
      * 填充数据方法

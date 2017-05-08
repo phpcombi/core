@@ -1,0 +1,17 @@
+user:
+    aaa:    1
+    bbb:    2
+    ccc:    3
+test < user:
+    aaa:    null
+    bbb:    20
+    ccc:    30
+
+article:
+    aaa:    1
+    test < aaa: 10
+    test < bbb: 20
+    bbb:    2
+    test < ccc:    22
+    ccc:    33
+    prod < ccc:    11

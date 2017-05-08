@@ -19,17 +19,20 @@ tris::debugTurnOn();
 Assert::same(helper::namespace(rt::class), 'Combi\Facades');
 Assert::same(rt::test()->pid(), 'test');
 
-// $rpc    = 'user.info';
+$rpc    = 'user.info';
 // $rpc    = 'article.content';
-$rpc    = 'article.lists';
-$rpc    = 'article.aaa';
+// $rpc    = 'article.lists';
+// $rpc    = 'article.aaa';
 $params = new Business\Params();
-$result = inner::dispatcher()->call($rpc, $params);
+// $result = inner::dispatcher()->call($rpc, $params);
 
 // include __DIR__ . '/stack_test.php';
 // include __DIR__ . '/aware_test.php';
 
 // tris::du(yaml_parse_file(inner::path('src', 'msghub/service.yml')));
+
+tris::du(inner::config('test')->user['aaa']);
+
 
 ['timecost' => $timecost] = tris::debugTurnOff();
 

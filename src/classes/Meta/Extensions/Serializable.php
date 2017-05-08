@@ -2,6 +2,7 @@
 namespace Combi\Meta\Extensions;
 
 use Combi\Common\Interfaces;
+use Combi\Utils\Pack;
 
 /**
  * （仅为）Struct接口实现类赋加重载访问属性支持
@@ -19,7 +20,9 @@ trait Serializable {
      *
      * @return Interfaces\Encoder
      */
-    abstract protected static function getEncoder(): Interfaces\Encoder;
+    protected static function getEncoder(): Interfaces\Encoder {
+        return Pack::getEncoder('msgpack');
+    }
 
     /**
      * 当前版本号。

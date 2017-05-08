@@ -19,7 +19,7 @@ interface Collection extends Arrayable, \Countable {
 
     public function has($key): bool;
 
-    public function append($value);
+    public function push($value);
 
     public function remove($key);
 

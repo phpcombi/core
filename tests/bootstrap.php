@@ -16,7 +16,7 @@ const TESTING = true;
 include __DIR__ . '/init_package.php';
 
 rt::ready('test', [
-	'scene'     => 'default',
+	'scene'     => 'test',
     'is_prod'   => false,
 
     'path'      => [

@@ -96,7 +96,7 @@ abstract class Collection
      * @param mixed $value
      * @return self
      */
-    public function append($value): self {
+    public function push($value): self {
         $this->_data[] = $value;
         return $this;
     }

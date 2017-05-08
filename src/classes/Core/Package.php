@@ -3,7 +3,6 @@
 namespace Combi\Core;
 
 use Combi\Facades\Runtime as rt;
-use Combi\Facades\Tris as tris;
 use Combi\Facades\Helper as helper;
 use Combi\Package as core;
 use Combi\Package as inner;
@@ -85,18 +84,25 @@ class Package extends Meta\Container {
             DIRECTORY_SEPARATOR.$this->pid());
 
             // 继承 main package 覆盖
-            $dictionary = new Utils\Dictionary(
-                $name,
-                rt::main()->dir('src', 'i18n'.
-                    DIRECTORY_SEPARATOR.$locale.
-                    DIRECTORY_SEPARATOR.$this->pid()), $tmp_dir);
+            // 仅在非main package时处理
+            if (rt::main()->pid() != $this->pid()) {
+                $dictionary = new Utils\Dictionary(
+                    $name,
+                    rt::main()->dir('src', 'i18n'.
+                        DIRECTORY_SEPARATOR.$locale.
+                        DIRECTORY_SEPARATOR.$this->pid()),
+                    rt::config('scene'),
+                    $tmp_dir);
+            }
 
-            if ($dictionary->raw()) { // 尝试访问main package的覆盖配置
+            // 尝试访问main package的覆盖配置
+            if (isset($dictionary) && $dictionary->raw()) {
                 $this->_dictionaries[$name] = $dictionary;
             } else {
                 $this->_dictionaries[$name] = new Utils\Dictionary(
                     $name,
                     $this->dir('src', 'i18n'.DIRECTORY_SEPARATOR.$locale),
+                    rt::config('scene'),
                     $tmp_dir);
             }
         }
@@ -117,18 +123,24 @@ class Package extends Meta\Container {
             $tmp_dir = $this->dir('tmp', 'config'.DIRECTORY_SEPARATOR.$this->pid());
 
             // 继承 main package 覆盖
-            $config = new Config(
-                $name,
-                rt::main()->dir('src', 'config'.
-                    DIRECTORY_SEPARATOR.$this->pid()),
-                $tmp_dir);
+            // 仅在非main package时处理
+            if (rt::main()->pid() != $this->pid()) {
+                $config = new Config(
+                    $name,
+                    rt::main()->dir('src', 'config'.
+                        DIRECTORY_SEPARATOR.$this->pid()),
+                    rt::config('scene'),
+                    $tmp_dir);
+            }
 
-            if ($config->raw()) { // 尝试访问main package的覆盖配置
+            // 尝试访问main package的覆盖配置
+            if (isset($config) && $config->raw()) {
                 $this->_configs[$name] = $config;
             } else {
                 $this->_configs[$name] = new Config(
                     $name,
                     $this->dir('src', 'config'),
+                    rt::config('scene'),
                     $tmp_dir);
             }
         }

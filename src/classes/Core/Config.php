@@ -11,7 +11,7 @@ use Combi\Core\Abort as abort;
 
 use Combi\Meta;
 use Combi\Utils\ArrayCover;
-use Nette\Neon\{Neon, Entity};
+use Nette\Neon\Neon;
 
 /**
  * Description of Config
@@ -24,6 +24,8 @@ class Config extends Meta\Container implements \ArrayAccess
         Meta\Extensions\ArrayAccess;
 
     protected $_name;
+
+    protected $_scene;
 
     /**
      * @var Resource\Directory
@@ -38,19 +40,21 @@ class Config extends Meta\Container implements \ArrayAccess
     /**
      *
      * @param string $name
-     * @param ?Resource\Directory $source
-     * @param ?Resource\Directory $cache
+     * @param Resource\Directory|null $source
+     * @param string $scene
+     * @param Resource\Directory|null $cache
      */
     public function __construct(string $name,
-        ?Resource\Directory $source = null,
+        ?Resource\Directory $source = null, string $scene = '',
         ?Resource\Directory $cache  = null) {
 
-        $this->_name = $name;
+        $this->_name    = $name;
+        $this->_scene   = $scene;
 
         $source && $this->_source   = $source;
         $cache  && $this->_cache    = $cache;
 
-        // 未设置源时不载入 这是为了测试方便
+        // 未设置源时不载入 这是为了方便测试
         if ($this->_source) {
             $this->_data = $this->load();
         }
@@ -68,8 +72,6 @@ class Config extends Meta\Container implements \ArrayAccess
      * @return array
      */
     protected function load(): array {
-        // 场景获取
-        $scene = rt::config('scene');
         // 配置文件路径
         $source_file = $this->_source->select("$this->_name.neon");
         if (!file_exists($source_file)) {
@@ -79,19 +81,19 @@ class Config extends Meta\Container implements \ArrayAccess
         // 检查缓存
         if ($this->_cache) {
             // 缓存文件名
-            $cache_file = $this->_cache->select("$this->_name.$scene.php");
+            $cache_file = $this->_cache->select("$this->_name.$this->_scene.php");
 
             // 从缓存中读取
             $data = $this->loadByCache($cache_file, $source_file);
             if (!$data) {
-                $data = $this->parse($source_file, $scene);
+                $data = $this->parse($source_file);
 
                 // 回写入缓存
-                $this->_cache->write("$this->_name.$scene.php", '<?php
+                $this->_cache->write("$this->_name.$this->_scene.php", '<?php
 return ' . var_export($data, true) . ';');
             }
         } else {
-            $data = $this->parse($source_file, $scene);
+            $data = $this->parse($source_file);
         }
 
         return $data;
@@ -100,10 +102,10 @@ return ' . var_export($data, true) . ';');
     /**
      *
      * @param string $cache_file
-     * @return ?array
+     * @return array
      */
-    protected function loadByCache(string $cache_file, string $source_file): ?array {
-        $data = null;
+    protected function loadByCache(string $cache_file, string $source_file): array {
+        $data = [];
 
         if (rt::isProd()) {
             // 生产环境直接载入
@@ -125,37 +127,40 @@ return ' . var_export($data, true) . ';');
     /**
      *
      * @param string $source_file
-     * @param string $scene
-     * @return ?array
+     * @return array
      */
-    protected function parse(string $source_file, string $scene): ?array {
+    protected function parse(string $source_file): array {
         $raw = Neon::decode(file_get_contents($source_file));
-        return $raw ? $this->makeupByScene($raw, $scene) : null;
+        $raw && $this->prune($raw);
+        return $raw;
     }
 
     /**
      *
-     * @param array $raw
-     * @param string $scene_selected
-     * @return array
+     * @param array $parent
+     * @return void
      */
-    protected function makeupByScene(array $raw, string $scene_selected): array {
-        $common = [];
-        $scened = [];
-        foreach ($raw as $section => $data) {
-            if (strpos($section, ' < ')) {
-                [$scene, $section] = explode(' < ', $section);
-                if ($scene != $scene_selected) {
+    protected function prune(array &$parent): void {
+        foreach ($parent as $key => $child) {
+            if (strpos($key, ' < ')) {
+                if (!$this->_scene) { // 未设置场景时只用默认值
+                    unset($parent[$key]);
                     continue;
                 }
-                $scened[$section] = $data;
-            } else {
-                $common[$section] = $data;
+
+                [$scene, $skey] = explode(' < ', $key);
+                if ($scene == $this->_scene) {
+                    $parent[$skey] = $parent[$key];
+                }
+                unset($parent[$key]);
             }
         }
 
-        $ac = new ArrayCover($common);
-        return $ac($scened);
+        foreach ($parent as $key => $child) {
+            if (is_array($child)) {
+                $this->prune($parent[$key]);
+            }
+        }
     }
 
     /**
