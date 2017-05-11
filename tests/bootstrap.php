@@ -16,8 +16,9 @@ const TESTING = true;
 include __DIR__ . '/init_package.php';
 
 rt::ready('test', [
-	'scene'     => 'test',
     'is_prod'   => false,
+	'scene'     => 'test',
+    'locale'    => 'zh_CN.utf8',
 
     'path'      => [
         'tmp'   => TEMP_DIR . '/tmp',

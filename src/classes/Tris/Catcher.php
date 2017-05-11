@@ -26,16 +26,7 @@ class Catcher
     public function __construct(array $config) {
         set_error_handler([$this, 'errorHandler']);
         set_exception_handler([$this, 'exceptionHandler']);
-
-        if ($config['shutdown_hook']) {
-            register_shutdown_function([$this, 'shutdownHandler']);
-        }
-
         $this->config = $config;
-    }
-
-    public function shutdownHandler() {
-        core::hook()->take(\Combi\HOOK_SHUTDOWN);
     }
 
     /**

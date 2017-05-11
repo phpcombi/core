@@ -21,5 +21,4 @@ sample:
 
 catcher:
     provider:   Combi\Tris\Catcher
-    shutdown_hook:  true
     print_exc:      true

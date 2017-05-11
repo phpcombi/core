@@ -136,6 +136,11 @@ class Runtime extends Meta\Container {
 
         // 勾子
         $this->core->hook->take(\Combi\HOOK_READY);
+        $this->core->hook->take(\Combi\HOOK_TICK);
+
+        register_shutdown_function(function() {
+            $this->core->hook->take(\Combi\HOOK_SHUTDOWN);
+        });
 
         // 设置状态
         $this->_is_ready = true;

@@ -31,7 +31,31 @@ $params = new Business\Params();
 
 // tris::du(yaml_parse_file(inner::path('src', 'msghub/service.yml')));
 
-tris::du(inner::config('test')->user['aaa']);
+// $abort = abort::unexpectedValue('User {user_id} is not found', 21001)
+//     ->set('user_id', 100)
+//     ->set('show', 0);
+
+// tris::du($abort);
+// echo $abort;
+// tris::dt($abort);
+
+
+core::hook()->attach(\Combi\HOOK_LOG_PREPARE,
+    function(array $record, string $to_file_path): array
+{
+    // 给record加上自定义参数
+    $record['custom_info'] = $_REQUEST['info'] ?? null;
+    return $record;
+});
+core::hook()->attach(\Combi\HOOK_LOG, function(array $record) {
+    if ($record['custom_info']) {
+        file_put_contents('/tmp/custom.log',
+            $record['custom_info']."\n", \FILE_APPEND);
+    }
+});
+
+$_REQUEST['info'] = 'bbbb';
+tris::log('aaa');
 
 
 ['timecost' => $timecost] = tris::debugTurnOff();

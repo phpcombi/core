@@ -20,15 +20,15 @@ $hook = core::hook();
  */
 
 // ==================== Core
-const HOOK_ACTION_BEGIN     = ':action/break';
-const HOOK_ACTION_END       = ':action/end';
-const HOOK_ACTION_BROKEN    = ':action/broken';
+const HOOK_ACTION_BEGIN     = 'core:action/begin';
+const HOOK_ACTION_END       = 'core:action/end';
+const HOOK_ACTION_BROKEN    = 'core:action/broken';
 
-const HOOK_READY        = ':ready';
-const HOOK_TICK         = ':tick';
-const HOOK_LOG          = ':log';
-const HOOK_LOG_PREPARE  = ':log/prepare';
-const HOOK_SHUTDOWN     = ':shutdown';
+const HOOK_READY        = 'core:ready';
+const HOOK_TICK         = 'core:tick';
+const HOOK_LOG          = 'core:log';
+const HOOK_LOG_PREPARE  = 'core:log/prepare';
+const HOOK_SHUTDOWN     = 'core:shutdown';
 
 $hook
     ->add(HOOK_ACTION_BEGIN)

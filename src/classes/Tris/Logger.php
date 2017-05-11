@@ -12,7 +12,6 @@ use Combi\Core\Abort as abort;
 use Psr;
 use ErrorException;
 use Combi\Common\Traits;
-use Combi\Common\Interfaces;
 use Combi\Core\Resource;
 
 /**
@@ -124,7 +123,7 @@ class Logger extends \Psr\Log\AbstractLogger
                 $message   = $exception->getMessage();
 
                 $context && $message = helper::padding($message, $context);
-            } elseif ($message instanceof Interfaces\Arrayable) {
+            } elseif (method_exists($message, 'toArray')) {
                 $raw = $message;
                 $exception = null;
                 $message   = $raw->toArray();

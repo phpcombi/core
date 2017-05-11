@@ -15,16 +15,12 @@ use Combi\Common\Traits;
 
 class Log extends Meta\Collection
 {
+    use Meta\Extensions\Overloaded;
 
     /**
      * @var string|int|abort|\Throwable
      */
     protected $_message;
-
-    /**
-     * @var array
-     */
-    protected $_context;
 
     /**
      * @var string
@@ -48,7 +44,7 @@ class Log extends Meta\Collection
      */
     public function __construct($message, array $context = []) {
         $this->_message = $message;
-        $this->_context  = $context;
+        $this->_data    = $context;
     }
 
     /**
@@ -74,14 +70,12 @@ class Log extends Meta\Collection
      */
     protected function apply(string $level): void {
         if ($this->_message instanceof abort) {
-            $context = array_merge($this->_message->all());
+            $context = array_merge($this->all(), $this->_message->all());
             $message = $this->_message->getPrevious();
         } else {
-            $context = $this->_context;
+            $context = $this->all();
             $message = $this->_message;
         }
-
-        $this->count() && $context = array_merge($context, $this->all());
 
         if (!defined("Psr\Log\LogLevel::" . strtoupper($level))) {
             $level = $message instanceof \Throwable

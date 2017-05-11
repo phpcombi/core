@@ -25,10 +25,6 @@ class Dumper implements Interfaces\Dumper
      */
     private $parsed = [];
 
-    public static function du($var, $title = 0): void {
-        self::instance()->dump($var, $title);
-    }
-
     public function dump($var, $title = null): self {
         if (rt::isProd()) {
             return $this;
