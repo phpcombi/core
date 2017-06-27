@@ -85,7 +85,7 @@ class Package extends Meta\Container {
 
             // 继承 main package 覆盖
             // 仅在非main package时处理
-            if (rt::main()->pid() != $this->pid()) {
+            if (rt::main() && rt::main()->pid() != $this->pid()) {
                 $dictionary = new Utils\Dictionary(
                     $name,
                     rt::main()->dir('src', 'i18n'.
@@ -124,7 +124,7 @@ class Package extends Meta\Container {
 
             // 继承 main package 覆盖
             // 仅在非main package时处理
-            if (rt::main()->pid() != $this->pid()) {
+            if (rt::main() && rt::main()->pid() != $this->pid()) {
                 $config = new Config(
                     $name,
                     rt::main()->dir('src', 'config'.

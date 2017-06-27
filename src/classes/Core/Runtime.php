@@ -32,7 +32,16 @@ class Runtime extends Meta\Container {
     /**
      * @var array
      */
-    private $_config = [];
+    private $_config = [
+        'is_prod'   => false,
+        'scene'     => 'dev',
+        'locale'    => 'zh_CN.utf8',
+
+        'path'      => [
+            'tmp'   => '/tmp/combi/tmp',
+            'logs'  => '/tmp/combi/logs',
+        ],
+    ];
 
     /**
      * @var bool
@@ -50,9 +59,9 @@ class Runtime extends Meta\Container {
     private $_bootloads = [];
 
     /**
-     * @return Package
+     * @return Package|null
      */
-    public function main(): Package {
+    public function main(): ?Package {
         return $this->_main_package;
     }
 
@@ -111,11 +120,11 @@ class Runtime extends Meta\Container {
     }
 
     /**
-     * @param string $pid
-     * @param array $config
+     * @param string|null $pid
+     * @param array|null $config
      * @return self
      */
-    public function ready(string $pid, ?array $config = null): self {
+    public function ready(?string $pid = null, ?array $config = null): self {
         // 检查状态
         if ($this->_is_ready) {
             $this->bootload();
@@ -126,7 +135,7 @@ class Runtime extends Meta\Container {
         $config && $this->_config = array_merge($this->_config, $config);
 
         // 设置主包
-        $this->_main_package = $this->$pid;
+        $pid && $this->_main_package = $this->$pid;
 
         // 启动引导载入
         $this->bootload();
