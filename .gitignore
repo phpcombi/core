@@ -1,6 +1,7 @@
-/nbproject/private/
+composer.phar
+/vendor/
 /tests/logs/
 /tests/tmp/
 /tests/Playground.phpt
-/vendor/
-/composer.lock
+composer.lock
+

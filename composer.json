@@ -2,7 +2,7 @@
     "name": "combi/core",
     "description": "combi core libs",
     "keywords": ["framework", "core", "libs"],
-    "license": "LGPL3.0",
+    "license": "MPL2.0",
     "authors": [
         {
             "name": "Andares Merigold",
@@ -14,12 +14,10 @@
         "ext-msgpack": "*",
         "psr/container": "dev-master",
         "psr/log": "^1.0",
-        "psr/http-message": "^1.0",
-        "google/protobuf": "^3.2",
         "nette/di": "^2.4",
         "nette/neon": "^2.4",
-        "andares/adarts": "^1.5",
-        "kevinlebrun/colors.php": "^1.0"
+        "monolog/monolog": "^1.22",
+        "andares/adarts": "^1.5"
     },
     "require-dev": {
         "nette/tester": "dev-master"
@@ -30,6 +28,5 @@
             "src/bootstrap.php"
         ]
     },
-    "bin": ["chord"],
     "minimum-stability": "stable"
 }
