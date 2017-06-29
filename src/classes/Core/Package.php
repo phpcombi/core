@@ -8,8 +8,8 @@ use Combi\Package as core;
 use Combi\Package as inner;
 use Combi\Core\Abort as abort;
 
-use Combi\Common\Interfaces;
-use Combi\Common\Traits;
+use Combi\Utils\Interfaces;
+use Combi\Utils\Traits;
 use Combi\Meta;
 use Combi\Utils;
 use Nette\DI;

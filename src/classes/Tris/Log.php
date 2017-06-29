@@ -11,7 +11,7 @@ use Combi\Core\Abort as abort;
 
 use Psr\Log\LogLevel as Level;
 use Combi\Meta;
-use Combi\Common\Traits;
+use Combi\Utils\Traits;
 
 class Log extends Meta\Collection
 {

@@ -2,7 +2,7 @@
 
 namespace Combi\Utils;
 
-use Combi\Common\Interfaces;
+use Combi\Utils\Interfaces;
 
 /**
  *

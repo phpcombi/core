@@ -2,6 +2,7 @@ composer.phar
 /vendor/
 /tests/logs/
 /tests/tmp/
+/tests/playground
 /tests/Playground.php
 composer.lock
 

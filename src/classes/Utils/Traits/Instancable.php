@@ -1,6 +1,6 @@
 <?php
 
-namespace Combi\Common\Traits;
+namespace Combi\Utils\Traits;
 
 /**
  *

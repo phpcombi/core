@@ -1,6 +1,6 @@
 <?php
 
-namespace Combi\Common\Interfaces;
+namespace Combi\Utils\Interfaces;
 
 use Combi\Facades\Runtime as rt;
 use Combi\Facades\Tris as tris;

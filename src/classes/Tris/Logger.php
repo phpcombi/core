@@ -11,7 +11,7 @@ use Combi\Core\Abort as abort;
 
 use Psr;
 use ErrorException;
-use Combi\Common\Traits;
+use Combi\Utils\Traits;
 use Combi\Core\Resource;
 
 /**

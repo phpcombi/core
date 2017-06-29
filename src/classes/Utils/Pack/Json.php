@@ -2,7 +2,7 @@
 
 namespace Combi\Utils\Pack;
 
-use Combi\Common\Interfaces;
+use Combi\Utils\Interfaces;
 
 /**
  * Description of Json

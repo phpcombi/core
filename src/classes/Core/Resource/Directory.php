@@ -2,8 +2,8 @@
 
 namespace Combi\Core\Resource;
 
-use Combi\Common\Traits;
-use Combi\Common\Interfaces;
+use Combi\Utils\Traits;
+use Combi\Utils\Interfaces;
 
 /**
  * @todo 缓存问题之后考虑

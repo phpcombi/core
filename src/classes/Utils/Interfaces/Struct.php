@@ -1,6 +1,6 @@
 <?php
 
-namespace Combi\Common\Interfaces;
+namespace Combi\Utils\Interfaces;
 
 /**
  *

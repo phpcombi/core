@@ -2,7 +2,7 @@
 
 namespace Combi\Meta\Extensions;
 
-use Combi\Common\Interfaces;
+use Combi\Utils\Interfaces;
 
 /**
  * 遮罩类Struct实现

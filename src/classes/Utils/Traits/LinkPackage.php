@@ -1,6 +1,6 @@
 <?php
 
-namespace Combi\Common\Traits;
+namespace Combi\Utils\Traits;
 
 use Combi\Facades\Runtime as rt;
 use Combi\Facades\Tris as tris;
@@ -9,7 +9,7 @@ use Combi\Package as core;
 use Combi\Package as inner;
 use Combi\Core\Abort as abort;
 
-use Combi\Common\Interfaces;
+use Combi\Utils\Interfaces;
 use Combi\Core\Package;
 
 /**

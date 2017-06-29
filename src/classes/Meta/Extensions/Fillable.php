@@ -2,7 +2,7 @@
 
 namespace Combi\Meta\Extensions;
 
-use Combi\Common\Interfaces;
+use Combi\Utils\Interfaces;
 
 /**
  * Collection和Struct接口实现类赋加fill相关接口支持

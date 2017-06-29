@@ -1,6 +1,6 @@
 <?php
 
-namespace Combi\Core\Business\Middleware;
+namespace Combi\Core\Middleware;
 
 use Combi\Facades\Runtime as rt;
 use Combi\Facades\Tris as tris;
@@ -9,49 +9,65 @@ use Combi\Package as core;
 use Combi\Package as inner;
 use Combi\Core\Abort as abort;
 
-use Combi\Common\Traits;
-use SplStack;
 
 class Stack
 {
-    use Traits\Instancable;
-
-    private $owner_class;
-
+    /**
+     * Spl栈对象，存放中间件调用栈
+     *
+     * @var \SplStack
+     */
     private $stack;
 
     private $kernel = null;
 
-    private $is_processing = false;
+    private $is_running = false;
 
-    public function __construct(string $class) {
-        $this->owner_class = $class;
-
+    /**
+     * 构造器。
+     *
+     * 初始化中间件调用栈。
+     */
+    public function __construct() {
         $this->stack = new \SplStack;
         $this->stack->setIteratorMode(\SplDoublyLinkedList::IT_MODE_LIFO
             | \SplDoublyLinkedList::IT_MODE_KEEP);
     }
 
+    /**
+     * 往调用栈中添加中间件
+     *
+     * @param callable $middleware
+     */
     public function append(callable $middleware) {
         $this->stack[] = $middleware;
     }
 
-    public function __invoke($params, $result) {
-        if (!$this->is_processing) {
-            $this->is_processing = true;
+    /**
+     * 执行调用栈
+     *
+     * @param array $params ...
+     * @return mixed
+     */
+    public function __invoke(...$params) {
+        // 未运行时初始化
+        if (!$this->is_running) {
+            $this->is_running = true;
             $this->stack->rewind();
         }
 
+        // 调用栈执行结束
         if (!$this->stack->valid()) {
-            $this->is_processing = false;
+            $this->is_running = false;
 
             if ($this->kernel) {
                 $kernel = $this->kernel;
-                return $kernel($params, $result);
+                return $kernel(...$params);
             }
             return $result;
         }
 
+        // 调用栈步进
         $middleware = $this->stack->current();
         $this->stack->next();
 
@@ -59,9 +75,16 @@ class Stack
         !($middleware instanceof \Closure)
             && $middleware = clone $middleware;
 
-        return $middleware($params, $result, $this);
+        // 执行并返回下一个invoke
+        return $middleware($this, ...$params);
     }
 
+    /**
+     * 设置调用栈内核
+     *
+     * @param callable $kernel
+     * @return callable
+     */
     public function kernel(callable $kernel = null): callable {
         return $this->kernel = $kernel;
     }

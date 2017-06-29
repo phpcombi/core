@@ -11,12 +11,10 @@ use Combi\Core\Abort as abort;
 define('TEMP_DIR', __DIR__ . '/tmp/' . getmypid());
 require __DIR__ . '/init_tester.php';
 
-$loader = include __DIR__.'/../vendor/autoload.php';
-
 // init combi
 const TESTING = true;
-include __DIR__ . '/init_package.php';
 
+include __DIR__ . '/init_package.php';
 rt::ready('test', [
     'is_prod'   => false,
 	'scene'     => 'test',

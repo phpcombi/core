@@ -1,7 +1,7 @@
 <?php
 namespace Combi\Meta\Extensions;
 
-use Combi\Common\Interfaces;
+use Combi\Utils\Interfaces;
 use Combi\Utils\Pack;
 
 /**

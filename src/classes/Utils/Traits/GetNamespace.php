@@ -1,6 +1,6 @@
 <?php
 
-namespace Combi\Access\Http;
+namespace Combi\Utils\Traits;
 
 use Combi\Facades\Runtime as rt;
 use Combi\Facades\Tris as tris;
@@ -9,10 +9,12 @@ use Combi\Package as core;
 use Combi\Package as inner;
 use Combi\Core\Abort as abort;
 
-use Combi\Core\Business;
-use Psr\Http\Message\ResponseInterface;
-
-class Response extends Business\Result implements ResponseInterface
-{
-
+/**
+ *
+ * @author andares
+ */
+trait GetNamespace {
+    public static function namespace(): string {
+        return helper::namespace(static::class);
+    }
 }
