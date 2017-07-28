@@ -2,14 +2,12 @@
 
 namespace Combi\Core;
 
-use Combi\Facades\Runtime as rt;
-use Combi\Facades\Tris as tris;
-use Combi\Facades\Helper as helper;
-use Combi\Package as core;
-use Combi\Package as inner;
-use Combi\Core\Abort as abort;
+use Combi\{
+    Helper as helper,
+    Abort as abort,
+    Core as core
+};
 
-use Combi\Meta;
 use Combi\Utils\ArrayCover;
 use Nette\Neon\Neon;
 
@@ -18,10 +16,10 @@ use Nette\Neon\Neon;
  *
  * @author andares
  */
-class Config extends Meta\Container implements \ArrayAccess
+class Config extends core\Meta\Container implements \ArrayAccess
 {
-    use Meta\Extensions\Overloaded,
-        Meta\Extensions\ArrayAccess;
+    use core\Meta\Extensions\Overloaded,
+        core\Meta\Extensions\ArrayAccess;
 
     protected $_name;
 
@@ -107,7 +105,7 @@ return ' . var_export($data, true) . ';');
     protected function loadByCache(string $cache_file, string $source_file): array {
         $data = [];
 
-        if (rt::isProd()) {
+        if (core::isProd()) {
             // 生产环境直接载入
             $data = @include $cache_file;
         } else {

@@ -1,0 +1,31 @@
+combi:
+    handlers:
+        - Monolog\Handler\RotatingFileHandler(
+            file=combi.log,
+            0,
+            level=info,
+            formatter=json
+        )
+    processors:
+        - Combi\Core\Logger\PrimariesProcessor()
+        - Combi\Core\Logger\RichMessageProcessor(true)
+    formatters:
+        json: Monolog\Formatter\JsonFormatter()
+
+slow:
+    handlers:
+        - Monolog\Handler\RotatingFileHandler(
+            file=slow.log,
+            0,
+            level=debug
+        )
+
+debug:
+    handlers:
+        - Monolog\Handler\StreamHandler(
+            file=debug.log,
+            level=debug
+        )
+    processors:
+        - Combi\Core\Logger\PrimariesProcessor()
+        - Combi\Core\Logger\RichMessageProcessor(true)

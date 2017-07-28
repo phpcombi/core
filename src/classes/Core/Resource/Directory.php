@@ -2,15 +2,18 @@
 
 namespace Combi\Core\Resource;
 
-use Combi\Utils\Traits;
-use Combi\Utils\Interfaces;
+use Combi\{
+    Helper as helper,
+    Abort as abort,
+    Core as core
+};
 
 /**
  * @todo 缓存问题之后考虑
  */
-class Directory implements Interfaces\Resource, \IteratorAggregate
+class Directory implements core\Interfaces\Resource, \IteratorAggregate
 {
-    use Traits\Instancable;
+    use core\Traits\Instancable;
 
     /**
      * @var string

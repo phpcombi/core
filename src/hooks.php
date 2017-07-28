@@ -2,14 +2,13 @@
 
 namespace Combi;
 
-use Combi\Facades\Runtime as rt;
-use Combi\Facades\Tris as tris;
-use Combi\Facades\Helper as helper;
-use Combi\Package as core;
-use Combi\Package as inner;
-use Combi\Core\Abort as abort;
+use Combi\{
+    Helper as helper,
+    Abort as abort,
+    Core as core
+};
 
-use Combi\Tris\ExceptionSample;
+use Combi\Core\Trace\ExceptionSample;
 
 $hook = core::hook();
 
@@ -20,14 +19,14 @@ $hook = core::hook();
  */
 
 // ==================== Core
-const HOOK_ACTION_BEGIN     = 'core:action/begin';
-const HOOK_ACTION_END       = 'core:action/end';
-const HOOK_ACTION_BROKEN    = 'core:action/broken';
+const HOOK_ACTION_BEGIN     = 'core:action.begin';
+const HOOK_ACTION_END       = 'core:action.end';
+const HOOK_ACTION_BROKEN    = 'core:action.broken';
+
+const HOOK_REDIS_UP     = 'core:redis.up';
 
 const HOOK_READY        = 'core:ready';
 const HOOK_TICK         = 'core:tick';
-const HOOK_LOG          = 'core:log';
-const HOOK_LOG_PREPARE  = 'core:log/prepare';
 const HOOK_SHUTDOWN     = 'core:shutdown';
 
 $hook
@@ -35,52 +34,30 @@ $hook
     ->add(HOOK_ACTION_END)
     ->add(HOOK_ACTION_BROKEN)
 
+    ->add(HOOK_REDIS_UP)
+
     ->add(HOOK_READY)
     ->add(HOOK_TICK)
-    ->add(HOOK_LOG)
     ->add(HOOK_SHUTDOWN);
 
-$hook->add(HOOK_LOG_PREPARE,
-    function(array $handlers,array $record, string $to_flie_path): array
-    {
-        foreach ($handlers as $handler) {
-            $record = $handler($record, $to_flie_path);
-        }
-        return $record;
-    });
-
-
 // attach hook taker
+
 // 时间
 core::hook()->attach(HOOK_TICK, function() {
     core::instance()->now = core::time()->now();
 });
 
 // slowlog
-if ($slowlog_limit = core::config('base')->log['slowlog_limit']) {
+if ($slowlog_limit = core::config('settings')->log['slowlog_limit']) {
     core::hook()->attach(HOOK_ACTION_BEGIN, function() {
-        tris::timer('__slowlog', true);
+        helper::timer('__slowlog');
     });
     core::hook()->attach(HOOK_ACTION_END, function() use ($slowlog_limit) {
-        $timecost = tris::timer('__slowlog') * 1000;
+        $timecost = helper::timer('__slowlog') * 1000;
         if (timecost > slowlog_limit) {
             $time = str_pad(number_format($timecost, 2, '.', ''),
                 9, '0', STR_PAD_LEFT);
-            tris::ml("slowlog: $time ms")->warning();
+            helper::log('slow')->info("slowlog: $time ms");
         }
     });
-}
-
-// exception sample
-$sample_config = core::config('tris')->sample;
-if ($sample_config['enable']) {
-    core::hook()->attach(HOOK_LOG_PREPARE,
-        function(array $record, string $to_flie_path) use ($sample_config)
-        {
-            if ($sample_config['levels'][$record['level']] ?? false) {
-                $record['sample'] = ExceptionSample::createByRecord($record)
-                    ->save($to_flie_path);
-            }
-            return $record;
-        });
 }

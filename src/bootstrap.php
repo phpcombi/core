@@ -1,9 +1,12 @@
 <?php
 namespace Combi;
 
-// runtime构建
-$runtime = Core\Runtime::instance();
+use Combi\{
+    Helper as helper,
+    Abort as abort,
+    Core as core
+};
 
 // 创建core包
-$runtime->register(Package::instance(__DIR__),
+core::register(core::create(__DIR__),
     'dependencies', 'hooks', 'helpers');

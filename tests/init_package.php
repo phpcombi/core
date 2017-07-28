@@ -1,5 +1,5 @@
 <?php
 
-$loader->addPsr4('Test\\', __DIR__.'/test_package_src/classes');
+$loader->addPsr4('Test\\', __DIR__.'/test_package/src/classes');
 
-require __DIR__ . '/test_package_src/bootstrap.php';
+require __DIR__ . '/test_package/src/bootstrap.php';

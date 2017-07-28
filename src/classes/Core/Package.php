@@ -2,16 +2,12 @@
 
 namespace Combi\Core;
 
-use Combi\Facades\Runtime as rt;
-use Combi\Facades\Helper as helper;
-use Combi\Package as core;
-use Combi\Package as inner;
-use Combi\Core\Abort as abort;
+use Combi\{
+    Helper as helper,
+    Abort as abort,
+    Core as core
+};
 
-use Combi\Utils\Interfaces;
-use Combi\Utils\Traits;
-use Combi\Meta;
-use Combi\Utils;
 use Nette\DI;
 
 /**
@@ -20,9 +16,14 @@ use Nette\DI;
  *
  * @author andares
  */
-class Package extends Meta\Container {
-    use Traits\Instancable,
-        Meta\Extensions\Overloaded;
+class Package extends core\Meta\Container {
+    use core\Traits\Instancable,
+        core\Meta\Extensions\Overloaded;
+
+    /**
+     * @var string
+     */
+    protected $_pid = null;
 
     /**
      * @var array
@@ -35,7 +36,7 @@ class Package extends Meta\Container {
     protected $_di = null;
 
     /**
-     * @var Utils\Dictionary[]
+     * @var Dictionary[]
      */
     protected $_dictionaries = [];
 
@@ -45,9 +46,10 @@ class Package extends Meta\Container {
     protected $_configs = [];
 
     /**
-     * @var string
+     *
+     * @var Logger[]
      */
-    protected $_pid = null;
+    protected $_loggers = [];
 
     /**
      * @param string $src_path
@@ -70,12 +72,14 @@ class Package extends Meta\Container {
      * @param string|null $path
      * @return Resource\Directory
      */
-    public function dir(string $category, ?string $path = null): Resource\Directory {
-        return rt::dir($this->path($category, $path));
+    public function dir(string $category,
+        ?string $path = null): Resource\Directory
+    {
+        return Resource\Directory::instance($this->path($category, $path));
     }
 
     public function dict(string $name, $key = null, ...$values) {
-        $locale = rt::config('locale');
+        $locale = core::config('settings')->locale;
 
         // 取字典对象
         if (!isset($this->_dictionaries[$locale][$name])) {
@@ -85,13 +89,13 @@ class Package extends Meta\Container {
 
             // 继承 main package 覆盖
             // 仅在非main package时处理
-            if (rt::main() && rt::main()->pid() != $this->pid()) {
-                $dictionary = new Utils\Dictionary(
+            if (core::main()->pid() != $this->pid()) {
+                $dictionary = new Dictionary(
                     $name,
-                    rt::main()->dir('src', 'i18n'.
+                    core::main()->dir('src', 'i18n'.
                         DIRECTORY_SEPARATOR.$locale.
                         DIRECTORY_SEPARATOR.$this->pid()),
-                    rt::config('scene'),
+                    core::env('scene'),
                     $tmp_dir);
             }
 
@@ -99,10 +103,10 @@ class Package extends Meta\Container {
             if (isset($dictionary) && $dictionary->raw()) {
                 $this->_dictionaries[$name] = $dictionary;
             } else {
-                $this->_dictionaries[$name] = new Utils\Dictionary(
+                $this->_dictionaries[$name] = new Dictionary(
                     $name,
                     $this->dir('src', 'i18n'.DIRECTORY_SEPARATOR.$locale),
-                    rt::config('scene'),
+                    core::env('scene'),
                     $tmp_dir);
             }
         }
@@ -124,12 +128,12 @@ class Package extends Meta\Container {
 
             // 继承 main package 覆盖
             // 仅在非main package时处理
-            if (rt::main() && rt::main()->pid() != $this->pid()) {
+            if (core::main()->pid() != $this->pid()) {
                 $config = new Config(
                     $name,
-                    rt::main()->dir('src', 'config'.
+                    core::main()->dir('src', 'config'.
                         DIRECTORY_SEPARATOR.$this->pid()),
-                    rt::config('scene'),
+                    core::env('scene'),
                     $tmp_dir);
             }
 
@@ -140,12 +144,27 @@ class Package extends Meta\Container {
                 $this->_configs[$name] = new Config(
                     $name,
                     $this->dir('src', 'config'),
-                    rt::config('scene'),
+                    core::env('scene'),
                     $tmp_dir);
             }
         }
 
         return $this->_configs[$name];
+    }
+
+    public function log(string $channel) {
+        if (!isset($this->_loggers[$channel])) {
+            $config = $this->config('logger');
+            if ($config) {
+                // 包有设logger.neon但是未设对应的channel，则该channel获得一个NullLogger
+                $this->_loggers[$channel] =
+                    new Logger($channel, $config->$channel);
+            } else {
+                // 包未设logger.neon配置，则使用core包的日志
+                $this->_loggers[$channel] = core::log($channel);
+            }
+        }
+        return $this->_loggers[$channel];
     }
 
     /**
@@ -155,7 +174,7 @@ class Package extends Meta\Container {
      */
     public function path(string $category, ?string $path = null): string {
         $prefix = $this->_path[$category] ??
-            rt::config('path')[$category] ?? '';
+            core::env('path')[$category] ?? '';
 
         return $path ? ($prefix.DIRECTORY_SEPARATOR.$path) : $prefix;
     }
@@ -177,11 +196,11 @@ class Package extends Meta\Container {
         if (!$this->_di) {
             // 检查缓存目录
             $tmp_dir    = $this->path('tmp',
-                'di'.DIRECTORY_SEPARATOR.rt::config('scene'));
+                'di'.DIRECTORY_SEPARATOR.core::env('scene'));
 
             // 载入di管理器
             $loader = new NetteFixer\DI\ContainerLoader($tmp_dir,
-                !rt::isProd());
+                !core::isProd());
             $class = $loader->load(function($compiler) {
                 $config = $this->config('services')->raw();
                 $compiler->addConfig(
@@ -216,7 +235,7 @@ class Package extends Meta\Container {
      * @return self
      */
     public function set($key, $value): self {
-        if (is_object($value) && $value instanceof Interfaces\LinkPackage) {
+        if (is_object($value) && $value instanceof core\Interfaces\LinkPackage) {
             $value->linkPackage($this, $key);
         }
 

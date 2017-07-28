@@ -2,14 +2,10 @@
 
 namespace Combi\Core;
 
-use Combi\Facades\Runtime as rt;
-use Combi\Facades\Tris as tris;
-use Combi\Facades\Helper as helper;
-use Combi\Package as core;
-use Combi\Package as inner;
-use Combi\Core\Abort as abort;
-
-use Combi\Meta;
+use Combi\{
+    Helper as helper,
+    Core as core
+};
 
 /**
  * Description of Abort
@@ -23,47 +19,33 @@ class Abort extends \Exception implements \JsonSerializable
 {
     /**
      * 数据
-     * @var Meta\Container
+     * @var core\Meta\Container
      */
     protected $extra;
-
-    public static function __callStatic(string $name, array $arguments): self {
-        $class = ucfirst($name) . 'Exception';
-        return self::with(new $class(...$arguments));
-    }
-
-    /**
-     * @param \Throwable $e
-     * @param callable $maker
-     * @param array $arguments
-     * @return Core\Abort
-     */
-    public static function with(\Throwable $e, callable $maker = null,
-        ...$arguments): self
-    {
-        $abort = new static($e);
-        return $maker ? $maker($abort, ...$arguments) : $abort;
-    }
 
     public function __construct(\Throwable $e) {
         parent::__construct($e->getMessage(), $e->getCode(), $e);
 
-        $this->extra = new Meta\Container;
+        $this->extra = new core\Meta\Container;
     }
 
 	public function __toString(): string {
         return json_encode($this);
     }
 
+    public function message(): string {
+        return helper::padding($this->getPrevious()->getMessage(),
+            $extra  = $this->all());
+    }
+
     public function toArray(): array {
-        $extra  = $this->all();
         $exc    = $this->getPrevious();
         $result = [
-            'message'   => helper::padding($exc->getMessage(), $extra),
+            'message'   => $this->message(),
             'code'      => $exc->getCode(),
             'file'      => $exc->getFile(),
             'line'      => $exc->getLine(),
-            'extra'     => $extra,
+            'extra'     => $this->all(),
         ];
         return $result;
     }
@@ -76,7 +58,7 @@ class Abort extends \Exception implements \JsonSerializable
         return get_class($this->getPrevious());
     }
 
-    public function extra(): Meta\Container {
+    public function extra(): core\Meta\Container {
         return $this->extra;
     }
 

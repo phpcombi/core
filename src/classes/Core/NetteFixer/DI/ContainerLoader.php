@@ -2,9 +2,13 @@
 
 namespace Combi\Core\NetteFixer\DI;
 
-use Nette\DI;
-use Nette\SmartObject;
-use Combi\Utils\Pack;
+use Combi\{
+    Helper as helper,
+    Abort as abort,
+    Core as core
+};
+
+use Nette\{DI, SmartObject};
 
 class ContainerLoader
 {
@@ -119,11 +123,11 @@ class ContainerLoader
 				return true;
 			}
 
-			$meta = Pack::decode('msgpack', file_get_contents($meta_file));
+			$meta = core\Utils\Pack::decode('msgpack', file_get_contents($meta_file));
 			$orig = $meta[2];
 			return empty($meta[0])
 				|| DI\DependencyChecker::isExpired(...$meta)
-				|| ($orig !== $meta[2] && $this->updated_meta = Pack::encode('msgpack', $meta));
+				|| ($orig !== $meta[2] && $this->updated_meta = core\Utils\Pack::encode('msgpack', $meta));
 		}
 		return false;
 	}
@@ -139,7 +143,7 @@ class ContainerLoader
 		$code = $generator(...[&$compiler]) ?: $compiler->compile();
 		return [
 			"<?php\n$code",
-			Pack::encode('msgpack', $compiler->exportDependencies())
+			core\Utils\Pack::encode('msgpack', $compiler->exportDependencies())
 		];
 	}
 

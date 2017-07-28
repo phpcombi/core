@@ -1,5 +1,0 @@
-time:
-    timezone:   null    # 设null或不设此键使用全局设置 设Asia/Shanghai等值则手动控制
-
-log:
-    slowlog_limit: 40
