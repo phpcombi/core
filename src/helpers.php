@@ -28,6 +28,10 @@ helper::register('dd', function($var, $title = null): void {
     die(1);
 });
 
+helper::register('log', function($message, array $context = []): void {
+    helper::logger()->info($message, $context);
+});
+
 helper::register('timer', function(string $name = 'default'): float {
     return core\Utils\Debug::instance()->timer($name);
 });

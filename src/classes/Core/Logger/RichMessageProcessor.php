@@ -8,6 +8,9 @@ use Combi\{
     Core as core
 };
 
+use Monolog\Logger as MonoLogger;
+use Psr\Log\LogLevel as Level;
+
 /**
  */
 class RichMessageProcessor
@@ -92,7 +95,44 @@ class RichMessageProcessor
         $abortinfo  && $record['extra']['abortinfo'] = $abortinfo;
 
         $record['message'] = $message;
+
+        $this->autolevel && $this->autolevel($record);
         return $record;
     }
 
+    private function autolevel(array &$record): void {
+        if ($record['level'] != MonoLogger::INFO
+            || !isset($record['extra']['throwable']))
+        {
+            return;
+        }
+
+        // 根据abort __level来变更level
+        $extra = $record['extra'];
+        if (isset($extra['abortinfo']['__level'])
+            && isset(core\Logger::LEVELS[$extra['abortinfo']['__level']]))
+        {
+            $this->setLevel($extra['abortinfo']['__level'], $record);
+
+        } else { // 根据throwable类来变更level
+            $throwable = $record['extra']['throwable'];
+            if ($throwable instanceof \LogicException) {
+                $level = Level::NOTICE;
+            } elseif ($throwable instanceof \RuntimeException) {
+                $level = Level::CRITICAL;
+            } elseif ($throwable instanceof \ErrorException
+                || $throwable instanceof \Error)
+            {
+                $level = Level::ERROR;
+            } else {
+                $level = Level::WARNING;
+            }
+            $this->setLevel($level, $record);
+        }
+    }
+
+    private function setLevel(string $level, array &$record) {
+        $record['level'] = core\Logger::LEVELS[$level];
+        $record['level_name'] = MonoLogger::getLevelName($record['level']);
+    }
 }

@@ -8,7 +8,6 @@ use Combi\{
     Core as core
 };
 
-use Combi\Core\Logger;
 use Nette\Neon\Entity;
 use Monolog\Formatter\NormalizerFormatter;
 
@@ -17,8 +16,8 @@ class Helper
     private static $functions = [];
 
     public static function __callStatic(string $name, array $arguments) {
-        if (isset(Logger::LEVELS[$name])) {
-            return self::log()->$name(...$arguments);
+        if (isset(core\Logger::LEVELS[$name])) {
+            return self::logger()->$name(...$arguments);
         }
         $func = self::$functions[$name];
         return $func(...$arguments);
@@ -28,8 +27,8 @@ class Helper
         self::$functions[$name] = $func;
     }
 
-    public static function log(string $channel = 'combi'): Logger {
-        return core::log($channel);
+    public static function logger(string $channel = 'combi'): core\Logger {
+        return core::logger($channel);
     }
 
     public static function padding(string $template, array $vars): ?string {

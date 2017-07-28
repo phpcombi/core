@@ -44,14 +44,14 @@ helper::du($cc->getActionId());
 
 // helper::warning('vvvvv', ['xxxxx', 'bbb' => core::instance()]);
 
-// helper::log('debug')->warning('vvvvv', ['xxxxx', 'bbb' => core::instance()]);
-// helper::log('debug')->warning('vvvvv', ['xxxxx', 'bbb' => core::instance()]);
-// helper::log('slow')->info('vvvvvvdddddd');
-// helper::log('slow')->info('vvvvvvdddddd');
+// helper::logger('debug')->warning('vvvvv', ['xxxxx', 'bbb' => core::instance()]);
+// helper::logger('debug')->warning('vvvvv', ['xxxxx', 'bbb' => core::instance()]);
+// helper::logger('slow')->info('vvvvvvdddddd');
+// helper::logger('slow')->info('vvvvvvdddddd');
 
 // helper::warning('vvvvv', ['xxxxx', 'bbb' => core::instance()]);
 
-helper::error(abort::logic('aaa bbbb %qqq%:eee')->set('qqq', 'andares'));
+helper::log(abort::logic('aaa bbbb %qqq%:eee')->set('qqq', 'andares'));
 
 $a = helper::timer();
 helper::du($a);

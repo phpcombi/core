@@ -152,7 +152,7 @@ class Package extends core\Meta\Container {
         return $this->_configs[$name];
     }
 
-    public function log(string $channel) {
+    public function logger(string $channel) {
         if (!isset($this->_loggers[$channel])) {
             $config = $this->config('logger');
             if ($config) {
@@ -161,7 +161,7 @@ class Package extends core\Meta\Container {
                     new Logger($channel, $config->$channel);
             } else {
                 // 包未设logger.neon配置，则使用core包的日志
-                $this->_loggers[$channel] = core::log($channel);
+                $this->_loggers[$channel] = core::logger($channel);
             }
         }
         return $this->_loggers[$channel];

@@ -57,7 +57,7 @@ if ($slowlog_limit = core::config('settings')->log['slowlog_limit']) {
         if (timecost > slowlog_limit) {
             $time = str_pad(number_format($timecost, 2, '.', ''),
                 9, '0', STR_PAD_LEFT);
-            helper::log('slow')->info("slowlog: $time ms");
+            helper::logger('slow')->info("slowlog: $time ms");
         }
     });
 }

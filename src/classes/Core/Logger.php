@@ -22,7 +22,6 @@ class Logger extends \Psr\Log\AbstractLogger
         LogLevel::CRITICAL  => MonoLogger::CRITICAL,
         LogLevel::ERROR     => MonoLogger::ERROR,
         LogLevel::WARNING   => MonoLogger::WARNING,
-        LogLevel::WARNING   => MonoLogger::WARNING,
         LogLevel::NOTICE    => MonoLogger::NOTICE,
         LogLevel::INFO      => MonoLogger::INFO,
         LogLevel::DEBUG     => MonoLogger::DEBUG,

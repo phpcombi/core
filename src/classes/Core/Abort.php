@@ -67,6 +67,11 @@ class Abort extends \Exception implements \JsonSerializable
         return $this;
     }
 
+    public function level(string $level): self {
+        $this->set('__level', $level);
+        return $this;
+    }
+
     public function __call(string $name, array $arguments) {
         return $this->extra->$name(...$arguments);
     }
