@@ -8,8 +8,6 @@ use Combi\{
     Core as core
 };
 
-use Combi\Core\Trace\ExceptionSample;
-
 $hook = core::hook();
 
 // add hook
@@ -47,14 +45,15 @@ core::hook()->attach(HOOK_TICK, function() {
     core::instance()->now = core::time()->now();
 });
 
+
 // slowlog
-if ($slowlog_limit = core::config('settings')->log['slowlog_limit']) {
+if ($slowlog_limit = core::config('settings')->slowlog['limit']) {
     core::hook()->attach(HOOK_ACTION_BEGIN, function() {
         helper::timer('__slowlog');
     });
     core::hook()->attach(HOOK_ACTION_END, function() use ($slowlog_limit) {
         $timecost = helper::timer('__slowlog') * 1000;
-        if (timecost > slowlog_limit) {
+        if ($timecost > $slowlog_limit) {
             $time = str_pad(number_format($timecost, 2, '.', ''),
                 9, '0', STR_PAD_LEFT);
             helper::logger('slow')->info("slowlog: $time ms");

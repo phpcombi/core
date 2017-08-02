@@ -67,6 +67,10 @@ class Abort extends \Exception implements \JsonSerializable
         return $this;
     }
 
+    public function get($key) {
+        return $this->extra->get($key);
+    }
+
     public function level(string $level): self {
         $this->set('__level', $level);
         return $this;

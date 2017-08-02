@@ -54,7 +54,7 @@ class Catcher
         // 处理方案
         // 记日志
         // TODO: 暂时记error，之后再改
-        helper::error($throwable->getMessage(), ['exception' => $throwable]);
+        helper::log($throwable);
 
         // 是否输出
         // 如果是非生产环境条件允许打印输出
@@ -73,15 +73,7 @@ class Catcher
      * @todo 这里用 helper::du()不是最合适
      */
     protected function printThrown(\Throwable $throwable) {
-        if ($throwable instanceof abort) {
-            $context = $throwable->all();
-            $throwable  = $throwable->getPrevious();
-        } elseif ($throwable instanceof ErrorException) {
-            $context = $throwable->getContext();
-        } else {
-            $context = [];
-        }
-        $sample     = new ExceptionSample('info', $throwable, $context);
+        $sample     = new ThrowableSample($throwable);
         helper::du($sample->render(), "Ooooooooooooooooooops!!");
     }
 

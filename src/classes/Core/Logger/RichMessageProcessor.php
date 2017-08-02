@@ -44,17 +44,17 @@ class RichMessageProcessor
         $context = $record['context'];
 
         // 处理message
-        $abortinfo = null;
+        $abort = null;
         if (is_object($message)) {
             if ($message instanceof \Throwable) {
                 $raw = null;
-                $throwable = $message;
-                if ($throwable instanceof abort) {
-                    $message = $throwable->message();
-
-                    $abortinfo = $throwable->all();
+                if ($message instanceof core\Abort) {
+                    $abort      = $message;
+                    $throwable  = $abort->getPrevious();
+                    $message    = $abort->message();
                 } else {
-                    $message = $throwable->getMessage();
+                    $throwable  = $message;
+                    $message    = $throwable->getMessage();
 
                     $context && $message = helper::padding($message, $context);
                 }
@@ -92,7 +92,7 @@ class RichMessageProcessor
         $raw        && $record['extra']['raw']       = $raw;
         $throwable  && $record['extra']['throwable'] = $throwable;
         $debugvars  && $record['extra']['debugvars'] = $debugvars;
-        $abortinfo  && $record['extra']['abortinfo'] = $abortinfo;
+        $abort      && $record['extra']['abort']     = $abort;
 
         $record['message'] = $message;
 
@@ -109,10 +109,11 @@ class RichMessageProcessor
 
         // 根据abort __level来变更level
         $extra = $record['extra'];
-        if (isset($extra['abortinfo']['__level'])
-            && isset(core\Logger::LEVELS[$extra['abortinfo']['__level']]))
+        $abort_level = isset($extra['abort'])
+            ? $extra['abort']->get('__level') : null;
+        if ($abort_level && isset(core\Logger::LEVELS[$abort_level]))
         {
-            $this->setLevel($extra['abortinfo']['__level'], $record);
+            $this->setLevel($abort_level, $record);
 
         } else { // 根据throwable类来变更level
             $throwable = $record['extra']['throwable'];

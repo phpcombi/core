@@ -6,6 +6,11 @@ combi:
             level=info,
             formatter=json
         )
+        - Combi\Core\Logger\SampleSnapHandler(
+            snaps,
+            Y-m,
+            level=info
+        )
     processors:
         - Combi\Core\Logger\PrimariesProcessor()
         - Combi\Core\Logger\RichMessageProcessor(true)

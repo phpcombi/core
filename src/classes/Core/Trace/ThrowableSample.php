@@ -8,62 +8,57 @@ use Combi\{
     Core as core
 };
 
-class ExceptionSample
+class ThrowableSample
 {
-    /**
-     * @var string
-     */
-    private $prefix = '';
-
     /**
      * @var \Throwable
      */
     private $throwable;
 
     /**
+     * @var string
+     */
+    private $message;
+
+    /**
      * @var array
      */
-    private $context = [];
+    private $context;
+
+    /**
+     * @var array|null
+     */
+    private $more;
 
     /**
      * @var string
      */
-    private $level = '';
-
-    /**
-     * @var string|int
-     */
-    private $primary = '';
-
-    /**
-     * @var string
-     */
-    private $template = "\n- message: %0%\n- code: %1%\n- file: %2%\n- line: %3%\n- info:\n%4%\n<<<<<<<<\n\n%5%\n";
+    private $template = "\n- message: %0%\n- code: %1%\n- file: %2%\n- line: %3%\n- info:\n%4%\n\n- more:\n%5%\n<<<<<<<<\n\n%6%\n";
 
     /**
      * @var string
      */
     private $joiner = "\n^--------------^\n";
 
-    public function __construct(string $level, \Throwable $throwable, array $context = []) {
-        $this->level     = $level;
+    public function __construct(\Throwable $throwable, array $more = null) {
+        if ($throwable instanceof core\Abort) {
+            $this->message = $throwable->message();
+
+            $context    = $throwable->all();
+            $throwable  = $throwable->getPrevious();
+        } elseif ($throwable instanceof ErrorException) {
+            $this->message = $throwable->getMessage();
+
+            $context = $throwable->getContext();
+        } else {
+            $this->message = $throwable->getMessage();
+
+            $context = [];
+        }
+
         $this->throwable = $throwable;
         $this->context   = $context;
-    }
-
-    public static function createByRecord(array $record): self {
-        return (new self($record['level'], $record['exception'], $record['context']))
-            ->setPrimary($record['primary']);
-    }
-
-    public function setPrimary($primary): self {
-        $this->primary = $primary;
-        return $this;
-    }
-
-    public function setPrefix($prefix): self {
-        $this->prefix = $prefix;
-        return $this;
+        $this->more      = $more;
     }
 
     public function setTemplate(string $template, ?string $joiner = null): self {
@@ -84,7 +79,7 @@ class ExceptionSample
 
     public function render(): string {
         $current = helper::padding($this->template,
-            $this->makeVars($this->throwable, $this->context));
+            $this->makeVars($this->throwable, $this->context, $this->more));
         $exc = $this->throwable->getPrevious();
         if ($exc) {
             $previous = helper::padding($this->template, $this->makeVars($exc));
@@ -101,7 +96,9 @@ class ExceptionSample
      * @param array|null $context
      * @return array
      */
-    private function makeVars(\Throwable $exc, ?array $context = null): array {
+    private function makeVars(\Throwable $exc,
+        ?array $context = null, ?array $more = null): array
+    {
         if ($context) {
             unset($context['GLOBALS']);
         }
@@ -113,22 +110,8 @@ class ExceptionSample
             $exc->getFile(),
             $exc->getLine(),
             $context ? helper::stringify($context) : '{}',
+            $more   ? helper::stringify($more) : '{}',
             $exc->getTraceAsString(),
         ];
-    }
-
-    private function makeFileName(): string {
-        // 文件名结构
-        $name = [
-            $this->throwable->getCode(),
-            get_class($this->throwable),
-            basename($this->throwable->getFile()),
-            $this->throwable->getLine(),
-        ];
-        isset($this->context['primary']) && $name[] = $this->context['primary'];
-
-        // primary限长
-        isset($name[4]) && strlen($name[4]) > 10 && $name[4] = substr($name[4], 0, 10);
-        return $this->prefix.implode('-', $name);
     }
 }

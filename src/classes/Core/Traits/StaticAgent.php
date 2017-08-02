@@ -10,7 +10,7 @@ use Combi\{
 
 
 /**
- * Facade
+ * StaticAgent
  *
  *
  * @author andares

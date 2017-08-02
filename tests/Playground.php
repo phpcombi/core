@@ -23,17 +23,25 @@ helper::timer();
 
 
 $aa = new class extends \Combi\Core\Action {
-protected function handle() {helper::du('a');}
+    use core\Traits\LoggerInject;
+
+    protected function handle() {
+        helper::du('a:'.core::now()->format('Y-m-d H:i:s'));
+        $this->error('aabbcc');
+    }
 };
 
 $bb = new class extends \Combi\Core\Action {
-protected function handle() {helper::du('b');}
-
+    protected function handle() {
+        helper::du('b:'.core::now()->format('Y-m-d H:i:s'));
+    }
 };
 
 $cc = new class extends \Combi\Core\Action {
-protected function handle() {helper::du('c');}
-
+    protected function handle() {
+        helper::du('c:'.core::now()->format('Y-m-d H:i:s'));
+        sleep(1);
+    }
 };
 
 helper::du($aa->getActionId());
@@ -51,7 +59,10 @@ helper::du($cc->getActionId());
 
 // helper::warning('vvvvv', ['xxxxx', 'bbb' => core::instance()]);
 
-helper::log(abort::logic('aaa bbbb %qqq%:eee')->set('qqq', 'andares'));
+// throw abort::runtime('aaa bbbb %qqq%:eee')->set('qqq', 'andares');
+
+helper::log(abort::runtime('aaa bbbb %qqq%:eee')->set('qqq', 'andares'));
+// helper::warning(abort::runtime('aaa bbbb %qqq%:eee')->set('qqq', 'andares'));
 
 $a = helper::timer();
 helper::du($a);

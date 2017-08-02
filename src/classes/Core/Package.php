@@ -52,6 +52,7 @@ class Package extends core\Meta\Container {
     protected $_loggers = [];
 
     /**
+     * @param string $pid
      * @param string $src_path
      */
     public function __construct(string $pid, string $src_path) {

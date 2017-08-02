@@ -58,6 +58,7 @@ abstract class Action extends core\Meta\Container
         }
 
         // 业务逻辑
+        $result = null;
         try {
             core::hook()->take(\Combi\HOOK_TICK);
             core::hook()->take(\Combi\HOOK_ACTION_BEGIN, $this);
@@ -66,6 +67,8 @@ abstract class Action extends core\Meta\Container
 
             core::hook()->take(\Combi\HOOK_ACTION_END, $this, $result);
         } catch (\Throwable $e) {
+            // TODO 暂时未对错误做处理
+            throw $e;
             core::hook()->take(\Combi\HOOK_ACTION_BROKEN, $this, $e);
         }
 

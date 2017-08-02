@@ -88,6 +88,9 @@ class Logger extends \Psr\Log\AbstractLogger
             $handler = helper::make(helper::entityWithProcessor($handler_conf,
                 function($name, $value) use (&$formatter, $config)
             {
+                if (is_numeric($name)) {
+                    return $value;
+                }
                 switch ($name) {
                     case 'file':
                         $value[0] != DIRECTORY_SEPARATOR
