@@ -13,11 +13,11 @@
         "php": ">=7.1.0",
         "ext-msgpack": "*",
         "ext-redis": "*",
-        "psr/container": "1.*",
-        "psr/log": "1.*",
-        "nette/di": "2.*",
-        "nette/neon": "2.*",
-        "monolog/monolog": "1.*",
+        "psr/container": "^1.0",
+        "psr/log": "^1.0",
+        "nette/di": "^2.0",
+        "nette/neon": "^2.0",
+        "monolog/monolog": "^1.0",
         "andares/adarts": "^1.5"
     },
     "require-dev": {
