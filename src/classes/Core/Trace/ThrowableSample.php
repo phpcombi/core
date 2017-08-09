@@ -70,7 +70,7 @@ class ThrowableSample
     public function save(string $dir): string {
         !file_exists($dir) && @mkdir($dir, 0755, true);
 
-        $file = $dir . DIRECTORY_SEPARATOR . $this->makeFileName() . ".smp";
+        $file = $dir.DIRECTORY_SEPARATOR.$this->makeFileName().".smp";
         !file_exists($file)
             && @file_put_contents($file, $this->render(), LOCK_EX);
 

@@ -4,7 +4,7 @@ return [
     'is_prod'   => false,
     'scene'     => 'dev',
     'path'      => [
-        'logs'  => __DIR__ . '/../logs',
-        'tmp'   => __DIR__ . '/../tmp',
+        'logs'  => __DIR__.'/../logs',
+        'tmp'   => __DIR__.'/../tmp',
     ],
 ];

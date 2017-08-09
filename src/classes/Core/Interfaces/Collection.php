@@ -15,7 +15,7 @@ use Combi\{
 interface Collection extends Arrayable, \Countable {
     public function set($key, $value);
 
-    public function get($key, $default = null);
+    public function get($key);
 
     public function replace(array $items);
 

@@ -170,7 +170,7 @@ abstract class Struct
                 $value = $this->$method($value);
             } elseif ($value === null) {
                 throw new \UnexpectedValueException(
-                    "meta:" . static::class . " field [$key] could not be empty");
+                    "meta:".static::class." field [$key] could not be empty");
             }
 
             // 展开所有对象进行confirm

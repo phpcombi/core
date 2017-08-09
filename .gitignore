@@ -3,6 +3,6 @@ composer.phar
 /tests/logs/
 /tests/tmp/
 /tests/playground
-/tests/Playground.php
+/tests/playground.php
 composer.lock
 

@@ -57,7 +57,7 @@ class ContainerLoader
 	 */
 	public function getClassName(string $pid)
 	{
-		return "Container_{$pid}_" . substr(md5($pid), 5, 5);
+		return "Container_{$pid}_".substr(md5($pid), 5, 5);
 	}
 
 	/**

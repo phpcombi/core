@@ -88,7 +88,7 @@ class Config extends core\Meta\Container implements \ArrayAccess
 
                 // 回写入缓存
                 $this->_cache->write("$this->_name.$this->_scene.php", '<?php
-return ' . var_export($data, true) . ';');
+return '.var_export($data, true).';');
             }
         } else {
             $data = $this->parse($source_file);

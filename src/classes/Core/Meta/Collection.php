@@ -49,11 +49,10 @@ abstract class Collection
     /**
      *
      * @param int|string $key
-     * @param mixed $default
-     * @return mixed
+     * @return mixed|null
      */
-    public function get($key, $default = null) {
-        return $this->_data[$key] ?? $default;
+    public function get($key) {
+        return $this->_data[$key] ?? null;
     }
 
     /**

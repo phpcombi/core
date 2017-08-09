@@ -42,7 +42,7 @@ class DateTime
             : $to->modify("+$interval day");
 
         return $this->between($this->datetime, $to,
-            "P$interval" . self::$units_index[$unit]);
+            "P$interval".self::$units_index[$unit]);
     }
 
     public function from(string $time,
@@ -55,7 +55,7 @@ class DateTime
             : $to->modify("+1 day");
 
         return $this->between($from, $to,
-            "P$interval" . self::$units_index[$unit]);
+            "P$interval".self::$units_index[$unit]);
     }
 
     public function between(\DateTimeInterface $begin,

@@ -79,7 +79,7 @@ class Directory implements core\Interfaces\Resource, \IteratorAggregate
             return $this->replaces[$path];
         }
 
-        $file = $this->dir . DIRECTORY_SEPARATOR . $path;
+        $file = $this->dir.DIRECTORY_SEPARATOR.$path;
         return $file;
     }
 

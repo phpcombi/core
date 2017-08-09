@@ -46,7 +46,7 @@ class Pack {
      */
     public static function getEncoder(string $name): core\Interfaces\Encoder {
         if (!isset(static::$encoders[$name])) {
-            $class = static::class . '\\' . ucfirst($name);
+            $class = static::class.'\\'.ucfirst($name);
             static::$encoders[$name] = new $class();
         }
         return static::$encoders[$name];
