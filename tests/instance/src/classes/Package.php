@@ -1,6 +1,6 @@
 <?php
 
-namespace Test;
+namespace App;
 
 use Combi\{
     Helper as helper,
@@ -10,5 +10,5 @@ use Combi\{
 
 class Package extends \Combi\Package
 {
-    protected static $pid = 'test';
+    protected static $pid = 'app';
 }

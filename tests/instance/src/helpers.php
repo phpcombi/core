@@ -1,6 +1,6 @@
 <?php
 
-namespace Test;
+namespace App;
 
 use Combi\{
     Helper as helper,

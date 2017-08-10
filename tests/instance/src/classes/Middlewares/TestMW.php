@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Middlewares;
+namespace App\Middlewares;
 
 use Combi\{
     Helper as helper,
