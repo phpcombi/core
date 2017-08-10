@@ -14,4 +14,4 @@ require __DIR__ . '/init_tester.php';
 const TESTING = true;
 
 include __DIR__ . '/init_instance.php';
-core::up('test', require __DIR__.'/instance/env.php');
+core::up('app', require __DIR__.'/instance/env.php');
