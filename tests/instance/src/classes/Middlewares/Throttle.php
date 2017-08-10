@@ -55,9 +55,9 @@ class Throttle extends Middleware {
     protected function process(Params $params, Result $result,
         callable $next): Result
     {
-        helper::du('throttle mw in');
+        helper::dt('throttle mw in');
         $result = $next($params, $result);
-        helper::du('throttle mw out');
+        helper::dt('throttle mw out');
         return $result;
         // // 取id
         // $id_fetcher = $this->id_fetcher;

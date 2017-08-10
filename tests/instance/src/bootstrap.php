@@ -8,5 +8,5 @@ use Combi\{
     Core as core
 };
 
-core::register(Package::create(__DIR__),
+core::register(Package::instance(__DIR__),
     /*'dependencies', 'hooks',*/ 'helpers');

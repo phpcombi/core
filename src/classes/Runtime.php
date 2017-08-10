@@ -1,6 +1,6 @@
 <?php
 
-namespace Combi\Core;
+namespace Combi;
 
 use Combi\{
     Helper as helper,

@@ -13,6 +13,6 @@ use Combi\{
  * @author andares
  */
 interface LinkPackage {
-    public function linkPackage(core\Package $package, string $name);
-    public function innerPackage(): core\Package;
+    public function linkPackage(\Combi\Package $package, string $name);
+    public function innerPackage(): \Combi\Package;
 }

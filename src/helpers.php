@@ -7,32 +7,32 @@ use Combi\{
     Core as core
 };
 
-helper::register('gen_id', function(int $random_length = 3): string {
+helper::register(function(int $random_length = 3): string {
     return (new core\Utils\IdGenerator())
         ->random_hex($random_length)
         ->orderable()
         ->get();
-});
+}, 'gen_id');
 
 
-helper::register('du', function($var, $title = null): void {
+helper::register(function($var, $title = null): void {
     static $count;
     $count++;
     !$title && $title = "Dump Count: $count";
 
     core\Utils\Debug::instance()->dump($var, $title);
-});
+}, 'du', 'dt');
 
-helper::register('dd', function($var, $title = null): void {
+helper::register(function($var, $title = null): void {
     helper::du($var, $title);
     die(1);
-});
+}, 'dd');
 
-helper::register('log', function($message, array $context = []): void {
+helper::register(function($message, array $context = []): void {
     helper::logger()->info($message, $context);
-});
+}, 'log');
 
-helper::register('timer', function(string $name = 'default'): float {
+helper::register(function(string $name = 'default'): float {
     return core\Utils\Debug::instance()->timer($name);
-});
+}, 'timer');
 

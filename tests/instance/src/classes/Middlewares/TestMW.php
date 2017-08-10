@@ -32,9 +32,9 @@ class TestMW extends Middleware {
     protected function process(Params $params, Result $result,
         callable $next): Result
     {
-        helper::du('test mw in');
+        helper::dt('test mw in');
         $result = $next($params, $result);
-        helper::du('test mw out');
+        helper::dt('test mw out');
         return $result;
     }
 

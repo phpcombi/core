@@ -7,9 +7,9 @@ use Combi\{
     Abort as abort
 };
 
-class Core extends Package
+class Core
 {
-    protected static $pid = 'core';
+    use Core\Traits\StaticAgent;
 
     /**
      * @var array
@@ -71,8 +71,8 @@ class Core extends Package
         return Core\Hook::instance();
     }
 
-    public static function rt(): Core\Runtime {
-        return Core\Runtime::instance();
+    public static function rt(): Runtime {
+        return Runtime::instance();
     }
 
     /**
@@ -99,19 +99,19 @@ class Core extends Package
 
     /**
      *
-     * @return Core\Package
+     * @return Package
      */
-    public static function main(): Core\Package {
+    public static function main(): Package {
         return self::$main_package;
     }
 
     /**
      * 注册一个package到runtime
      *
-     * @param Core\Package $package
+     * @param Package $package
      * @return void
      */
-    public static function register(Core\Package $package, ...$bootload): void {
+    public static function register(Package $package, ...$bootload): void {
         $pid = $package->pid();
 
         if (!$pid) {
@@ -148,39 +148,32 @@ class Core extends Package
         $pid && self::$main_package = self::rt()->$pid;
 
         // 启动引导载入
-        self::bootload();
-
-        // 开启catcher
-        self::enableCatcher();
-
-        // 勾子
-        register_shutdown_function(function() {
-            core::hook()->take(\Combi\HOOK_SHUTDOWN);
-        });
-        core::hook()->take(\Combi\HOOK_READY);
-        core::hook()->take(\Combi\HOOK_TICK);
-
-        // 设置状态
-        self::$is_up = true;
-    }
-
-    private static function bootload(): void {
         foreach (self::$bootloads as $pid => $bootload) {
             foreach ($bootload as $filename) {
                 require self::rt()->$pid->path('src', "$filename.php");
             }
             unset(self::$bootloads[$pid]);
         }
-    }
 
-    /**
-     * @return void
-     */
-    private static function enableCatcher(): void {
+        // 开启catcher
         $provider = self::config('settings')->catcher;
         if ($provider) {
             helper::instance($provider);
         }
+
+        // 勾子
+        register_shutdown_function(function() {
+            self::hook()->take(\Combi\HOOK_SHUTDOWN);
+        });
+        self::hook()->take(\Combi\HOOK_READY);
+        self::hook()->take(\Combi\HOOK_TICK);
+
+        // 设置状态
+        self::$is_up = true;
+    }
+
+    public static function instance(): Core\Package {
+        return Core\Package::instance('core');
     }
 
 }

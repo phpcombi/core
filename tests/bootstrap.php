@@ -7,7 +7,6 @@ use Combi\{
 };
 
 // set temp dir & init nette tester
-define('TEMP_DIR', __DIR__ . '/tmp/' . getmypid());
 require __DIR__ . '/init_tester.php';
 
 // init combi

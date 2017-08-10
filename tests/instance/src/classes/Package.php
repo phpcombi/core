@@ -10,5 +10,5 @@ use Combi\{
 
 class Package extends \Combi\Package
 {
-    protected static $pid = 'app';
+    protected static $_pid = 'app';
 }

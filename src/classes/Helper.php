@@ -23,8 +23,16 @@ class Helper
         return $func(...$arguments);
     }
 
-    public static function register(string $name, callable $func) {
-        self::$functions[$name] = $func;
+    /**
+     *
+     * @param callable $func
+     * @param array $names
+     * @return void
+     */
+    public static function register(callable $func, ...$names): void {
+        foreach ($names as $name) {
+            self::$functions[$name] = $func;
+        }
     }
 
     public static function logger(string $channel = 'combi'): core\Logger {

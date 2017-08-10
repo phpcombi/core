@@ -20,13 +20,13 @@ trait LinkPackage {
 
     protected $_inner_name = '';
 
-    public function linkPackage(core\Package $package, string $name): self {
+    public function linkPackage(\Combi\Package $package, string $name): self {
         $this->_inner_package   = $package;
         $this->_inner_name      = $name;
         return $this;
     }
 
-    public function innerPackage(): core\Package {
+    public function innerPackage(): \Combi\Package {
         return $this->_inner_package;
     }
 

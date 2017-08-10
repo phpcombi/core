@@ -1,6 +1,6 @@
 <?php
 
-namespace Combi;
+namespace Combi\Core;
 
 use Combi\{
     Helper as helper,
@@ -9,5 +9,5 @@ use Combi\{
 };
 
 // 创建core包
-core::register(core::create(__DIR__),
+core::register(Package::instance(__DIR__),
     'dependencies', 'hooks', 'helpers');

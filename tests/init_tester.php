@@ -1,5 +1,7 @@
 <?php
 
+define('TEMP_DIR', __DIR__ . '/tmp/' . getmypid());
+
 // The Nette Tester command-line runner can be
 // invoked through the command: ../vendor/bin/tester .
 if (!($loader = include __DIR__ . '/../vendor/autoload.php')) {
