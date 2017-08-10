@@ -13,5 +13,5 @@ require __DIR__ . '/init_tester.php';
 // init combi
 const TESTING = true;
 
-include __DIR__ . '/init_package.php';
-core::up('test', require __DIR__.'/test_package/env.php');
+include __DIR__ . '/init_instance.php';
+core::up('test', require __DIR__.'/instance/env.php');

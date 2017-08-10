@@ -15,10 +15,10 @@ class Package
     protected static $pid = null;
 
     public static function create(string $src_path): Core\Package {
-        return Core\Package::instance(static::$pid, $src_path);
+        return core\Package::instance(static::$pid, $src_path);
     }
 
     public static function instance(): Core\Package {
-        return Core\Package::instance(static::$pid);
+        return core\Package::instance(static::$pid);
     }
 }
