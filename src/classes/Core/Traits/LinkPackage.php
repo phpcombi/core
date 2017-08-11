@@ -1,6 +1,6 @@
 <?php
 
-namespace Combi\CoreTraits;
+namespace Combi\Core\Traits;
 
 use Combi\{
     Helper as helper,
