@@ -14,5 +14,4 @@ use Combi\{
  */
 interface LinkPackage {
     public function linkPackage(\Combi\Package $package, string $name);
-    public function innerPackage(): \Combi\Package;
 }

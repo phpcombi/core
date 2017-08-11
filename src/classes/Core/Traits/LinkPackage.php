@@ -16,21 +16,21 @@ trait LinkPackage {
     /**
      * @var Package
      */
-    protected $_inner_package = null;
+    protected $_link_package = null;
 
     protected $_inner_name = '';
 
     public function linkPackage(\Combi\Package $package, string $name): self {
-        $this->_inner_package   = $package;
+        $this->_link_package    = $package;
         $this->_inner_name      = $name;
         return $this;
     }
 
-    public function innerPackage(): \Combi\Package {
-        return $this->_inner_package;
+    public function p(): \Combi\Package {
+        return $this->_link_package;
     }
 
-    public function innerName(): string {
+    public function getInnerName(): string {
         return $this->_inner_name;
     }
 }
