@@ -63,7 +63,7 @@ abstract class Collection
      */
     public function replace(array $items): self {
         foreach ($items as $key => $value) {
-            isset($this->_data[$key]) && $this->_data[$key] = $value;
+            $this->has($key) && $this->set($key, $value);
         }
         return $this;
     }

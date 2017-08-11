@@ -90,7 +90,7 @@ class IdGenerator {
 
     public function uuid($trim = true) {
         $id = uuid_create();
-        $this->data = $trim ? str_replace('-', '', $id) : $id;
+        $this->data = $trim ? strtr($id, '-', '') : $id;
         return $this;
     }
 }

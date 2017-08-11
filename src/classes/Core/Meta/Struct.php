@@ -111,7 +111,7 @@ abstract class Struct
      */
     public function iterate(bool $include_deprecated = false): iterable {
         foreach (static::defaults($include_deprecated) as $key => $default) {
-            yield $key => $this->_data[$key] ?? $default;
+            yield $key => $this->get($key);
         }
     }
 

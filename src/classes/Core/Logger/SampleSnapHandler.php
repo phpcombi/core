@@ -102,7 +102,7 @@ class SampleSnapHandler extends AbstractHandler
     private function makeBasename(\Throwable $throwable): string {
         // 文件名结构
         $name = $throwable->getCode().'-'.
-            str_replace('\\', '_', get_class($throwable)).'-'.
+            strtr(get_class($throwable), '\\', '_').'-'.
             basename($throwable->getFile()).'-'.
             $throwable->getLine();
 
