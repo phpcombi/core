@@ -21,6 +21,7 @@ abstract class Struct
     implements core\Interfaces\Struct, \IteratorAggregate, \JsonSerializable
 {
     use Extensions\IteratorAggregate,
+        Extensions\Fillable,
         Extensions\ToArray,
         Extensions\JsonSerializable;
 

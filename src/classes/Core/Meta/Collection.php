@@ -19,6 +19,7 @@ abstract class Collection
         \IteratorAggregate, \JsonSerializable
 {
     use Extensions\IteratorAggregate,
+        Extensions\Fillable,
         Extensions\ToArray,
         Extensions\JsonSerializable;
 
