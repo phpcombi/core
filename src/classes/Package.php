@@ -235,7 +235,7 @@ abstract class Package extends core\Meta\Container {
      */
     public function set($key, $value): self {
         if (is_object($value) && $value instanceof core\Interfaces\LinkPackage) {
-            $value->linkPackage($this, $key);
+            $value->linkPackage($this);
         }
 
         $this->_data[$key] = $value;

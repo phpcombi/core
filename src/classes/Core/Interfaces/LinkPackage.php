@@ -13,5 +13,5 @@ use Combi\{
  * @author andares
  */
 interface LinkPackage {
-    public function linkPackage(\Combi\Package $package, string $name);
+    public function linkPackage(\Combi\Package $package);
 }
