@@ -12,7 +12,7 @@ use Combi\{
  *
  * @author andares
  */
-interface Struct extends Arrayable {
+interface Struct extends Arrayable, Confirmable {
     public static function defaults(bool $include_deprecated = false): array;
 
     public static function isKeyDeprecated($key): bool;

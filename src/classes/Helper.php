@@ -92,6 +92,11 @@ class Helper
         return new Entity($entity->value, $attributes);
     }
 
+    public static function confirm($object) {
+        return $object instanceof core\Interfaces\Confirmable
+            ? $object->confirm() : $object;
+    }
+
     public static function stringify($var): string {
         return str_replace(["\r\n", "\r", "\n"], ' ',
             json_encode((new NormalizerFormatter())->format($var),
