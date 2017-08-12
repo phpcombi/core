@@ -15,12 +15,14 @@
         "ext-redis": "*",
         "psr/container": "^1.0",
         "psr/log": "^1.0",
-        "nette/di": "^2.4",
         "nette/neon": "^2.4",
         "monolog/monolog": "^1.0"
     },
     "require-dev": {
         "nette/tester": "dev-master"
+    },
+    "suggest": {
+        "nette/di": "Allow use service by DI. (need 'nette/di: ^2.4')"
     },
     "autoload": {
         "psr-4": {"Combi\\": "src/classes/"},

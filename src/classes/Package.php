@@ -193,6 +193,13 @@ abstract class Package extends core\Meta\Container {
      */
     public function service($name) {
         if (!$this->_di) {
+            // 兼容未安装DI服务
+            if (!class_exists('Nette\\DI\\Container')) {
+                throw abort::badMethodCall('The method %name%@%class% not exist.')
+                    ->set('name',   $name)
+                    ->set('class',  static::class);
+            }
+
             // 检查缓存目录
             $tmp_dir    = $this->path('tmp',
                 'di'.DIRECTORY_SEPARATOR.core::env('scene'));
