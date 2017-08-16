@@ -16,10 +16,11 @@ use Nette\Neon\Neon;
  *
  * @author andares
  */
-class Config extends core\Meta\Container implements \ArrayAccess
+class Config extends core\Meta\Collection
+    implements \ArrayAccess
 {
     use core\Meta\Extensions\Overloaded,
-        core\Meta\Extensions\ArrayAccess;
+        core\Meta\Extensions\ArrayAccess {}
 
     protected $_name;
 

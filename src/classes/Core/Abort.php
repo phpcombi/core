@@ -26,7 +26,7 @@ class Abort extends \Exception implements \JsonSerializable
     public function __construct(\Throwable $e) {
         parent::__construct($e->getMessage(), $e->getCode(), $e);
 
-        $this->extra = new core\Meta\Container;
+        $this->extra = new core\Meta\Collection;
     }
 
 	public function __toString(): string {
@@ -58,7 +58,7 @@ class Abort extends \Exception implements \JsonSerializable
         return get_class($this->getPrevious());
     }
 
-    public function extra(): core\Meta\Container {
+    public function extra(): core\Meta\Collection {
         return $this->extra;
     }
 

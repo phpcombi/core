@@ -14,14 +14,13 @@ use Combi\{
  *
  * @author andares
  */
-abstract class Collection
+class Collection
     implements core\Interfaces\Collection,
-        \IteratorAggregate, \JsonSerializable
+        \IteratorAggregate
 {
     use Extensions\IteratorAggregate,
         Extensions\Fillable,
-        Extensions\ToArray,
-        Extensions\JsonSerializable;
+        Extensions\ToArray {}
 
     /**
      * 数据

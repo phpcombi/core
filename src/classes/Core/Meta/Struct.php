@@ -18,12 +18,11 @@ use Combi\{
  * @author andares
  */
 abstract class Struct
-    implements core\Interfaces\Struct, \IteratorAggregate, \JsonSerializable
+    implements core\Interfaces\Struct, \IteratorAggregate
 {
     use Extensions\IteratorAggregate,
         Extensions\Fillable,
-        Extensions\ToArray,
-        Extensions\JsonSerializable;
+        Extensions\ToArray {}
 
     /**
      * 基础数据结构
