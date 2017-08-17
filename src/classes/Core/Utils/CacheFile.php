@@ -46,14 +46,14 @@ class CacheFile
         if ($rebuild_check) {
             if ($rebuild_check($this)) {
                 if (!($file = $this->dir->write($this->filename, $maker()))) {
-                    throw abort::runtime("Cache file can not create");
+                    throw new \RuntimeException("Cache file can not create");
                 }
             } else {
                 $file = $this->dir->select($this->filename);
             }
         } else {
             if (!($file = $this->dir->writeWhenNotExists($this->filename, $maker))) {
-                throw abort::runtime("Cache file can not create");
+                throw new \RuntimeException("Cache file can not create");
             }
         }
         return include $file;

@@ -104,9 +104,8 @@ class Logger extends \Psr\Log\AbstractLogger
                     case 'formatter':
                         // 为了效率，这里在处理formatter之前检查配置并报错了
                         if (!isset($config['formatters'][$value])) {
-                            throw abort::runtime(
-                                'Logger formatter %name% is not defined')
-                                    ->set('name', $value);
+                            throw new \RuntimeException(
+                                "Logger formatter $value is not defined");
                         }
                         $formatter = $this->getFormatter($value,
                             $config['formatters']);

@@ -46,8 +46,7 @@ class Hook
 
     public function take(string $name, ...$args) {
         if (!isset($this->takers[$name])) {
-            throw abort::unexpectedValue("hook %name% is undefined")
-                ->set('name', $name);
+            throw new \UnexpectedValueException("hook $name is undefined");
         }
 
         $taker = $this->takers[$name];

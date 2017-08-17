@@ -50,8 +50,7 @@ class Core
         if (!isset($redis_instances[$name])) {
             $config = self::config('redis');
             if (!$config || !$config->$name) {
-                throw abort::runtime('redis config %name% is not exists.')
-                    ->set('name', $name);
+                throw new \RuntimeException("redis config $name is not exists");
             }
 
             $redis_instances[$name] = new \Redis();
@@ -115,13 +114,12 @@ class Core
         $pid = $package->pid();
 
         if (!$pid) {
-            throw abort::runtime('package id of %class% can not be null')
-                    ->set('class', get_class($package));
+            throw new \RuntimeException("package id of ".
+                get_class($package)." can not be null");
         }
         if (self::rt()->has($pid)) {
-            throw abort::runtime('%class package id %pid% is conflicted')
-                    ->set('class', get_class($package))
-                    ->set('pid', $pid);
+            throw new \RuntimeException(get_class($package).
+                " class package id $pid is conflicted");
         }
         self::rt()->set($pid, $package);
 

@@ -47,14 +47,13 @@ abstract class Action extends core\Meta\Container
 
         // action栈判断
         if ($stack[0] != $this) {
-            throw abort::runtime(
-                'Action [%id%] stack call sequence error. should be [%id2%]')
-                    ->set('id',     $this->getActionId())
-                    ->set('id2',    $stack[0]->getActionId());
+            throw new \RuntimeException(
+                "Action ".$this->getActionId().
+                    " stack call sequence error. should be ".$stack[0]->getActionId());
         }
         if ($this->_action_done) {
-            throw abort::runtime('Action [%id%] is done, can not run again')
-                ->set('id', $this->getActionId());
+            throw new \RuntimeException("Action ".
+                $this->getActionId()." is done, can not run again");
         }
 
         // 业务逻辑
@@ -76,10 +75,9 @@ abstract class Action extends core\Meta\Container
         $this->_action_done = true;
         $action = $stack->pop();
         if ($action != $this) {
-            throw abort::runtime(
-                'Action [%id%] stack pop sequence error. should be [%id2%]')
-                    ->set('id',     $this->getActionId())
-                    ->set('id2',    $action->getActionId());
+            throw new \RuntimeException(
+                "Action ".$this->getActionId().
+                    " stack pop sequence error. should be ".$action->getActionId());
         }
 
         return $result;

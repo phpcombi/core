@@ -39,7 +39,6 @@ trait LoggerInject
     }
 
     protected function _callCustom(string $name, array $arguments) {
-        throw abort::badMethodCall('method "%method%()" not exist.')
-            ->set('method', $name);
+        throw new BadMethodCallException("method $name() not exist");
     }
 }

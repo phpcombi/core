@@ -195,9 +195,8 @@ abstract class Package extends core\Meta\Container {
         if (!$this->_di) {
             // 兼容未安装DI服务
             if (!class_exists('Nette\\DI\\Container')) {
-                throw abort::badMethodCall('The method %name%@%class% not exist.')
-                    ->set('name',   $name)
-                    ->set('class',  static::class);
+                throw new \BadMethodCallException(
+                    "The method $name@".static::class." not exist");
             }
 
             // 检查缓存目录

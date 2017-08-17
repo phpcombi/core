@@ -78,9 +78,8 @@ class SampleSnapHandler extends AbstractHandler
 
         if (!is_dir($dir)) {
             if (!mkdir($dir, 0755, true)) {
-                throw abort::unexpectedValue(
-                    'There is no existing directory at "%dir%"')
-                        ->set('dir', $dir);
+                throw new \UnexpectedValueException(
+                    "There is no existing directory at $dir");
             }
         }
 
