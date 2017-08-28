@@ -10,4 +10,4 @@ use Combi\{
 
 // 创建core包
 core::register(Package::instance(__DIR__),
-    'dependencies', 'hooks', 'helpers');
+    'dependencies', 'helpers', 'hooks');

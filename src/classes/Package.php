@@ -18,7 +18,7 @@ use Nette\DI;
  */
 abstract class Package extends core\Meta\Container {
     use core\Traits\Singleton,
-        core\Meta\Extensions\Overloaded;
+        core\Meta\Extensions\Overloaded {}
 
     /**
      * @var string

@@ -171,7 +171,7 @@ class Core
     }
 
     public static function instance(): Core\Package {
-        return Core\Package::instance('core');
+        return Core\Package::instance();
     }
 
 }
