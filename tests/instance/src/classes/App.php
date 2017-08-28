@@ -10,8 +10,8 @@ class App
 {
     use core\Traits\StaticAgent;
 
-    public static function instance(): core\Package {
-        return core\Package::instance();
+    public static function instance(): App\Package {
+        return App\Package::instance();
     }
 
 }
