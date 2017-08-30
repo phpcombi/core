@@ -45,6 +45,19 @@ core::hook()->attach(HOOK_TICK, function() {
     core::instance()->now = core::time()->now();
 });
 
+// action error
+core::hook()->attach(HOOK_ACTION_BROKEN,
+    function(core\Action $action, \Throwable $e)
+{
+    $config = core::config('settings')->debug['action_error'];
+    if ($config['show']) {
+        helper::du("Action Id: ".$action->getActionId(), 'Action Error Raised');
+        core\Trace\Catcher::instance()->exceptionHandler($e, false);
+    }
+    if ($config['halt']) {
+        die(1);
+    }
+});
 
 // slowlog
 if ($slowlog_limit = core::config('settings')->slowlog['limit']) {

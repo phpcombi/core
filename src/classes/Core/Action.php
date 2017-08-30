@@ -66,8 +66,7 @@ abstract class Action extends core\Meta\Container
 
             core::hook()->take(\Combi\HOOK_ACTION_END, $this, $result);
         } catch (\Throwable $e) {
-            // TODO 暂时未对错误做处理
-            throw $e;
+            // die('xxxxxxxxxxxxxx');
             core::hook()->take(\Combi\HOOK_ACTION_BROKEN, $this, $e);
         }
 
