@@ -17,7 +17,7 @@ prod < debug:
 
 # 慢请求日志
 slowlog:
-    limit: 30           # 慢查询日志限时，单位毫秒
+    limit: 20           # 慢查询日志限时，单位毫秒
 
 # 角色验证类
 auth: Combi\Core\Auth()

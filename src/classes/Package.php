@@ -90,7 +90,9 @@ abstract class Package extends core\Meta\Container {
             if (core::main()->pid() != $this->pid()) {
                 $dictionary = new core\Dictionary(
                     $name,
-                    core::main()->dir('src', 'i18n.'.$locale.'.'.$this->pid()),
+                    core::main()->dir('src', 'i18n'.
+                        DIRECTORY_SEPARATOR.$locale.
+                        DIRECTORY_SEPARATOR.$this->pid()),
                     core::env('scene'),
                     $tmp_dir);
             }
@@ -101,7 +103,7 @@ abstract class Package extends core\Meta\Container {
             } else {
                 $this->_dictionaries[$name] = new core\Dictionary(
                     $name,
-                    $this->dir('src', 'i18n.'.$locale),
+                    $this->dir('src', 'i18n'.DIRECTORY_SEPARATOR.$locale),
                     core::env('scene'),
                     $tmp_dir);
             }
@@ -127,10 +129,11 @@ abstract class Package extends core\Meta\Container {
             if (core::main()->pid() != $this->pid()) {
                 $config = new core\Config(
                     $name,
-                    core::main()->dir('src', 'config.'.$this->pid()),
+                    core::main()->dir('src', 'config'.
+                        DIRECTORY_SEPARATOR.$this->pid()),
                     core::env('scene'),
                     $tmp_dir);
-            }
+                }
 
             // 尝试访问main package的覆盖配置
             if (isset($config) && $config->raw()) {

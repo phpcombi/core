@@ -66,7 +66,6 @@ abstract class Action extends core\Meta\Container
 
             core::hook()->take(\Combi\HOOK_ACTION_END, $this, $result);
         } catch (\Throwable $e) {
-            // die('xxxxxxxxxxxxxx');
             core::hook()->take(\Combi\HOOK_ACTION_BROKEN, $this, $e);
         }
 
