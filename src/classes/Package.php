@@ -83,18 +83,14 @@ abstract class Package extends core\Meta\Container {
 
         // 取字典对象
         if (!isset($this->_dictionaries[$locale][$name])) {
-            $tmp_dir = $this->dir('tmp', 'i18n'.
-            DIRECTORY_SEPARATOR.$locale.
-            DIRECTORY_SEPARATOR.$this->pid());
+            $tmp_dir = $this->dir('tmp', 'i18n.'.$locale.'.'.$this->pid());
 
             // 继承 main package 覆盖
             // 仅在非main package时处理
             if (core::main()->pid() != $this->pid()) {
                 $dictionary = new core\Dictionary(
                     $name,
-                    core::main()->dir('src', 'i18n'.
-                        DIRECTORY_SEPARATOR.$locale.
-                        DIRECTORY_SEPARATOR.$this->pid()),
+                    core::main()->dir('src', 'i18n.'.$locale.'.'.$this->pid()),
                     core::env('scene'),
                     $tmp_dir);
             }
@@ -105,7 +101,7 @@ abstract class Package extends core\Meta\Container {
             } else {
                 $this->_dictionaries[$name] = new core\Dictionary(
                     $name,
-                    $this->dir('src', 'i18n'.DIRECTORY_SEPARATOR.$locale),
+                    $this->dir('src', 'i18n.'.$locale),
                     core::env('scene'),
                     $tmp_dir);
             }
@@ -124,15 +120,14 @@ abstract class Package extends core\Meta\Container {
      */
     public function config(string $name): core\Config {
         if (!isset($this->_configs[$name])) {
-            $tmp_dir = $this->dir('tmp', 'config'.DIRECTORY_SEPARATOR.$this->pid());
+            $tmp_dir = $this->dir('tmp', 'config.'.$this->pid());
 
             // 继承 main package 覆盖
             // 仅在非main package时处理
             if (core::main()->pid() != $this->pid()) {
                 $config = new core\Config(
                     $name,
-                    core::main()->dir('src', 'config'.
-                        DIRECTORY_SEPARATOR.$this->pid()),
+                    core::main()->dir('src', 'config.'.$this->pid()),
                     core::env('scene'),
                     $tmp_dir);
             }
@@ -200,8 +195,7 @@ abstract class Package extends core\Meta\Container {
             }
 
             // 检查缓存目录
-            $tmp_dir    = $this->path('tmp',
-                'di'.DIRECTORY_SEPARATOR.core::env('scene'));
+            $tmp_dir    = $this->path('tmp', 'di.'.core::env('scene').'.cache');
 
             // 载入di管理器
             $loader = new core\NetteFixer\DI\ContainerLoader($tmp_dir,
