@@ -31,7 +31,10 @@ helper::register(function($message, array $context = []): void {
     helper::logger()->info($message, $context);
 }, 'log');
 
+helper::register(function($message, array $context = []): void {
+    helper::logger('debug')->debug($message, $context);
+}, 'debug');
+
 helper::register(function(string $name = 'default'): float {
     return core\Utils\Debug::instance()->timer($name);
 }, 'timer');
-

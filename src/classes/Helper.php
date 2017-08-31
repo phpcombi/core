@@ -16,11 +16,14 @@ class Helper
     private static $functions = [];
 
     public static function __callStatic(string $name, array $arguments) {
+        if (isset(self::$functions[$name])) {
+            $func = self::$functions[$name];
+            return $func(...$arguments);
+        }
         if (isset(core\Logger::LEVELS[$name])) {
             return self::logger()->$name(...$arguments);
         }
-        $func = self::$functions[$name];
-        return $func(...$arguments);
+        throw new \UnexpectedValueException("Try to call an undefined helper function $name.");
     }
 
     /**
@@ -29,7 +32,7 @@ class Helper
      * @param array $names
      * @return void
      */
-    public static function register(callable $func, ...$names): void {
+    public static function register(?callable $func, ...$names): void {
         foreach ($names as $name) {
             self::$functions[$name] = $func;
         }
