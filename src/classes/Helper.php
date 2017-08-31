@@ -66,7 +66,7 @@ class Helper
         return substr($class, 0, strrpos($class, '\\'));
     }
 
-    public static function make($class, array $params = null) {
+    public static function make($class, array $params = []) {
         if ($class instanceof Entity) {
             $params = $class->attributes;
             $class  = $class->value;
@@ -74,7 +74,7 @@ class Helper
         return new $class(...$params);
     }
 
-    public static function instance($class, array $params = null) {
+    public static function instance($class, array $params = []) {
         if ($class instanceof Entity) {
             $params = $class->attributes;
             $class  = $class->value;
