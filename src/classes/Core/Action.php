@@ -15,8 +15,10 @@ use Combi\{
  * @author andares
  */
 abstract class Action extends core\Meta\Container
+    implements core\Interfaces\LinkPackage
 {
-    use core\Meta\Extensions\Overloaded;
+    use core\Meta\Extensions\Overloaded,
+        core\Traits\LinkPackage {}
 
     private static $_action_stack = null;
 
