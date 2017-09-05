@@ -22,7 +22,6 @@
         "nette/tester": "dev-master"
     },
     "suggest": {
-        "nette/di": "Allow use service by DI. (need 'nette/di: ^2.4')",
         "ext-gmp": "Make gen id with helper faster"
     },
     "autoload": {

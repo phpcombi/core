@@ -12,7 +12,7 @@ use Nette\DI;
 
 /**
  * Description of Package
- * container/service + config
+ * container + config
  *
  * @author andares
  */
@@ -174,43 +174,6 @@ abstract class Package extends core\Meta\Container {
             core::env('path')[$category] ?? '';
 
         return $path ? ($prefix.DIRECTORY_SEPARATOR.$path) : $prefix;
-    }
-
-    /**
-     * @param string $name
-     * @param array $arguments
-     * @return class
-     */
-    public function __call(string $name, array $arguments) {
-        return $this->service($name);
-    }
-
-    /**
-     * @param string $name
-     * @return class
-     */
-    public function service($name) {
-        if (!$this->_di) {
-            // 兼容未安装DI服务
-            if (!class_exists('Nette\\DI\\Container')) {
-                throw new \BadMethodCallException(
-                    "The method $name@".static::class." not exist");
-            }
-
-            // 检查缓存目录
-            $tmp_dir    = $this->path('tmp', 'di.'.core::env('scene').'.cache');
-
-            // 载入di管理器
-            $loader = new core\NetteFixer\DI\ContainerLoader($tmp_dir,
-                !core::isProd());
-            $class = $loader->load(function($compiler) {
-                $config = $this->config('services')->raw();
-                $compiler->addConfig(
-                    (new DI\Config\Adapters\NeonAdapter)->process($config));
-            }, $this->pid());
-            $this->_di = new $class;
-        }
-        return $this->_di->getService($name);
     }
 
     /**
