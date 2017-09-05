@@ -6,10 +6,21 @@ use Combi\{
     Core as core
 };
 
-helper::register(function(int $random_length = 3): string {
+helper::register(function_exists('gmp_init')
+    ? function(int $random_length = 6): string
+{
     return (new core\Utils\IdGenerator())
-        ->random_hex($random_length)
+        ->randByLength($random_length)
         ->orderable()
+        ->gmp_strval()
+        ->get();
+}
+    : function(int $random_length = 6): string
+{
+    return (new core\Utils\IdGenerator())
+        ->randByLength($random_length)
+        ->orderable()
+        ->to62()
         ->get();
 }, 'gen_id');
 
