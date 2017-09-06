@@ -57,7 +57,6 @@ abstract class Package extends core\Meta\Container {
      */
     public function __construct(string $src_path) {
         $this->_path['src'] = $src_path;
-        $this->init();
     }
 
     /**
