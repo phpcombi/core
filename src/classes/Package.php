@@ -60,8 +60,6 @@ abstract class Package extends core\Meta\Container {
         $this->init();
     }
 
-    protected function init(): void {}
-
     /**
      *
      * @return string
