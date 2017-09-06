@@ -14,4 +14,5 @@ use Combi\{
  */
 interface Instancable {
     public static function instance();
+    public static function instances(): array;
 }

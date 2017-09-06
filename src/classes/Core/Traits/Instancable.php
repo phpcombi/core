@@ -14,4 +14,8 @@ trait Instancable {
             (static::$_instances[$id] = new static($id, ...$args));
         return $instance;
     }
+
+    public static function instances(): array {
+        return static::$_instances;
+    }
 }
