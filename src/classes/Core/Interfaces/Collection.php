@@ -12,7 +12,9 @@ use Combi\{
  *
  * @author andares
  */
-interface Collection extends Arrayable, \Countable {
+interface Collection extends Arrayable, \Countable,
+    \Psr\Container\ContainerInterface
+{
     public function set($key, $value);
 
     public function get($key);

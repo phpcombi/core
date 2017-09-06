@@ -8,6 +8,7 @@ use Combi\{
     Core as core
 };
 
+use \Psr\Container\ContainerInterface;
 
 /**
  * StaticAgent
@@ -20,6 +21,10 @@ trait StaticAgent
     public static function __callStatic(string $name, array $arguments) {
         $instance = static::instance();
 
+        if ($instance instanceof ContainerInterface) {
+            return $instance->has($name)
+                ? $instance->$name : $instance->$name(...$arguments);
+        }
         return \method_exists($instance, $name)
             ? $instance->$name(...$arguments) : $instance->$name;
     }

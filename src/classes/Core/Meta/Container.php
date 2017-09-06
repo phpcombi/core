@@ -8,6 +8,6 @@ namespace Combi\Core\Meta;
  *
  * @author andares
  */
-class Container extends Collection implements \Psr\Container\ContainerInterface
+class Container extends Collection
 {
 }

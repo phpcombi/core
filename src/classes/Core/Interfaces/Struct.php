@@ -12,7 +12,9 @@ use Combi\{
  *
  * @author andares
  */
-interface Struct extends Arrayable, Confirmable {
+interface Struct extends Arrayable, Confirmable,
+    \Psr\Container\ContainerInterface
+ {
     public static function defaults(bool $include_deprecated = false): array;
 
     public static function isKeyDeprecated($key): bool;
