@@ -4,7 +4,8 @@ namespace Combi\Core\Meta;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
 
@@ -18,7 +19,7 @@ use Combi\{
  * @author andares
  */
 abstract class Struct
-    implements core\Interfaces\Struct, \IteratorAggregate
+    implements Core\Interfaces\Struct, \IteratorAggregate
 {
     use Extensions\IteratorAggregate,
         Extensions\Fillable,

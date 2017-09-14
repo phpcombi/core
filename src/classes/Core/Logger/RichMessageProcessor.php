@@ -5,7 +5,8 @@ namespace Combi\Core\Logger;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
 use Monolog\Logger as MonoLogger;
@@ -15,7 +16,7 @@ use Psr\Log\LogLevel as Level;
  */
 class RichMessageProcessor
 {
-    use core\Traits\Singleton;
+    use Core\Traits\Singleton;
 
     private $autolevel;
 
@@ -48,7 +49,7 @@ class RichMessageProcessor
         if (is_object($message)) {
             if ($message instanceof \Throwable) {
                 $raw = null;
-                if ($message instanceof core\Abort) {
+                if ($message instanceof Core\Abort) {
                     $abort      = $message;
                     $throwable  = $abort->getPrevious();
                     $message    = $abort->message();
@@ -111,7 +112,7 @@ class RichMessageProcessor
         $extra = $record['extra'];
         $abort_level = isset($extra['abort'])
             ? $extra['abort']->get('__level') : null;
-        if ($abort_level && isset(core\Logger::LEVELS[$abort_level]))
+        if ($abort_level && isset(Core\Logger::LEVELS[$abort_level]))
         {
             $this->setLevel($abort_level, $record);
 
@@ -133,7 +134,7 @@ class RichMessageProcessor
     }
 
     private function setLevel(string $level, array &$record) {
-        $record['level'] = core\Logger::LEVELS[$level];
+        $record['level'] = Core\Logger::LEVELS[$level];
         $record['level_name'] = MonoLogger::getLevelName($record['level']);
     }
 }

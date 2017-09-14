@@ -5,7 +5,8 @@ namespace Combi\Core\Meta\Extensions;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
 /**
@@ -18,6 +19,6 @@ trait ToBin {
      * @return string
      */
     public function toBin(): string {
-        return core\Utils\Pack::encode('msgpack', $this->toArray());
+        return Core\Utils\Pack::encode('msgpack', $this->toArray());
     }
 }

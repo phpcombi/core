@@ -5,7 +5,7 @@ namespace Combi\Core;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Runtime as rt
 };
 
 abstract class Middleware

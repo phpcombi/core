@@ -5,7 +5,7 @@ namespace Combi\Core;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Runtime as rt
 };
 
 /**
@@ -14,7 +14,7 @@ use Combi\{
  *
  * @author andares
  */
-class Auth implements core\Interfaces\Instancable
+class Auth implements Interfaces\Instancable
 {
 
     protected $id = null;

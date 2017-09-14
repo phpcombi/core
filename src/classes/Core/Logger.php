@@ -5,7 +5,7 @@ namespace Combi\Core;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Runtime as rt
 };
 
 use Psr\Log\LogLevel;
@@ -94,7 +94,7 @@ class Logger extends \Psr\Log\AbstractLogger
                 switch ($name) {
                     case 'file':
                         $value[0] != DIRECTORY_SEPARATOR
-                            && $value = core::path('logs', $value);
+                            && $value = rt::core()->path('logs', $value);
                         break;
 
                     case 'level':

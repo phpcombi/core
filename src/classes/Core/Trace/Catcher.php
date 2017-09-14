@@ -5,7 +5,8 @@ namespace Combi\Core\Trace;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
 /**
@@ -13,7 +14,7 @@ use Combi\{
  */
 class Catcher
 {
-    use core\Traits\Singleton;
+    use Core\Traits\Singleton;
 
     /**
      * @var array
@@ -58,7 +59,7 @@ class Catcher
 
         // 是否输出
         // 如果是非生产环境条件允许打印输出
-        if (!core::isProd() && $this->isPrintable($throwable)) {
+        if (!rt::isProd() && $this->isPrintable($throwable)) {
             $this->printThrown($throwable);
         }
 

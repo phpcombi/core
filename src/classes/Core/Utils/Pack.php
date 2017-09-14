@@ -5,7 +5,8 @@ namespace Combi\Core\Utils;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
 /**
@@ -42,9 +43,9 @@ class Pack {
     /**
      *
      * @param string $name
-     * @return core\Interfaces\Encoder
+     * @return Core\Interfaces\Encoder
      */
-    public static function getEncoder(string $name): core\Interfaces\Encoder {
+    public static function getEncoder(string $name): Core\Interfaces\Encoder {
         if (!isset(static::$encoders[$name])) {
             $class = static::class.'\\'.ucfirst($name);
             static::$encoders[$name] = new $class();

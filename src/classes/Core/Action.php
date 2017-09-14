@@ -5,7 +5,7 @@ namespace Combi\Core;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Runtime as rt
 };
 
 /**
@@ -14,11 +14,11 @@ use Combi\{
  *
  * @author andares
  */
-abstract class Action extends core\Meta\Container
-    implements core\Interfaces\LinkPackage
+abstract class Action extends Meta\Container
+    implements Interfaces\LinkPackage
 {
-    use core\Meta\Extensions\Overloaded,
-        core\Traits\LinkPackage {}
+    use Meta\Extensions\Overloaded,
+        Traits\LinkPackage {}
 
     private static $_action_stack = null;
 
@@ -61,14 +61,14 @@ abstract class Action extends core\Meta\Container
         // 业务逻辑
         $result = null;
         try {
-            core::hook()->take(\Combi\HOOK_TICK);
-            core::hook()->take(\Combi\HOOK_ACTION_BEGIN, $this);
+            rt::core()->hook()->take(\Combi\HOOK_TICK);
+            rt::core()->hook()->take(\Combi\HOOK_ACTION_BEGIN, $this);
 
             $result = $this->handle(...$arguments);
 
-            core::hook()->take(\Combi\HOOK_ACTION_END, $this, $result);
+            rt::core()->hook()->take(\Combi\HOOK_ACTION_END, $this, $result);
         } catch (\Throwable $e) {
-            core::hook()->take(\Combi\HOOK_ACTION_BROKEN, $this, $e);
+            rt::core()->hook()->take(\Combi\HOOK_ACTION_BROKEN, $this, $e);
         }
 
         // 关闭action并出栈
@@ -99,7 +99,7 @@ abstract class Action extends core\Meta\Container
     }
 
     protected function genAuth(): Auth {
-        $provider = core::config('settings')->auth;
+        $provider = rt::core()->config('settings')->auth;
         if ($this->_action_previous) {
             $provider->attributes[] = $this->_action_previous->getAuth();
         }

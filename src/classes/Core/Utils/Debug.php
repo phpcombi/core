@@ -5,12 +5,13 @@ namespace Combi\Core\Utils;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
 class Debug
 {
-    use core\Traits\Singleton;
+    use Core\Traits\Singleton;
 
     /**
      * @var array
@@ -20,17 +21,17 @@ class Debug
     public function timer(string $name = 'default'): float
     {
         if (!isset($this->timer[$name])) {
-            $this->timer[$name] = core::time()->micro();
+            $this->timer[$name] = rt::core()->time->micro();
             return 0;
         } else {
-            $duration = core::time()->micro() - $this->timer[$name];
+            $duration = rt::core()->time->micro() - $this->timer[$name];
             unset($this->timer[$name]);
             return $duration;
         }
     }
 
     public function dump($var, $title = null): self {
-        if (core::isProd()) {
+        if (rt::isProd()) {
             return $this;
         }
 

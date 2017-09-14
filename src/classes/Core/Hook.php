@@ -5,12 +5,12 @@ namespace Combi\Core;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Runtime as rt
 };
 
 class Hook
 {
-    use core\Traits\Singleton;
+    use Traits\Singleton;
 
     /**
      *

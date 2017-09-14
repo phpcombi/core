@@ -4,7 +4,8 @@ namespace Combi\Core\Meta\Extensions;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
 
@@ -22,10 +23,10 @@ trait Serializable {
     /**
      * 获取编解码器
      *
-     * @return core\Interfaces\Encoder
+     * @return Core\Interfaces\Encoder
      */
-    protected static function getEncoder(): core\Interfaces\Encoder {
-        return core\Utils\Pack::getEncoder('msgpack');
+    protected static function getEncoder(): Core\Interfaces\Encoder {
+        return Core\Utils\Pack::getEncoder('msgpack');
     }
 
     /**

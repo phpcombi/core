@@ -5,7 +5,8 @@ namespace Combi\Core\Logger;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
 use Monolog\Logger as MonoLogger;
@@ -56,14 +57,14 @@ class SampleSnapHandler extends AbstractHandler
         $throwable = $record['extra']['abort']
             ?? $record['extra']['throwable'];
 
-        $sample = new core\Trace\ThrowableSample($throwable, $record['context']);
+        $sample = new Core\Trace\ThrowableSample($throwable, $record['context']);
         @\file_put_contents($filename, $sample->render(), \LOCK_EX);
     }
 
     private function getFilename(array $extra,
         \DateTimeInterface $datetime): string
     {
-        $dir = core::path('logs', $this->base_dir).DIRECTORY_SEPARATOR.
+        $dir = rt::core()->path('logs', $this->base_dir).DIRECTORY_SEPARATOR.
             $datetime->format($this->date_format);
         $this->createDir($dir);
 

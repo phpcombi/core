@@ -5,7 +5,7 @@ namespace Combi;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Runtime as rt
 };
 
 use Nette\DI;
@@ -16,9 +16,9 @@ use Nette\DI;
  *
  * @author andares
  */
-abstract class Package extends core\Meta\Container {
-    use core\Traits\Singleton,
-        core\Meta\Extensions\Overloaded {}
+abstract class Package extends Core\Meta\Container {
+    use Core\Traits\Singleton,
+        Core\Meta\Extensions\Overloaded {}
 
     /**
      * @var string
@@ -36,18 +36,18 @@ abstract class Package extends core\Meta\Container {
     protected $_di = null;
 
     /**
-     * @var core\Dictionary[]
+     * @var Core\Dictionary[]
      */
     protected $_dictionaries = [];
 
     /**
-     * @var core\Config[]
+     * @var Core\Config[]
      */
     protected $_configs = [];
 
     /**
      *
-     * @var core\Logger[]
+     * @var Core\Logger[]
      */
     protected $_loggers = [];
 
@@ -73,13 +73,13 @@ abstract class Package extends core\Meta\Container {
      * @return Resource\Directory
      */
     public function dir(string $category,
-        ?string $path = null): core\Resource\Directory
+        ?string $path = null): Core\Resource\Directory
     {
-        return core\Resource\Directory::instance($this->path($category, $path));
+        return Core\Resource\Directory::instance($this->path($category, $path));
     }
 
     public function dict(string $name, $key = null, ...$values) {
-        $locale = core::config('settings')->locale;
+        $locale = rt::core()->config('settings')->locale;
 
         // 取字典对象
         if (!isset($this->_dictionaries[$locale][$name])) {
@@ -87,13 +87,13 @@ abstract class Package extends core\Meta\Container {
 
             // 继承 main package 覆盖
             // 仅在非main package时处理
-            if (core::main()->pid() != $this->pid()) {
-                $dictionary = new core\Dictionary(
+            if (rt::main()->pid() != $this->pid()) {
+                $dictionary = new Core\Dictionary(
                     $name,
-                    core::main()->dir('src', 'i18n'.
+                    rt::main()->dir('src', 'i18n'.
                         DIRECTORY_SEPARATOR.$locale.
                         DIRECTORY_SEPARATOR.$this->pid()),
-                    core::env('scene'),
+                    rt::env('scene'),
                     $tmp_dir);
             }
 
@@ -101,10 +101,10 @@ abstract class Package extends core\Meta\Container {
             if (isset($dictionary) && $dictionary->raw()) {
                 $this->_dictionaries[$name] = $dictionary;
             } else {
-                $this->_dictionaries[$name] = new core\Dictionary(
+                $this->_dictionaries[$name] = new Core\Dictionary(
                     $name,
                     $this->dir('src', 'i18n'.DIRECTORY_SEPARATOR.$locale),
-                    core::env('scene'),
+                    rt::env('scene'),
                     $tmp_dir);
             }
         }
@@ -118,20 +118,20 @@ abstract class Package extends core\Meta\Container {
 
     /**
      * @param string $name
-     * @return core\Config
+     * @return Core\Config
      */
-    public function config(string $name): core\Config {
+    public function config(string $name): Core\Config {
         if (!isset($this->_configs[$name])) {
             $tmp_dir = $this->dir('tmp', 'config.'.$this->pid());
 
             // 继承 main package 覆盖
             // 仅在非main package时处理
-            if (core::main()->pid() != $this->pid()) {
-                $config = new core\Config(
+            if (rt::main()->pid() != $this->pid()) {
+                $config = new Core\Config(
                     $name,
-                    core::main()->dir('src', 'config'.
+                    rt::main()->dir('src', 'config'.
                         DIRECTORY_SEPARATOR.$this->pid()),
-                    core::env('scene'),
+                    rt::env('scene'),
                     $tmp_dir);
                 }
 
@@ -139,10 +139,10 @@ abstract class Package extends core\Meta\Container {
             if (isset($config) && $config->raw()) {
                 $this->_configs[$name] = $config;
             } else {
-                $this->_configs[$name] = new core\Config(
+                $this->_configs[$name] = new Core\Config(
                     $name,
                     $this->dir('src', 'config'),
-                    core::env('scene'),
+                    rt::env('scene'),
                     $tmp_dir);
             }
         }
@@ -155,10 +155,10 @@ abstract class Package extends core\Meta\Container {
             if ($config) {
                 // 包有设logger.neon但是未设对应的channel，则该channel获得一个NullLogger
                 $this->_loggers[$channel] =
-                    new core\Logger($channel, $config->$channel);
+                    new Core\Logger($channel, $config->$channel);
             } else {
                 // 包未设logger.neon配置，则使用core包的日志
-                $this->_loggers[$channel] = core::logger($channel);
+                $this->_loggers[$channel] = rt::core()->logger($channel);
             }
         }
         return $this->_loggers[$channel];
@@ -171,7 +171,7 @@ abstract class Package extends core\Meta\Container {
      */
     public function path(string $category, ?string $path = null): string {
         $prefix = $this->_path[$category] ??
-            core::env('path')[$category] ?? '';
+            rt::env('path')[$category] ?? '';
 
         return $path ? ($prefix.DIRECTORY_SEPARATOR.$path) : $prefix;
     }
@@ -200,7 +200,7 @@ abstract class Package extends core\Meta\Container {
      * @return self
      */
     public function set($key, $value): self {
-        if (is_object($value) && $value instanceof core\Interfaces\LinkPackage) {
+        if (is_object($value) && $value instanceof Core\Interfaces\LinkPackage) {
             $value->linkPackage($this);
         }
 

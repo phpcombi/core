@@ -5,9 +5,9 @@ namespace Combi\Core;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Runtime as rt
 };
 
 // 创建core包
-core::register(Package::instance(__DIR__),
+rt::register(Package::instance(__DIR__),
     'dependencies', 'helpers', 'hooks');

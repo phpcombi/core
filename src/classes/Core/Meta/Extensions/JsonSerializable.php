@@ -6,7 +6,8 @@ namespace Combi\Core\Meta\Extensions;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
 /**
@@ -19,7 +20,7 @@ trait JsonSerializable {
      * @return string
      */
     public function __toString(): string {
-        return core\Utils\Pack::encode('json', $this->toArray());
+        return Core\Utils\Pack::encode('json', $this->toArray());
     }
 
     /**

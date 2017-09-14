@@ -4,7 +4,7 @@ namespace Combi\Core;
 
 use Combi\{
     Helper as helper,
-    Core as core
+    Runtime as rt
 };
 
 /**
@@ -19,14 +19,14 @@ class Abort extends \Exception implements \JsonSerializable
 {
     /**
      * 数据
-     * @var core\Meta\Container
+     * @var Meta\Container
      */
     protected $extra;
 
     public function __construct(\Throwable $e) {
         parent::__construct($e->getMessage(), $e->getCode(), $e);
 
-        $this->extra = new core\Meta\Collection;
+        $this->extra = new Meta\Collection;
     }
 
 	public function __toString(): string {
@@ -58,7 +58,7 @@ class Abort extends \Exception implements \JsonSerializable
         return get_class($this->getPrevious());
     }
 
-    public function extra(): core\Meta\Collection {
+    public function extra(): \Meta\Collection {
         return $this->extra;
     }
 

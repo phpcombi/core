@@ -3,13 +3,14 @@
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
 helper::register(function_exists('gmp_init')
     ? function(int $random_length = 6): string
 {
-    return (new core\Utils\IdGenerator())
+    return (new Core\Utils\IdGenerator())
         ->randByLength($random_length)
         ->orderable()
         ->gmp_strval()
@@ -17,7 +18,7 @@ helper::register(function_exists('gmp_init')
 }
     : function(int $random_length = 6): string
 {
-    return (new core\Utils\IdGenerator())
+    return (new Core\Utils\IdGenerator())
         ->randByLength($random_length)
         ->orderable()
         ->to62()
@@ -30,7 +31,7 @@ helper::register(function($var, $title = null): void {
     $count++;
     !$title && $title = "Dump Count: $count";
 
-    core\Utils\Debug::instance()->dump($var, $title);
+    Core\Utils\Debug::instance()->dump($var, $title);
 }, 'du', 'dt');
 
 helper::register(function($var, $title = null): void {
@@ -47,5 +48,5 @@ helper::register(function($message, array $context = []): void {
 }, 'debug');
 
 helper::register(function(string $name = 'default'): float {
-    return core\Utils\Debug::instance()->timer($name);
+    return Core\Utils\Debug::instance()->timer($name);
 }, 'timer');

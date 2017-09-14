@@ -5,7 +5,8 @@ namespace Combi\Core\Meta;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
 
@@ -15,7 +16,7 @@ use Combi\{
  * @author andares
  */
 class Collection
-    implements core\Interfaces\Collection,
+    implements Core\Interfaces\Collection,
         \IteratorAggregate
 {
     use Extensions\IteratorAggregate,

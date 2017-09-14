@@ -6,7 +6,8 @@ namespace Combi\Core\Utils\Pack;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
 
@@ -15,7 +16,7 @@ use Combi\{
  *
  * @author andares
  */
-class Json implements core\Interfaces\Encoder {
+class Json implements Core\Interfaces\Encoder {
     private $options = 0;
     private $depth = 512;
     private $assoc = true;

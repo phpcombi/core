@@ -5,7 +5,8 @@ namespace Combi\Core\Auth;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
 /**
@@ -13,6 +14,6 @@ use Combi\{
  *
  * @author andares
  */
-class Session implements core\Interfaces\Instancable
+class Session implements Core\Interfaces\Instancable
 {
 }

@@ -5,7 +5,7 @@ namespace Combi;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Runtime as rt
 };
 
 use Nette\Neon\Entity;
@@ -20,7 +20,7 @@ class Helper
             $func = self::$functions[$name];
             return $func(...$arguments);
         }
-        if (isset(core\Logger::LEVELS[$name])) {
+        if (isset(Core\Logger::LEVELS[$name])) {
             return self::logger()->$name(...$arguments);
         }
         throw new \UnexpectedValueException("Try to call an undefined helper function $name.");
@@ -38,8 +38,8 @@ class Helper
         }
     }
 
-    public static function logger(string $channel = 'combi'): core\Logger {
-        return core::logger($channel);
+    public static function logger(string $channel = 'combi'): Core\Logger {
+        return rt::core()->logger($channel);
     }
 
     public static function padding(string $template, array $vars): ?string {
@@ -96,7 +96,7 @@ class Helper
     }
 
     public static function confirm($object) {
-        return $object instanceof core\Interfaces\Confirmable
+        return $object instanceof Core\Interfaces\Confirmable
             ? $object->confirm() : $object;
     }
 

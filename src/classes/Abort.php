@@ -4,12 +4,12 @@ namespace Combi;
 
 use Combi\{
     Helper as helper,
-    Core as core
+    Runtime as rt
 };
 
 class Abort
 {
-    use core\Traits\With;
+    use Core\Traits\With;
 
     protected static function pretreat(string $name, array $arguments): array {
         return [helper::make(ucfirst($name).'Exception', $arguments)];

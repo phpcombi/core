@@ -5,10 +5,11 @@ namespace Combi;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
-$hook = core::hook();
+$hook = rt::core()->hook();
 
 // add hook
 /**
@@ -41,18 +42,18 @@ $hook
 // attach hook taker
 
 // 时间
-core::hook()->attach(HOOK_TICK, function() {
-    core::instance()->now = core::time()->now();
+rt::core()->hook()->attach(HOOK_TICK, function() {
+    rt::core()->now = rt::core()->time->now();
 });
 
 // action error
-core::hook()->attach(HOOK_ACTION_BROKEN,
-    function(core\Action $action, \Throwable $e)
+rt::core()->hook()->attach(HOOK_ACTION_BROKEN,
+    function(Core\Action $action, \Throwable $e)
 {
-    $config = core::config('settings')->debug['action_error'];
+    $config = rt::core()->config('settings')->debug['action_error'];
     if ($config['show']) {
         helper::du("Action Id: ".$action->getActionId(), 'Action Error Raised');
-        core\Trace\Catcher::instance()->exceptionHandler($e, false);
+        Core\Trace\Catcher::instance()->exceptionHandler($e, false);
     }
     if ($config['halt']) {
         die(1);
@@ -60,11 +61,11 @@ core::hook()->attach(HOOK_ACTION_BROKEN,
 });
 
 // slowlog
-if ($slowlog_limit = core::config('settings')->slowlog['limit']) {
-    core::hook()->attach(HOOK_ACTION_BEGIN, function() {
+if ($slowlog_limit = rt::core()->config('settings')->slowlog['limit']) {
+    rt::core()->hook()->attach(HOOK_ACTION_BEGIN, function() {
         helper::timer('__slowlog');
     });
-    core::hook()->attach(HOOK_ACTION_END, function() use ($slowlog_limit) {
+    rt::core()->hook()->attach(HOOK_ACTION_END, function() use ($slowlog_limit) {
         $timecost = helper::timer('__slowlog') * 1000;
         if ($timecost > $slowlog_limit) {
             $time = str_pad(number_format($timecost, 2, '.', ''),

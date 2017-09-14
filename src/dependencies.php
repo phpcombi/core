@@ -3,12 +3,13 @@
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
 // 时间
-$time_config = core::config('settings')->time;
-core::instance()->time =
-    new core\Utils\DateTime('now', $time_config['timezone'] ?? null);
-core::instance()->now  = core::time()->now();
+$time_config = rt::core()->config('settings')->time;
+rt::core()->time =
+    new Core\Utils\DateTime('now', $time_config['timezone'] ?? null);
+rt::core()->now  = rt::core()->time->now();
 

@@ -5,7 +5,8 @@ namespace Combi\Core\Trace;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
 class ThrowableSample
@@ -41,7 +42,7 @@ class ThrowableSample
     private $joiner = "\n^--------------^\n";
 
     public function __construct(\Throwable $throwable, array $more = null) {
-        if ($throwable instanceof core\Abort) {
+        if ($throwable instanceof Core\Abort) {
             $this->message = $throwable->message();
 
             $context    = $throwable->all();

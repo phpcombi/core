@@ -5,7 +5,8 @@ namespace Combi\Core\Utils\Pack;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
 
@@ -14,7 +15,7 @@ use Combi\{
  *
  * @author andares
  */
-class Msgpack implements core\Interfaces\Encoder {
+class Msgpack implements Core\Interfaces\Encoder {
     public function encode($value) {
         return \msgpack_pack($value);
     }

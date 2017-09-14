@@ -5,7 +5,7 @@ namespace Combi\Core\Middleware;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Runtime as rt
 };
 
 /**

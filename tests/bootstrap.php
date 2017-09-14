@@ -3,7 +3,7 @@
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Runtime as rt
 };
 
 // set temp dir & init nette tester
@@ -13,4 +13,4 @@ require __DIR__ . '/init_tester.php';
 const TESTING = true;
 
 include __DIR__ . '/init_instance.php';
-core::up('app', require __DIR__.'/instance/env.php');
+rt::up('app', require __DIR__.'/instance/env.php');

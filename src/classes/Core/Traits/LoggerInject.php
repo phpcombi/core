@@ -5,7 +5,8 @@ namespace Combi\Core\Traits;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
 use Psr\Log\LoggerInterface;
@@ -20,7 +21,7 @@ trait LoggerInject
     protected $_logger = null;
 
     public function __call(string $name, array $arguments) {
-        if (isset(core\Logger::LEVELS[$name])) {
+        if (isset(Core\Logger::LEVELS[$name])) {
             return $this->getlogger()->$name(...$arguments);
         }
         return $this->_callCustom($name, $arguments);

@@ -5,7 +5,7 @@ namespace Combi\Core\Traits;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Runtime as rt
 };
 
 /**
@@ -15,12 +15,12 @@ use Combi\{
  */
 trait Singleton {
     public static function instance(...$args): self {
-        return core::$singletons[static::class] ??
-            (core::$singletons[static::class] = new static(...$args));
+        return rt::$_singletons[static::class] ??
+            (rt::$_singletons[static::class] = new static(...$args));
     }
 
     public static function reinstance(...$args): self {
-        unset(core::$singletons[static::class]);
+        unset(r::$_singletons[static::class]);
         return static::instance(...$args);
     }
 }

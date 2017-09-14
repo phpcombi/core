@@ -5,7 +5,8 @@ namespace Combi\Core\Meta\Extensions;
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core as core
+    Core,
+    Runtime as rt
 };
 
 /**
@@ -23,7 +24,7 @@ trait ToArray {
         $result = [];
         foreach ($this->iterate() as $key => $value) {
             // 完全展开
-            if (is_object($value) && $value instanceof core\Interfaces\Arrayable) {
+            if (is_object($value) && $value instanceof Core\Interfaces\Arrayable) {
                 $value = $value->toArray();
             }
 
