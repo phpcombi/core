@@ -8,7 +8,7 @@ combi:
         )
         - Combi\Core\Logger\SampleSnapHandler(
             snaps,
-            Y-m,
+            c,
             level=info
         )
     processors:

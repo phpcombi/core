@@ -34,7 +34,7 @@ class ThrowableSample
     /**
      * @var string
      */
-    private $template = "\n- message: %0%\n- code: %1%\n- file: %2%\n- line: %3%\n- info:\n%4%\n\n- more:\n%5%\n<<<<<<<<\n\n%6%\n";
+    private $template = "\n- message: {{0}}\n- code: {{1}}\n- file: {{2}}\n- line: {{3}}\n- info:\n{{4}}\n\n- more:\n{{5}}\n<<<<<<<<\n\n{{6}}\n";
 
     /**
      * @var string

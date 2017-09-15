@@ -136,11 +136,12 @@ class Runtime extends Core\Meta\Container {
         }
 
         // 勾子
-        register_shutdown_function(function() {
-            self::core()->hook()->take(\Combi\HOOK_SHUTDOWN);
+        $hook = self::core()->hook();
+        register_shutdown_function(function() use ($hook) {
+            $hook->take(\Combi\HOOK_SHUTDOWN);
         });
-        self::core()->hook()->take(\Combi\HOOK_READY);
-        self::core()->hook()->take(\Combi\HOOK_TICK);
+        $hook->take(\Combi\HOOK_READY);
+        $hook->take(\Combi\HOOK_TICK);
     }
 
     public static function __callStatic(string $name, array $arguments) {

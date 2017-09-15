@@ -43,16 +43,9 @@ class Helper
     }
 
     public static function padding(string $template, array $vars): ?string {
-        $result = preg_replace_callback('/(\%)([A-Za-z0-9_\.]+)(\%)|(\%\%)/',
+        $result = preg_replace_callback('/(\{\{)([A-Za-z0-9_\.\:\-\|\@\#\$\%\!\^\&\*\?\~]+)(\}\})/',
             function($matches) use ($vars) {
-                if (isset($matches[4])) {
-                    return '%';
-                }
-
-                if (isset($vars[$matches[2]])) {
-                    return $vars[$matches[2]];
-                }
-                return $matches[0];
+                return $vars[$matches[2]] ?? $matches[0];
             }, $template);
         return $result;
     }

@@ -14,21 +14,19 @@ abstract class Middleware
      * 中间件业务逻辑入口抽象方法
      *
      * @param callable $next
-     * @param array $params ...
      * @return mixed
      */
-    abstract protected function handle(callable $next, ...$params);
+    abstract protected function handle(callable $next);
 
     /**
      * Stack调用入口
      *
      * @param callable $next
-     * @param array $params ...
      * @return mixed
      */
-    public function __invoke(callable $next, ...$params)
+    public function __invoke(callable $next)
     {
-        return $this->handle($next, ...$params);
+        return $this->handle($next);
     }
 
     /**

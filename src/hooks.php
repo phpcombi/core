@@ -42,12 +42,12 @@ $hook
 // attach hook taker
 
 // 时间
-rt::core()->hook()->attach(HOOK_TICK, function() {
+$hook->attach(HOOK_TICK, function() {
     rt::core()->now = rt::core()->time->now();
 });
 
 // action error
-rt::core()->hook()->attach(HOOK_ACTION_BROKEN,
+$hook->attach(HOOK_ACTION_BROKEN,
     function(Core\Action $action, \Throwable $e)
 {
     $config = rt::core()->config('settings')->debug['action_error'];
@@ -62,10 +62,10 @@ rt::core()->hook()->attach(HOOK_ACTION_BROKEN,
 
 // slowlog
 if ($slowlog_limit = rt::core()->config('settings')->slowlog['limit']) {
-    rt::core()->hook()->attach(HOOK_ACTION_BEGIN, function() {
+    $hook->attach(HOOK_ACTION_BEGIN, function() {
         helper::timer('__slowlog');
     });
-    rt::core()->hook()->attach(HOOK_ACTION_END, function() use ($slowlog_limit) {
+    $hook->attach(HOOK_ACTION_END, function() use ($slowlog_limit) {
         $timecost = helper::timer('__slowlog') * 1000;
         if ($timecost > $slowlog_limit) {
             $time = str_pad(number_format($timecost, 2, '.', ''),

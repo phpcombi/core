@@ -61,14 +61,15 @@ abstract class Action extends Meta\Container
         // 业务逻辑
         $result = null;
         try {
-            rt::core()->hook()->take(\Combi\HOOK_TICK);
-            rt::core()->hook()->take(\Combi\HOOK_ACTION_BEGIN, $this);
+            $hook = rt::core()->hook();
+            $hook->take(\Combi\HOOK_TICK);
+            $hook->take(\Combi\HOOK_ACTION_BEGIN, $this);
 
             $result = $this->handle(...$arguments);
 
-            rt::core()->hook()->take(\Combi\HOOK_ACTION_END, $this, $result);
+            $hook->take(\Combi\HOOK_ACTION_END, $this, $result);
         } catch (\Throwable $e) {
-            rt::core()->hook()->take(\Combi\HOOK_ACTION_BROKEN, $this, $e);
+            $hook->take(\Combi\HOOK_ACTION_BROKEN, $this, $e);
         }
 
         // 关闭action并出栈

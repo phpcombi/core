@@ -29,7 +29,7 @@ class RichMessageProcessor
      *
      * 对message为对象或是数组进行判定，并将其转化为字串。
      * message padding支持。
-     * 根据message的类型和内容，为 context 添加 debugvars, throwable 和 raw 三个字段。
+     * 根据message的类型和内容，为 context 添加 abort, debugvars, throwable 和 raw 等字段。
      *
      * @param mixed $message
      * @param array $context
