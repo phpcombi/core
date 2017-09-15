@@ -8,7 +8,7 @@ use Combi\{
     Runtime as rt
 };
 
-abstract class Middleware
+trait Middleware
 {
     /**
      * 中间件业务逻辑入口抽象方法
@@ -16,7 +16,7 @@ abstract class Middleware
      * @param callable $next
      * @return mixed
      */
-    abstract protected function handle(callable $next);
+    abstract protected function handle(callable $next, ...$params);
 
     /**
      * Stack调用入口
@@ -24,9 +24,9 @@ abstract class Middleware
      * @param callable $next
      * @return mixed
      */
-    public function __invoke(callable $next)
+    public function __invoke(callable $next, ...$params)
     {
-        return $this->handle($next);
+        return $this->handle($next, ...$params);
     }
 
     /**
