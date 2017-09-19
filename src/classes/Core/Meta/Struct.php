@@ -183,7 +183,9 @@ abstract class Struct
             }
 
             // 展开所有对象进行confirm
-            is_object($value) && $value instanceof self && $value->confirm();
+            is_object($value)
+                && $value instanceof Core\Interfaces\Confirmable
+                    && $value->confirm($include_deprecated);
 
             // 赋回
             $this->set($key, $value);
