@@ -160,6 +160,14 @@ abstract class Struct
 
     /**
      *
+     * @return int
+     */
+    public function count(): int {
+        return count($this->_data);
+    }
+
+    /**
+     *
      * @param bool $include_deprecated
      * @return self
      * @throws \UnexpectedValueException

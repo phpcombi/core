@@ -12,7 +12,7 @@ use Combi\{
  *
  * @author andares
  */
-interface Struct extends Arrayable, Confirmable,
+interface Struct extends Arrayable, Confirmable, \Countable,
     \Psr\Container\ContainerInterface
  {
     public static function defaults(bool $include_deprecated = false): array;
