@@ -3,21 +3,21 @@ locale:     zh_CN.utf8
 
 # 时间配置
 time:
-    timezone:   null    # 设null或不设此键使用全局设置 设Asia/Shanghai等值则手动控制
+  timezone:   null    # 设null或不设此键使用全局设置 设Asia/Shanghai等值则手动控制
 
 # 调试配置
 debug:
-    action_error:
-        show:   true
-        halt:   true
+  actionError:
+    show:   true
+    halt:   true
 prod < debug:
-    action_error:
-        show:   false
-        halt:   true
+  actionError:
+    show:   false
+    halt:   true
 
 # 慢请求日志
-slowlog:
-    limit: 20           # 慢查询日志限时，单位毫秒
+slowLog:
+  limit: 20           # 慢查询日志限时，单位毫秒
 
 # 角色验证类
 auth: Combi\Core\Auth()

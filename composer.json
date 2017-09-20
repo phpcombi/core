@@ -23,7 +23,7 @@
         "nette/tester": "dev-master"
     },
     "suggest": {
-        "ext-gmp": "Make gen id with helper faster"
+        "ext-gmp": "Make helper::genId() function faster."
     },
     "autoload": {
         "psr-4": {"Combi\\": "src/classes/"},

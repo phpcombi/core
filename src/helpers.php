@@ -23,7 +23,7 @@ helper::register(function_exists('gmp_init')
         ->orderable()
         ->to62()
         ->get();
-}, 'gen_id');
+}, 'genId');
 
 
 helper::register(function($var, $title = null): void {

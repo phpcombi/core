@@ -1,17 +1,51 @@
 user:
-    aaa:    1
-    bbb:    2
-    ccc:    3
+  aaa:    1
+  bbb:    2
+  ccc:    3
 test < user:
-    aaa:    null
-    bbb:    20
-    ccc:    30
+  aaa:    null
+  bbb:    20
+  ccc:    30
 
 article:
-    aaa:    1
-    test < aaa: 10
-    test < bbb: 20
-    bbb:    2
-    test < ccc:    22
-    ccc:    33
-    prod < ccc:    11
+  aaa:    1
+  test < aaa: 10
+  test < bbb: 20
+  bbb:    2
+  test < ccc:    22
+  ccc:    33
+  prod < ccc:    11
+
+configMethod:
+  dir:
+    $path:
+      path:       bootstrap.php
+      category:   src
+      pid:        app     # 可选，不填为main包
+  date1:
+    $instance:
+      class:      Combi\Core\Utils\DateTime
+      params:     (now)
+
+  date2:      # make与instance调用方法一致，均支持 entity
+    $make:          Combi\Core\Utils\DateTime(now)
+
+  app:
+    $di:
+      parameters:
+        subapp:
+          $di:
+            parameters:
+              next:
+                abc:    1
+                def:    2
+            constructor:    App\App(next)
+            initialize:
+        date:
+          $instance:  Combi\Core\Utils\DateTime(now)
+        abc:    100
+        def:    200
+      constructor:        App\App(abc, def)
+      initialize:
+        - init(subapp)
+        - setDate(date)

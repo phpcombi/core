@@ -15,7 +15,7 @@ use Combi\{
 interface Struct extends Arrayable, Confirmable, \Countable,
     \Psr\Container\ContainerInterface
  {
-    public static function defaults(bool $include_deprecated = false): array;
+    public static function defaults(bool $includeDeprecated = false): array;
 
     public static function isKeyDeprecated($key): bool;
 
@@ -23,9 +23,9 @@ interface Struct extends Arrayable, Confirmable, \Countable,
 
     public function get($key);
 
-    public function iterate(bool $include_deprecated = false): iterable;
+    public function iterate(bool $includeDeprecated = false): iterable;
 
-    public function all(bool $include_deprecated = false): array;
+    public function all(bool $includeDeprecated = false): array;
 
     public function has($key): bool;
 
@@ -33,5 +33,5 @@ interface Struct extends Arrayable, Confirmable, \Countable,
 
     public function clear();
 
-    public function confirm(bool $include_deprecated = false);
+    public function confirm(bool $includeDeprecated = false);
 }

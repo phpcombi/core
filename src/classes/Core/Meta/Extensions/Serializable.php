@@ -43,10 +43,10 @@ trait Serializable {
      * 结合version时用的扩展方法，通过增加迁移代码实现解包时的数据一致性维护。
      *
      * @param array $data
-     * @param int|string $last_version
+     * @param int|string $lastVersion
      * @return array
      */
-    protected static function renew(array $data, $last_version) {
+    protected static function renew(array $data, $lastVersion) {
         return $data;
     }
 
@@ -96,12 +96,12 @@ trait Serializable {
         if (!$arr) {
             throw new \UnexpectedValueException("unpack fail");
         }
-        $last_version = $arr['#'];
+        $lastVersion = $arr['#'];
         unset($arr['#']);
 
         // 触发升级勾子
-        if ($last_version != static::version()) {
-            $arr = static::renew($arr, $last_version);
+        if ($lastVersion != static::version()) {
+            $arr = static::renew($arr, $lastVersion);
         }
         if (!$arr) {
             throw new \UnexpectedValueException("unserialize fail");

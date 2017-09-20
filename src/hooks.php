@@ -50,7 +50,7 @@ $hook->attach(HOOK_TICK, function() {
 $hook->attach(HOOK_ACTION_BROKEN,
     function(Core\Action $action, \Throwable $e)
 {
-    $config = rt::core()->config('settings')->debug['action_error'];
+    $config = rt::core()->config('settings')->debug['actionError'];
     if ($config['show']) {
         helper::du("Action Id: ".$action->getActionId(), 'Action Error Raised');
         Core\Trace\Catcher::instance()->exceptionHandler($e, false);
@@ -60,17 +60,17 @@ $hook->attach(HOOK_ACTION_BROKEN,
     }
 });
 
-// slowlog
-if ($slowlog_limit = rt::core()->config('settings')->slowlog['limit']) {
+// slowLog
+if ($slowLogLimit = rt::core()->config('settings')->slowLog['limit']) {
     $hook->attach(HOOK_ACTION_BEGIN, function() {
-        helper::timer('__slowlog');
+        helper::timer('__slowLog');
     });
-    $hook->attach(HOOK_ACTION_END, function() use ($slowlog_limit) {
-        $timecost = helper::timer('__slowlog') * 1000;
-        if ($timecost > $slowlog_limit) {
+    $hook->attach(HOOK_ACTION_END, function() use ($slowLogLimit) {
+        $timecost = helper::timer('__slowLog') * 1000;
+        if ($timecost > $slowLogLimit) {
             $time = str_pad(number_format($timecost, 2, '.', ''),
                 9, '0', STR_PAD_LEFT);
-            helper::logger('slow')->info("slowlog: $time ms");
+            helper::logger('slow')->info("slowLog: $time ms");
         }
     });
 }

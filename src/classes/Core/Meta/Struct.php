@@ -59,9 +59,9 @@ abstract class Struct
      * 获取基础数据结构
      * @return array
      */
-    public static function defaults(bool $include_deprecated = false): array {
+    public static function defaults(bool $includeDeprecated = false): array {
         static $enabled = [];
-        if ($include_deprecated) {
+        if ($includeDeprecated) {
             return static::$_defaults;
         }
 
@@ -107,11 +107,11 @@ abstract class Struct
     /**
      * 返回一个遍历内部数据的迭代器
      *
-     * @param bool $include_deprecated
+     * @param bool $includeDeprecated
      * @return iterable
      */
-    public function iterate(bool $include_deprecated = false): iterable {
-        foreach (static::defaults($include_deprecated) as $key => $default) {
+    public function iterate(bool $includeDeprecated = false): iterable {
+        foreach (static::defaults($includeDeprecated) as $key => $default) {
             yield $key => $this->get($key);
         }
     }
@@ -119,12 +119,12 @@ abstract class Struct
     /**
      * 返回全部属性
      *
-     * @param bool $include_deprecated
+     * @param bool $includeDeprecated
      * @return array
      */
-    public function all(bool $include_deprecated = false): array {
+    public function all(bool $includeDeprecated = false): array {
         $result = [];
-        foreach ($this->iterate($include_deprecated) as $key => $value) {
+        foreach ($this->iterate($includeDeprecated) as $key => $value) {
             $result[$key] = $value;
         }
         return $result;
@@ -168,12 +168,12 @@ abstract class Struct
 
     /**
      *
-     * @param bool $include_deprecated
+     * @param bool $includeDeprecated
      * @return self
      * @throws \UnexpectedValueException
      */
-    public function confirm(bool $include_deprecated = false): self {
-        foreach ($this->iterate($include_deprecated) as $key => $value) {
+    public function confirm(bool $includeDeprecated = false): self {
+        foreach ($this->iterate($includeDeprecated) as $key => $value) {
             $method = "_confirm_$key";
             if (method_exists($this, $method)) {
                 $value = $this->$method($value);
@@ -185,7 +185,7 @@ abstract class Struct
             // 展开所有对象进行confirm
             is_object($value)
                 && $value instanceof Core\Interfaces\Confirmable
-                    && $value->confirm($include_deprecated);
+                    && $value->confirm($includeDeprecated);
 
             // 赋回
             $this->set($key, $value);

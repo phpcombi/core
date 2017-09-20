@@ -1,9 +1,9 @@
 default:
-    connect:            # can use 'pconnect' as key
-        - 127.0.0.1     # can be unix socket path
-        - 6379          # port, ignore when use unix socket
-        # - 1           # timeout
-        # - null        # reserved, value in seconds
-        # - 100         # retry_interval, value in milliseconds
-        # - 0           # read_timeout, value in seconds
+  connect:          # can use 'pconnect' as key
+    - 127.0.0.1     # can be unix socket path
+    - 6379          # port, ignore when use unix socket
+    # - 1           # timeout
+    # - null        # reserved, value in seconds
+    # - 100         # retry_interval, value in milliseconds
+    # - 0           # read_timeout, value in seconds
 

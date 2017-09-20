@@ -18,24 +18,24 @@ abstract class Action extends Meta\Container
     implements Interfaces\LinkPackage
 {
     use Meta\Extensions\Overloaded,
-        Traits\LinkPackage {}
+        Traits\LinkPackage;
 
-    private static $_action_stack = null;
+    private static $_stack = null;
 
-    private $_action_previous = null;
+    private $_previous = null;
 
-    private $_action_id;
+    private $_id;
 
-    private $_action_done = false;
+    private $_isDone = false;
 
     protected $_auth = null;
 
     public function __construct() {
-        $this->_action_id = static::genActionId();
+        $this->_id = static::genActionId();
 
         $stack = self::getActionStack();
         if (isset($stack[0])) {
-            $this->_action_previous = $stack[0];
+            $this->_previous = $stack[0];
         }
 
         $this->setAuth($this->genAuth());
@@ -53,7 +53,7 @@ abstract class Action extends Meta\Container
                 "Action ".$this->getActionId().
                     " stack call sequence error. should be ".$stack[0]->getActionId());
         }
-        if ($this->_action_done) {
+        if ($this->_isDone) {
             throw new \RuntimeException("Action ".
                 $this->getActionId()." is done, can not run again");
         }
@@ -73,7 +73,7 @@ abstract class Action extends Meta\Container
         }
 
         // 关闭action并出栈
-        $this->_action_done = true;
+        $this->_isDone = true;
         $action = $stack->pop();
         if ($action != $this) {
             throw new \RuntimeException(
@@ -85,33 +85,33 @@ abstract class Action extends Meta\Container
     }
 
     final public static function getActionStack(): \SplStack {
-        !self::$_action_stack && (self::$_action_stack = new \SplStack)
+        !self::$_stack && (self::$_stack = new \SplStack)
             ->setIteratorMode(\SplDoublyLinkedList::IT_MODE_LIFO
                 | \SplDoublyLinkedList::IT_MODE_KEEP);
-        return self::$_action_stack;
+        return self::$_stack;
     }
 
     protected static function genActionId(): string {
-        return helper::gen_id();
+        return helper::genId();
     }
 
     public function getActionId() {
-        return $this->_action_id;
+        return $this->_id;
     }
 
-    protected function genAuth(): Auth {
+    protected function genAuth(): Action\Auth {
         $provider = rt::core()->config('settings')->auth;
-        if ($this->_action_previous) {
-            $provider->attributes[] = $this->_action_previous->getAuth();
+        if ($this->_previous) {
+            $provider->attributes[] = $this->_previous->getAuth();
         }
         return helper::instance($provider);
     }
 
-    public function setAuth(Auth $auth): void {
+    public function setAuth(Action\Auth $auth): void {
         $this->_auth = $auth;
     }
 
-    public function getAuth(): Auth {
+    public function getAuth(): Action\Auth {
         return $this->_auth;
     }
 

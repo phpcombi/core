@@ -1,6 +1,6 @@
 <?php
 
-namespace Combi\Core;
+namespace Combi\Core\Action;
 
 use Combi\{
     Helper as helper,
@@ -19,6 +19,12 @@ class Auth implements Interfaces\Instancable
 
     protected $id = null;
 
+    protected $token;
+
+    protected $secret = '';
+
+    protected $data;
+
     public static function instance(?self $previous = null): self {
         if ($previous) {
             return $previous;
@@ -32,5 +38,9 @@ class Auth implements Interfaces\Instancable
 
     public function getId() {
         return $this->id;
+    }
+
+    public function getSession(): Sessio {
+
     }
 }

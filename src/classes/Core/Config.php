@@ -20,7 +20,13 @@ class Config extends Meta\Collection
     implements \ArrayAccess
 {
     use Meta\Extensions\Overloaded,
-        Meta\Extensions\ArrayAccess {}
+        Meta\Extensions\ArrayAccess;
+
+    protected static $_methodSpaces = [
+        'Combi\\Core\\Config\\Methods',
+    ];
+
+    protected static $_methodLoaded = [];
 
     protected $_name;
 
@@ -59,6 +65,10 @@ class Config extends Meta\Collection
         }
     }
 
+    public static function appendMethodSpaces(...$spaces): void {
+        self::$_methodSpaces += $spaces;
+    }
+
     /**
      * @return array
      */
@@ -72,27 +82,28 @@ class Config extends Meta\Collection
      */
     protected function load(): array {
         // 配置文件路径
-        $source_file = $this->_source->select("$this->_name.neon");
-        if (!file_exists($source_file)) {
+        $sourceFile = $this->_source->select("$this->_name.neon");
+        if (!file_exists($sourceFile)) {
             return [];
         }
 
         // 检查缓存
         if ($this->_cache) {
             // 缓存文件名
-            $cache_file = $this->_cache->select("$this->_name.$this->_scene.php");
+            $cacheFile = $this->_cache->select("$this->_name.$this->_scene.php");
 
             // 从缓存中读取
-            $data = $this->loadByCache($cache_file, $source_file);
+            $data = $this->loadByCache($cacheFile, $sourceFile);
             if (!$data) {
-                $data = $this->parse($source_file);
-
                 // 回写入缓存
-                $this->_cache->write("$this->_name.$this->_scene.php", '<?php
-return '.var_export($data, true).';');
+                $this->_cache->write("$this->_name.$this->_scene.php",
+                    "<?php\nreturn ".var_export($this->parse($sourceFile), true).';');
+
+                // 重新读出，为了实现method计算
+                $data = $this->loadByCache($cacheFile, $sourceFile);
             }
         } else {
-            $data = $this->parse($source_file);
+            $data = $this->parse($sourceFile);
         }
 
         return $data;
@@ -100,22 +111,22 @@ return '.var_export($data, true).';');
 
     /**
      *
-     * @param string $cache_file
+     * @param string $cacheFile
      * @return array
      */
-    protected function loadByCache(string $cache_file, string $source_file): array {
+    protected function loadByCache(string $cacheFile, string $sourceFile): array {
         $data = [];
 
         if (rt::isProd()) {
             // 生产环境直接载入
-            $data = @include $cache_file;
+            $data = @include $cacheFile;
         } else {
             // 非生产环境检查更新情况
-            if (file_exists($cache_file)) {
-                @clearstatcache(false, $source_file);
-                @clearstatcache(false, $cache_file);
-                if (filemtime($source_file) <= filemtime($cache_file)) {
-                    $data = @include $cache_file;
+            if (file_exists($cacheFile)) {
+                @clearstatcache(false, $sourceFile);
+                @clearstatcache(false, $cacheFile);
+                if (filemtime($sourceFile) <= filemtime($cacheFile)) {
+                    $data = @include $cacheFile;
                 }
             }
         }
@@ -125,13 +136,48 @@ return '.var_export($data, true).';');
 
     /**
      *
-     * @param string $source_file
+     * @param string $sourceFile
      * @return array
      */
-    protected function parse(string $source_file): array {
-        $raw = Neon::decode(file_get_contents($source_file));
+    protected function parse(string $sourceFile): array {
+        $raw = Neon::decode(file_get_contents($sourceFile));
         $raw && $this->prune($raw);
+        $this->traverse($raw);
         return $raw;
+    }
+
+    protected function traverse(array &$arr,
+        $parentKey = null, array &$parentArr = null)
+    {
+        foreach (new \RecursiveArrayIterator($arr) as $key => $value) {
+            if (is_array($value)) { // 进入下一级
+                $this->traverse($arr[$key], $key, $arr);
+            }
+            // 扩展方法
+            if ($key[0] == '$') {
+                $method = $this->getMethod(substr($key, 1), [$arr[$key]]);
+                $parentArr[$parentKey] = $this->_cache ? $method : $method();
+                break; // 目前一个key下只允许一个配置方法
+            }
+
+        }
+    }
+
+    protected function getMethod(string $name, $params) {
+        if (!array_key_exists($name, self::$_methodLoaded)) {
+            foreach (self::$_methodSpaces as $space) {
+                $class = "$space\\".ucfirst($name);
+                if (class_exists($class)) {
+                    self::$_methodLoaded[$name] = $class;
+                    break;
+                }
+            }
+            !isset(self::$_methodLoaded[$name]) && self::$_methodLoaded[$name] = null;
+        }
+        if (self::$_methodLoaded[$name]) {
+            return helper::make(self::$_methodLoaded[$name], $params);
+        }
+        return null;
     }
 
     /**

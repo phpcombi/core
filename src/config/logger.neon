@@ -1,23 +1,39 @@
 combi:
-    handlers:
-        - Monolog\Handler\RotatingFileHandler(
-            file=combi.log,
-            0,
-            level=info,
-            formatter=json
-        )
-        - Combi\Core\Logger\SampleSnapHandler(
-            snaps,
-            c,
-            level=info
-        )
-    processors:
-        - Combi\Core\Logger\PrimariesProcessor()
-        - Combi\Core\Logger\RichMessageProcessor(true)
-    formatters:
-        json: Monolog\Formatter\JsonFormatter()
+  # $di:
+  #   parameters:
+  #     handler1:
+  #       $di:
+  #         parameters:
+  #           file:
+  #             $path:
+  #               path:       combi.log
+  #               category:   logs
+  #         constructor:    Monolog\Handler\RotatingFileHandler(file)
+  #         initialize:
+  #   constructor:        Monolog\Logger(combi)
+  #   initialize:
+  #     - init(subapp)
+  #     - setDate(date)
+  handlers:
+      - Monolog\Handler\RotatingFileHandler(
+          file=combi.log,
+          0,
+          level=info,
+          formatter=json
+      )
+      - Combi\Core\Logger\SampleSnapHandler(
+          snaps,
+          c,
+          level=info
+      )
+  processors:
+      - Combi\Core\Logger\PrimariesProcessor()
+      - Combi\Core\Logger\RichMessageProcessor(true)
+  formatters:
+      json: Monolog\Formatter\JsonFormatter()
 
 slow:
+
     handlers:
         - Monolog\Handler\RotatingFileHandler(
             file=slow.log,
@@ -26,6 +42,7 @@ slow:
         )
 
 debug:
+
     handlers:
         - Monolog\Handler\StreamHandler(
             file=debug.log,

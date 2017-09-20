@@ -1,6 +1,6 @@
 <?php
 
-namespace Combi\Core\Auth;
+namespace Combi\Core\Action;
 
 use Combi\{
     Helper as helper,

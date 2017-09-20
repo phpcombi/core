@@ -27,7 +27,7 @@ class DateTime
     protected $timezone;
     protected $datetime;
 
-    public function __consturct($time = 'now', ?\DateTimeZone $timezone = null) {
+    public function __construct($time = 'now', ?\DateTimeZone $timezone = null) {
         $this->timezone = $timezone
             ?: new \DateTimeZone(\date_default_timezone_get() ?: 'UTC');
         $this->datetime = new \DateTime($time, $this->timezone);
