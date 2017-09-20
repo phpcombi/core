@@ -31,21 +31,31 @@ configMethod:
     $make:          Combi\Core\Utils\DateTime(now)
 
   app:
-    $di:
+    $constructor:
+      new:  App\App(abc, def)
       parameters:
         subapp:
-          $di:
+          $constructor:
+            new:  App\App(next)
             parameters:
               next:
                 abc:    1
                 def:    2
-            constructor:    App\App(next)
             initialize:
         date:
           $instance:  Combi\Core\Utils\DateTime(now)
         abc:    100
         def:    200
-      constructor:        App\App(abc, def)
       initialize:
         - init(subapp)
         - setDate(date)
+
+  scene:
+    $env: scene
+
+  phpVersion:
+    $constant:  PHP_VERSION
+
+  logLevel:
+    $constant: Combi\Core\Logger::LEVELS(info)
+

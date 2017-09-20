@@ -158,6 +158,9 @@ abstract class Package extends Core\Meta\Container {
                     new Core\Logger($channel, $config->$channel);
             } else {
                 // 包未设logger.neon配置，则使用core包的日志
+                if ($this->pid() == 'core') {
+                    throw new \RuntimeException("The logger channel $channel is not exsits.");
+                }
                 $this->_loggers[$channel] = rt::core()->logger($channel);
             }
         }

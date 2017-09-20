@@ -18,19 +18,19 @@ class SampleSnapHandler extends AbstractHandler
 {
     const EXISTS_CACHE_LIMIT = 200;
 
-    private static $dir_created = [];
-    private static $exist_cache = [];
-    private static $cache_id    = 0;
+    private static $dirCreated  = [];
+    private static $existCache  = [];
+    private static $cacheId     = 0;
 
-    private $base_dir;
-    private $date_format;
+    private $baseDir;
+    private $dateFormat;
 
-    public function __construct(string $base_dir, string $date_format = 'c',
+    public function __construct(string $baseDir, string $dateFormat = 'c',
         int $level = MonoLogger::INFO, bool $bubble = true)
     {
         parent::__construct($level, $bubble);
-        $this->base_dir     = $base_dir;
-        $this->date_format  = $date_format;
+        $this->baseDir     = $baseDir;
+        $this->dateFormat  = $dateFormat;
     }
 
     public function handle(array $record): bool
@@ -64,8 +64,8 @@ class SampleSnapHandler extends AbstractHandler
     private function getFilename(array $extra,
         \DateTimeInterface $datetime): string
     {
-        $dir = rt::core()->path('logs', $this->base_dir).DIRECTORY_SEPARATOR.
-            $datetime->format($this->date_format);
+        $dir = $this->baseDir.DIRECTORY_SEPARATOR.
+            $datetime->format($this->dateFormat);
         $this->createDir($dir);
 
         return $dir.DIRECTORY_SEPARATOR.
@@ -73,7 +73,7 @@ class SampleSnapHandler extends AbstractHandler
     }
 
     private function createDir(string $dir): void {
-        if (isset(self::$dir_created[$dir])) {
+        if (isset(self::$dirCreated[$dir])) {
             return;
         }
 
@@ -84,17 +84,17 @@ class SampleSnapHandler extends AbstractHandler
             }
         }
 
-        self::$dir_created[$dir] = true;
+        self::$dirCreated[$dir] = true;
     }
 
     private function checkFileExists(string $filename): bool {
-        if ((self::$exist_cache[self::$cache_id] ?? null) == $filename) {
+        if ((self::$existCache[self::$cacheId] ?? null) == $filename) {
             return true;
         }
 
-        self::$exist_cache[self::$cache_id] = $filename;
-        (++self::$cache_id) && (self::$cache_id > self::EXISTS_CACHE_LIMIT)
-            && self::$cache_id = 0;
+        self::$existCache[self::$cacheId] = $filename;
+        (++self::$cacheId) && (self::$cacheId > self::EXISTS_CACHE_LIMIT)
+            && self::$cacheId = 0;
 
         return file_exists($filename);
     }

@@ -142,7 +142,8 @@ class Config extends Meta\Collection
     protected function parse(string $sourceFile): array {
         $raw = Neon::decode(file_get_contents($sourceFile));
         $raw && $this->prune($raw);
-        $this->traverse($raw);
+        // TODO: 暂时不考虑遍历算法与修剪合并
+        $raw && $this->traverse($raw);
         return $raw;
     }
 

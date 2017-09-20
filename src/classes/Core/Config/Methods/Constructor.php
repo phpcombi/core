@@ -11,16 +11,16 @@ use Combi\{
 
 use Nette\Neon\Entity;
 
-class Di extends Core\Config\Method
+class Constructor extends Core\Config\Method
 {
+    protected $new;
     protected $parameters = [];
-    protected $constructor;
     protected $initialize = [];
 
     public function __invoke() {
         // 构造 new 参数
-        $params = $this->getParamsByEntity($this->constructor);
-        $class  = $this->constructor->value;
+        $params = $this->getParamsByEntity($this->new);
+        $class  = $this->new->value;
         $object = new $class(...$params);
 
         // 执行initialize

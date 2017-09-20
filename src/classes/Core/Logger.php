@@ -8,7 +8,10 @@ use Combi\{
     Runtime as rt
 };
 
-use Psr\Log\LogLevel;
+use Psr\Log\{
+    LoggerInterface,
+    LogLevel
+};
 use Monolog\Logger as MonoLogger;
 use Monolog\Formatter\FormatterInterface;
 
@@ -45,23 +48,19 @@ class Logger extends \Psr\Log\AbstractLogger
      */
     private $formatters = [];
 
-    public function __construct(string $channel, ?array $config = null) {
-        $this->channel = $channel;
-
-        if ($config) {
-            $this->logger = $this->createLogger($config);
-        } else {
-            $this->logger = Logger\NullLogger::instance();
-        }
+    public function __construct(string $channel, ?LoggerInterface $logger = null) {
+        $this->channel  = $channel;
+        $this->logger   = $logger ?: Logger\NullLogger::instance();
     }
 
-    public function getLogger(): MonoLogger {
+    public function getLogger(): LoggerInterface {
         return $this->logger;
     }
 
     public function log($level, $message, array $context = []): void
     {
-        $processors = $this->logger->getProcessors();
+        $processors = $this->logger instanceof MonoLogger
+            ? $this->logger->getProcessors() : [];
         if (($processors[0] ?? null)
             instanceof Logger\RichMessageProcessor)
         {
@@ -77,64 +76,6 @@ class Logger extends \Psr\Log\AbstractLogger
             $message = '';
         }
         return [$message, $context];
-    }
-
-    private function createLogger(array $config): MonoLogger {
-        $logger     = new MonoLogger($this->channel);
-
-        foreach ($config['handlers'] as $handler_conf) {
-            $formatter  = null;
-
-            $handler = helper::make(helper::entityWithProcessor($handler_conf,
-                function($name, $value) use (&$formatter, $config)
-            {
-                if (is_numeric($name)) {
-                    return $value;
-                }
-                switch ($name) {
-                    case 'file':
-                        $value[0] != DIRECTORY_SEPARATOR
-                            && $value = rt::core()->path('logs', $value);
-                        break;
-
-                    case 'level':
-                        $value = self::LEVELS[$value];
-                        break;
-
-                    case 'formatter':
-                        // 为了效率，这里在处理formatter之前检查配置并报错了
-                        if (!isset($config['formatters'][$value])) {
-                            throw new \RuntimeException(
-                                "Logger formatter $value is not defined");
-                        }
-                        $formatter = $this->getFormatter($value,
-                            $config['formatters']);
-                        return null;
-
-                    default:
-                        break;
-                }
-                return $value;
-            }));
-            $formatter && $handler->setFormatter($formatter);
-            $logger->pushHandler($handler);
-        }
-
-        if (isset($config['processors'])) {
-            foreach ($config['processors'] as $processor_conf) {
-                $logger->pushProcessor(helper::instance($processor_conf));
-            }
-        }
-
-        return $logger;
-    }
-
-    private function getFormatter(string $name, array $config): FormatterInterface {
-        if (!isset($this->formatters[$name])) {
-            $this->formatters[$name] = helper::make($config[$name]);
-        }
-
-        return $this->formatters[$name];
     }
 
 }
