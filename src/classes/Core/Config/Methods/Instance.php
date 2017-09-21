@@ -12,8 +12,8 @@ use Combi\{
 class Instance extends Core\Config\Method
 {
     public function __invoke() {
-        if (isset($this->param)) {
-            return helper::instance($this->param);
+        if ($val = $this->getValue()) {
+            return helper::instance($val);
         }
         return helper::instance($this->class, $this->params);
     }

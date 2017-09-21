@@ -14,6 +14,6 @@ class Env extends Core\Config\Method
     protected $param;
 
     public function __invoke() {
-        return rt::env($this->param);
+        return rt::env($this->getValue());
     }
 }

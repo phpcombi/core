@@ -11,6 +11,8 @@ use Combi\{
 
 abstract class Method
 {
+    protected $_value;
+
     abstract public function __invoke();
 
     public function __construct($params) {
@@ -19,8 +21,12 @@ abstract class Method
                 ($value || $value == false) && $this->$key = $value;
             }
         } else {
-            $this->param = $params;
+            $this->_value = $params;
         }
+    }
+
+    protected function getValue() {
+        return $this->_value;
     }
 
     public static function __set_state(array $params) {

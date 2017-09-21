@@ -12,8 +12,8 @@ use Combi\{
 class Make extends Core\Config\Method
 {
     public function __invoke() {
-        if (isset($this->param)) {
-            return helper::make($this->param);
+        if ($val = $this->getValue()) {
+            return helper::make($val);
         }
         return helper::make($this->class, $this->params);
     }

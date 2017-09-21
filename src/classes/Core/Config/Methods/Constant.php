@@ -16,10 +16,11 @@ class Constant extends Core\Config\Method
     protected $param;
 
     public function __invoke() {
-        if ($this->param instanceof Entity) {
-            $value = constant($this->param->value);
-            return $value[$this->param->attributes[0]];
+        $val = $this->getValue();
+        if ($val instanceof Entity) {
+            $const = constant($val->value);
+            return $const[$val->attributes[0]];
         }
-        return constant($this->param);
+        return constant($val);
     }
 }
