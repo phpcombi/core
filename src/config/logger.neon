@@ -20,7 +20,7 @@ combi:
       handler2:
         $constructor:
           new:  Combi\Core\Logger\SampleSnapHandler(
-            baseDir, c, level)
+            baseDir, Y-m, level)
           parameters:
             baseDir:
               $path:

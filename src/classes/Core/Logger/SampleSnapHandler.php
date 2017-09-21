@@ -25,7 +25,7 @@ class SampleSnapHandler extends AbstractHandler
     private $baseDir;
     private $dateFormat;
 
-    public function __construct(string $baseDir, string $dateFormat = 'c',
+    public function __construct(string $baseDir, string $dateFormat = 'Y-m',
         int $level = MonoLogger::INFO, bool $bubble = true)
     {
         parent::__construct($level, $bubble);
