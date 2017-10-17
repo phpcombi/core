@@ -11,16 +11,16 @@ use Combi\{
 
 class Path extends Core\Config\Method
 {
-    protected $path;
+    protected $path         = null;
     protected $category     = '';
     protected $pid          = null;
     protected $autoCreate   = false;
 
     public function __invoke(): string {
         $pid    = $this->pid ?: 'main';
-        $path   = rt::$pid()->path($this->category, $this->path);
+        $path   = rt::$pid()->path($this->category, $this->path ?: $this->getValue());
 
-        $this->autoCreate && !\file_exists($path) && mkdir($path, 0777, true);
+        $this->autoCreate && !\file_exists($path) && mkdir($path, 0755, true);
         return $path;
     }
 }

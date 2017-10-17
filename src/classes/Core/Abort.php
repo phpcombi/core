@@ -19,7 +19,7 @@ class Abort extends \Exception implements \JsonSerializable
 {
     /**
      * 数据
-     * @var Meta\Container
+     * @var Meta\Collection
      */
     protected $extra;
 

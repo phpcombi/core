@@ -9,6 +9,8 @@ use Combi\{
     Runtime as rt
 };
 
+use Combi\Core\Resource\Directory;
+
 use Monolog\Logger as MonoLogger;
 use Monolog\Handler\AbstractHandler;
 
@@ -49,42 +51,16 @@ class SampleSnapHandler extends AbstractHandler
             return;
         }
 
-        $filename = $this->getFilename($record['extra'], $record['datetime']);
-        if ($this->checkFileExists($filename)) {
-            return;
-        }
+        $dir = new Directory($this->baseDir);
+        $filename = $record['datetime']->format($this->dateFormat).
+            DIRECTORY_SEPARATOR.$this->makeBasename($record['extra']['throwable']).'.txt';
+        $dir->writeWhenNotExists($filename, function() use ($record): string {
+            $throwable = $record['extra']['abort']
+                ?? $record['extra']['throwable'];
 
-        $throwable = $record['extra']['abort']
-            ?? $record['extra']['throwable'];
-
-        $sample = new Core\Trace\ThrowableSample($throwable, $record['context']);
-        @\file_put_contents($filename, $sample->render(), \LOCK_EX);
-    }
-
-    private function getFilename(array $extra,
-        \DateTimeInterface $datetime): string
-    {
-        $dir = $this->baseDir.DIRECTORY_SEPARATOR.
-            $datetime->format($this->dateFormat);
-        $this->createDir($dir);
-
-        return $dir.DIRECTORY_SEPARATOR.
-            $this->makeBasename($extra['throwable']).'.txt';
-    }
-
-    private function createDir(string $dir): void {
-        if (isset(self::$dirCreated[$dir])) {
-            return;
-        }
-
-        if (!is_dir($dir)) {
-            if (!mkdir($dir, 0755, true)) {
-                throw new \UnexpectedValueException(
-                    "There is no existing directory at $dir");
-            }
-        }
-
-        self::$dirCreated[$dir] = true;
+            $sample = new Core\Trace\ThrowableSample($throwable, $record['context']);
+            return $sample->render();
+        });
     }
 
     private function checkFileExists(string $filename): bool {

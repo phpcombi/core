@@ -11,6 +11,10 @@ use Combi\{
 
 class Make extends Core\Config\Method
 {
+    public function __construct($params) {
+        parent::__construct($params);
+    }
+
     public function __invoke() {
         if ($val = $this->getValue()) {
             return helper::make($val);

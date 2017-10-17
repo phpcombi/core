@@ -25,30 +25,39 @@ configMethod:
   date1:
     $instance:
       class:      Combi\Core\Utils\DateTime
-      params:     (now)
+      params:     [now]
 
   date2:      # make与instance调用方法一致，均支持 entity
     $make:          Combi\Core\Utils\DateTime(now)
 
   app:
     $constructor:
-      new:  App\App(abc, def)
-      parameters:
-        subapp:
-          $constructor:
-            new:  App\App(next)
-            parameters:
-              next:
-                abc:    1
-                def:    2
-            initialize:
+      take: app
+      deps:
+        app:    App\App(abc, def)
+        subapp: App\App(next)
+
         date:
           $instance:  Combi\Core\Utils\DateTime(now)
+
         abc:    100
         def:    200
-      initialize:
-        - init(subapp)
-        - setDate(date)
+        next:
+          abc:    1
+          def:    2
+      init:
+        app:
+          - init(subapp)
+          - setDate(date)
+
+  app2:
+    $make:
+      class:  App\App
+      params:
+        -
+          $path:
+            path:     cache
+            category: tmp
 
   scene:
     $env: scene
@@ -59,3 +68,7 @@ configMethod:
   logLevel:
     $constant: Combi\Core\Logger::LEVELS(info)
 
+  date3:
+    $constructor:
+      deps:
+        date:   Combi\Core\Utils\DateTime(now)

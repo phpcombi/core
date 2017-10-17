@@ -28,7 +28,7 @@ class IdGenerator {
         $this->algo = $algo;
     }
 
-    public function prepare(string $data): self {
+    public function prepare(string $data = ''): self {
         $this->data     = $this->raw = $data;
         return $this;
     }
@@ -37,12 +37,22 @@ class IdGenerator {
         return $this->data;
     }
 
-    public function hash_hmac(string $secret = null, $return_raw = false): self {
-        $this->data = hash_hmac($this->algo, $this->data, $secret, $return_raw);
+    public function md5(): self {
+        $this->data = md5($this->data);
         return $this;
     }
 
-    public function random_hex(int $length = 8): self {
+    public function sha1(): self {
+        $this->data = sha1($this->data);
+        return $this;
+    }
+
+    public function hashHmac(string $secret = null, $returnRaw = false): self {
+        $this->data = hash_hmac($this->algo, $this->data, $secret, $returnRaw);
+        return $this;
+    }
+
+    public function randomHex(int $length = 8): self {
         $this->data = bin2hex(random_bytes($length));
         return $this;
     }
@@ -61,34 +71,53 @@ class IdGenerator {
         return $this;
     }
 
-    public function orderable(): self {
-        $this->data = intval(microtime(true) * 1000).$this->data;
+    public function orderable($precision = 100000): self {
+        $this->data = intval(microtime(true) * $precision).$this->data;
         return $this;
     }
 
     public function to62(): self {
-        $value  = $this->data;
-        $result = '';
+        static $dict = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+        $to = 62;
+        $ret = '';
         do {
-            // 精度问题
-            $value < 10000 && $value = intval($value);
+            $result = $dict[bcmod($num, $to)].$result;
+            $num = bcdiv($num, $to);
+        } while ($num > 0);
+        $this->data = $result;
 
-            $last    = $value % 62;
-            $value   -= $last;
-            $value && $value /= 62;
+        // TODO: 暂时保留一下老算法
+        // $value  = $this->data;
+        // $result = '';
+        // do {
+        //     // 精度问题
+        //     $value < 10000 && $value = intval($value);
 
-            $ord     = $last < 10 ? (48 + $last)
-                : ($last > 35 ? (61 + $last) : (55 + $last));
-            $result .= chr($ord);
-        } while ($value > 0);
-        $this->data = strrev($result);
+        //     $last    = $value % 62;
+        //     $value   -= $last;
+        //     $value && $value /= 62;
+
+        //     $ord     = $last < 10 ? (48 + $last)
+        //         : ($last > 35 ? (61 + $last) : (55 + $last));
+        //     $result .= chr($ord);
+        // } while ($value > 0);
+        // $this->data = strrev($result);
+
         return $this;
     }
 
-    public function gmp_strval($bit = 62, $prefix = ''): self {
+    public function gmpStrval($bit = 62, $prefix = ''): self {
         $data = $prefix.$this->data;
         $gmp  = gmp_init($data);
         $this->data = gmp_strval($gmp, $bit);
+        return $this;
+    }
+
+    public function gmpIntval($bit = 62, $prefix = ''): self {
+        $data = $prefix.$this->data;
+        $gmp  = gmp_init($data, $bit);
+        $this->data = gmp_intval($gmp);
         return $this;
     }
 
@@ -117,14 +146,14 @@ class IdGenerator {
         return $this;
     }
 
-    public function base_convert(int $from, int $to): self {
+    public function baseConvert(int $from, int $to): self {
         $this->data = base_convert($this->data, $from, $to);
         return $this;
     }
 
     public function uuid($trim = true) {
         $id = uuid_create();
-        $this->data = $trim ? strtr($id, '-', '') : $id;
+        $this->data = $trim ? str_replace('-', '', $id) : $id;
         return $this;
     }
 }

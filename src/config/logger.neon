@@ -1,82 +1,75 @@
 combi:
   $constructor:
-    new:  Monolog\Logger(combi)
-    parameters:
-      handler1:
-        $constructor:
-          new:  Monolog\Handler\RotatingFileHandler(
-            filename, 0, level)
-          parameters:
-            filename:
-              $path:
-                path:       combi.log
-                category:   logs
-            level:
-              $constant: Combi\Core\Logger::LEVELS(info)
-            formatter:
-              $make:  Monolog\Formatter\JsonFormatter()
-          initialize:
-            - setFormatter(formatter)
-      handler2:
-        $constructor:
-          new:  Combi\Core\Logger\SampleSnapHandler(
-            baseDir, Y-m, level)
-          parameters:
-            baseDir:
-              $path:
-                path:       snaps
-                category:   logs
-            level:
-              $constant: Combi\Core\Logger::LEVELS(info)
+    take: logger
+    deps:
+      logger:       Monolog\Logger(combi)
+
+      handler1:     Monolog\Handler\RotatingFileHandler(handler1Filename, 0, level)
+      handler1Filename:
+        $path:
+          path:     combi.log
+          category: logs
+      handler1Formatter:
+        $make:      Monolog\Formatter\JsonFormatter()
+
+      handler2:     Combi\Core\Logger\SampleSnapHandler(handler2BaseDir, Y-m, level)
+      handler2BaseDir:
+        $path:
+          path:       snaps
+          category:   logs
+
+      level:
+        $constant:  Combi\Core\Logger::LEVELS(info)
+
       processor1:
         $instance:  Combi\Core\Logger\PrimariesProcessor()
       processor2:
         $instance:  Combi\Core\Logger\RichMessageProcessor(true)
 
-    initialize:
-      - pushHandler(handler1)
-      - pushHandler(handler2)
-      - pushProcessor(processor1)
-      - pushProcessor(processor2)
+    init:
+      handler1:
+        - setFormatter(handler1Formatter)
+      logger:
+        - pushHandler(handler1)
+        - pushHandler(handler2)
+        - pushProcessor(processor1)
+        - pushProcessor(processor2)
 
 slow:
   $constructor:
-    new:  Monolog\Logger(slow)
-    parameters:
-      handler1:
-        $constructor:
-          new:  Monolog\Handler\RotatingFileHandler(
-            filename, 0, level)
-          parameters:
-            filename:
-              $path:
-                path:       slow.log
-                category:   logs
-            level:
-              $constant: Combi\Core\Logger::LEVELS(info)
-    initialize:
-      - pushHandler(handler1)
+    take: logger
+    deps:
+      logger:     Monolog\Logger(slow)
+      handler:    Monolog\Handler\RotatingFileHandler(handlerFilename, 0, level)
+      handlerFilename:
+        $path:
+          path:       slow.log
+          category:   logs
+      level:
+        $constant: Combi\Core\Logger::LEVELS(info)
+    init:
+      logger:
+        - pushHandler(handler)
 
 debug:
   $constructor:
-    new:  Monolog\Logger(slow)
-    parameters:
-      handler1:
-        $constructor:
-          new:  Monolog\Handler\StreamHandler(
-            filename, 0, level)
-          parameters:
-            filename:
-              $path:
-                path:       debug.log
-                category:   logs
-            level:
-              $constant: Combi\Core\Logger::LEVELS(debug)
+    take: logger
+    deps:
+      logger:   Monolog\Logger(slow)
+      handler:  Monolog\Handler\StreamHandler(handlerFilename, 0, level)
+      handlerFilename:
+        $path:
+          path:       debug.log
+          category:   logs
+      level:
+        $constant: Combi\Core\Logger::LEVELS(debug)
+
       processor1:
         $instance:  Combi\Core\Logger\PrimariesProcessor()
       processor2:
         $instance:  Combi\Core\Logger\RichMessageProcessor(true)
-    initialize:
-      - pushHandler(handler1)
-      - pushProcessor(processor1)
-      - pushProcessor(processor2)
+    init:
+      logger:
+        - pushHandler(handler)
+        - pushProcessor(processor1)
+        - pushProcessor(processor2)

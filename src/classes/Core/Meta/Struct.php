@@ -23,7 +23,8 @@ abstract class Struct
 {
     use Extensions\IteratorAggregate,
         Extensions\Fillable,
-        Extensions\ToArray {}
+        Extensions\Overloaded,
+        Extensions\ToArray;
 
     /**
      * 基础数据结构
@@ -31,6 +32,12 @@ abstract class Struct
      * @var array
      */
     protected static $_defaults = [];
+
+    /**
+     * 是否允许字段为null
+     * @var array
+     */
+    protected static $_nullable = [];
 
     /**
      * 已弃用字段
@@ -177,7 +184,7 @@ abstract class Struct
             $method = "_confirm_$key";
             if (method_exists($this, $method)) {
                 $value = $this->$method($value);
-            } elseif ($value === null) {
+            } elseif ($value === null && !isset(static::$_nullable[$key])) {
                 throw new \UnexpectedValueException(
                     "meta:".static::class." field [$key] could not be empty");
             }

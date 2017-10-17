@@ -11,7 +11,7 @@ use Combi\{
 
 abstract class Method
 {
-    protected $_value;
+    protected $_value = null;
 
     abstract public function __invoke();
 

@@ -21,7 +21,7 @@ trait Fillable {
      *
      * @var array
      */
-    private $_exclude_keys = [];
+    protected $_excludeKeys = [];
 
     /**
      * 填充数据方法
@@ -39,7 +39,7 @@ trait Fillable {
         foreach ($this instanceof coreInterfaces\Struct ? static::defaults() : $data
             as $key => $value) {
 
-            if (isset($this->_exclude_keys[$key])) {
+            if (isset($this->_excludeKeys[$key])) {
                 continue;
             }
             isset($data[$key]) && $this->set($key, $data[$key]);
@@ -56,10 +56,10 @@ trait Fillable {
     public function exclude(...$keys): self {
         if ($keys) {
             foreach ($keys as $key) {
-                $this->_exclude_keys[$key] = 1;
+                $this->_excludeKeys[$key] = 1;
             }
         } else {
-            $this->_exclude_keys = [];
+            $this->_excludeKeys = [];
         }
         return $this;
     }

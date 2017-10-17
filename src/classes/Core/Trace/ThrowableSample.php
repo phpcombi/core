@@ -68,16 +68,6 @@ class ThrowableSample
         return $this;
     }
 
-    public function save(string $dir): string {
-        !file_exists($dir) && @mkdir($dir, 0755, true);
-
-        $file = $dir.DIRECTORY_SEPARATOR.$this->makeFileName().".smp";
-        !file_exists($file)
-            && @file_put_contents($file, $this->render(), LOCK_EX);
-
-        return $file;
-    }
-
     public function render(): string {
         $current = helper::padding($this->template,
             $this->makeVars($this->throwable, $this->context, $this->more));
@@ -89,6 +79,10 @@ class ThrowableSample
         }
 
         return "$current$this->joiner$previous";
+    }
+
+    public function __toString(): string {
+        return $this->render();
     }
 
     /**

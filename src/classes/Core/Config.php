@@ -137,27 +137,39 @@ class Config extends Meta\Collection
     /**
      *
      * @param string $sourceFile
-     * @return array
+     * @return array|object
      */
-    protected function parse(string $sourceFile): array {
+    protected function parse(string $sourceFile) {
         $raw = Neon::decode(file_get_contents($sourceFile));
         $raw && $this->prune($raw);
         // TODO: 暂时不考虑遍历算法与修剪合并
-        $raw && $this->traverse($raw);
+        $raw && $this->traverse($raw, $raw);
         return $raw;
     }
 
+    /**
+     *
+     * @param array &$arr
+     * @param array &$parent
+     * @param string &$parentKey
+     * @return void
+     * @todo 以后可观察是否提供 method 返回数据时可与同级定义配置下的其他字段合并的特性
+     */
     protected function traverse(array &$arr,
-        $parentKey = null, array &$parentArr = null)
+        array &$parent = null, $parentKey = null): void
     {
         foreach (new \RecursiveArrayIterator($arr) as $key => $value) {
             if (is_array($value)) { // 进入下一级
-                $this->traverse($arr[$key], $key, $arr);
+                $this->traverse($arr[$key], $arr, $key);
             }
-            // 扩展方法
-            if ($key[0] == '$') {
-                $method = $this->getMethod(substr($key, 1), [$arr[$key]]);
-                $parentArr[$parentKey] = $this->_cache ? $method : $method();
+
+            // 获取method
+            if ($key[0] == '$'
+                && $method = $this->getMethod(substr($key, 1), [$arr[$key]]))
+            {
+                $parentKey === null
+                    ? ($parent = $this->_cache ? $method : $method())
+                    : ($parent[$parentKey] = $this->_cache ? $method : $method());
                 break; // 目前一个key下只允许一个配置方法
             }
 

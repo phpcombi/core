@@ -8,17 +8,18 @@ use Combi\{
     Runtime as rt
 };
 
-use Nette\DI;
-
 /**
  * Description of Package
  * container + config
  *
  * @author andares
  */
-abstract class Package extends Core\Meta\Container {
-    use Core\Traits\Singleton,
-        Core\Meta\Extensions\Overloaded {}
+abstract class Package
+    implements Core\Interfaces\Collection, \IteratorAggregate
+{
+    use Core\Meta\Container,
+        Core\Traits\Singleton,
+        Core\Meta\Extensions\Overloaded;
 
     /**
      * @var string
@@ -29,11 +30,6 @@ abstract class Package extends Core\Meta\Container {
      * @var array
      */
     protected $_path = [];
-
-    /**
-     * @var DI\Container
-     */
-    protected $_di = null;
 
     /**
      * @var Core\Dictionary[]
@@ -186,7 +182,7 @@ abstract class Package extends Core\Meta\Container {
      * @return mixed
      */
     public function get($key) {
-        $value = parent::get($key);
+        $value = $this->_data[$key] ?? null;
 
         if ($value instanceof \Closure) {
             $value = $value();

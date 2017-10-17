@@ -1,11 +1,10 @@
 <?php
 
-namespace Combi\Core\Action;
+namespace Combi\Action\Interfaces;
 
 use Combi\{
     Helper as helper,
     Abort as abort,
-    Core,
     Runtime as rt
 };
 
@@ -14,6 +13,7 @@ use Combi\{
  *
  * @author andares
  */
-class Session implements Core\Interfaces\Instancable
+interface Perm
 {
+    public function isAllow(Target $target, $operation = null): bool;
 }

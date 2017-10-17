@@ -1,0 +1,14 @@
+$constructor:
+  take:
+    - action
+    - session
+  deps:
+    action:       App\Action(auth)
+
+    auth:         App\Auth()
+    # local < auth: App\Auth(localAuth)
+
+    session:      Combi\Action\Session::instance(localAuth)
+
+    localAuth:
+      $env: localAuth

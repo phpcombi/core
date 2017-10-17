@@ -7,41 +7,36 @@ use Combi\{
     Runtime as rt
 };
 
-helper::register(function_exists('gmp_init')
-    ? function(int $random_length = 6): string
+helper::register(function(int $random_length = 10): string
 {
     return (new Core\Utils\IdGenerator())
         ->randByLength($random_length)
         ->orderable()
-        ->gmp_strval()
-        ->get();
-}
-    : function(int $random_length = 6): string
-{
-    return (new Core\Utils\IdGenerator())
-        ->randByLength($random_length)
-        ->orderable()
-        ->to62()
+        ->gmpStrval()
         ->get();
 }, 'genId');
 
+helper::register(function() {
+    return (new Core\Utils\IdGenerator())
+        ->orderable(1000)
+        ->gmpStrval()
+        ->get().
+        (new Core\Utils\IdGenerator())
+        ->uuid()
+        ->gmpStrval(62, '0x')
+        ->get();
+}, 'genUuid');
+
 
 helper::register(function($var, $title = null): void {
-    static $count;
-    $count++;
-    !$title && $title = "Dump Count: $count";
-
-    Core\Utils\Debug::instance()->dump($var, $title);
-}, 'du', 'dt');
+    helper::du($var, $title);
+}, 'dt');
 
 helper::register(function($var, $title = null): void {
     helper::du($var, $title);
     die(1);
 }, 'dd');
 
-helper::register(function($message, array $context = []): void {
-    helper::logger()->info($message, $context);
-}, 'log');
 
 helper::register(function($message, array $context = []): void {
     helper::logger('debug')->debug($message, $context);

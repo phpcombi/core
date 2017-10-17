@@ -15,7 +15,7 @@ use Combi\{
  *
  * @author andares
  */
-class Runtime extends Core\Meta\Container {
+class Runtime extends Core\Meta\Collection {
     use Core\Traits\Singleton,
         Core\Meta\Extensions\Overloaded {}
 
@@ -130,10 +130,7 @@ class Runtime extends Core\Meta\Container {
         self::$_is_uppped = true;
 
         // 开启catcher
-        $provider = self::core()->config('settings')->catcher;
-        if ($provider) {
-            helper::instance($provider);
-        }
+        $catcher = self::core()->config('settings')->catcher;
 
         // 勾子
         $hook = self::core()->hook();

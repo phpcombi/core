@@ -9,18 +9,15 @@ time:
 debug:
   actionError:
     show:   true
-    halt:   true
 prod < debug:
   actionError:
     show:   false
-    halt:   true
 
 # 慢请求日志
 slowLog:
   limit: 20           # 慢查询日志限时，单位毫秒
 
-# 角色验证类
-auth: Combi\Core\Auth()
-
 # catcher类
-catcher: Combi\Core\Trace\Catcher(true)
+catcher:
+  $instance:
+    Combi\Core\Trace\Catcher(true)

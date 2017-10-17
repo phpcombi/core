@@ -12,6 +12,7 @@
     "require": {
         "php": ">=7.1.0",
         "ext-msgpack": "*",
+        "ext-gmp": "*",
         "ext-redis": "*",
         "psr/container": "^1.0",
         "psr/log": "^1.0",
@@ -23,7 +24,6 @@
         "nette/tester": "dev-master"
     },
     "suggest": {
-        "ext-gmp": "Make helper::genId() function faster."
     },
     "autoload": {
         "psr-4": {"Combi\\": "src/classes/"},

@@ -7,4 +7,6 @@ return [
         'logs'  => __DIR__.'/../logs',
         'tmp'   => TEMP_DIR.'/tmp',
     ],
+
+    'localAuth' => 134,
 ];

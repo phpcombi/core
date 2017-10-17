@@ -38,8 +38,20 @@ class Helper
         }
     }
 
+    public static function du($var, $title = null): void {
+        static $count;
+        $count++;
+        !$title && $title = "Dump Count: $count";
+
+        Core\Utils\Debug::instance()->dump($var, $title);
+    }
+
     public static function logger(string $channel = 'combi'): Core\Logger {
         return rt::core()->logger($channel);
+    }
+
+    public static function log($message, array $context = []): void {
+        self::logger()->info($message, $context);
     }
 
     public static function padding(string $template, array $vars): ?string {

@@ -13,31 +13,62 @@ use Nette\Neon\Entity;
 
 class Constructor extends Core\Config\Method
 {
-    protected $new;
-    protected $parameters = [];
-    protected $initialize = [];
+    protected $take = null;
+    protected $deps = [];
+    protected $init = [];
 
     public function __invoke() {
-        // 构造 new 参数
-        $params = $this->getParamsByEntity($this->new);
-        $class  = $this->new->value;
-        $object = new $class(...$params);
-
-        // 执行initialize
-        if ($this->initialize) {
-            foreach ($this->initialize as $call) {
-                $params = $this->getParamsByEntity($call);
-                $object->{$call->value}(...$params);
+        if ($this->take && !is_array($this->take)) {
+            $result = $this->getDependeny($this->take);
+        } else {
+            $take   = $this->take ?: array_keys($this->deps);
+            if (!$this->take && count($take) == 1) {
+                $result = $this->getDependeny($this->take);
+            } else {
+                $result = [];
+                foreach ($take as $name) {
+                    $result[$name] = $this->getDependeny($name);
+                }
             }
         }
 
-        return $object;
+        if (!$result) {
+            return [];
+        }
+        return $result;
+    }
+
+    protected function getDependeny($name) {
+        if (!isset($this->deps[$name])) {
+            return null;
+        }
+
+        if ($this->deps[$name] instanceof Entity) {
+            $params = $this->getParamsByEntity($this->deps[$name]);
+            $class  = $this->deps[$name]->value;
+            if (strpos($class, '::')) {
+                $class  = explode('::', $class);
+                $object = $class(...$params);
+            } else {
+                $object = new $class(...$params);
+            }
+
+            if ($this->init && isset($this->init[$name])) {
+                foreach ($this->init[$name] as $call) {
+                    $params = $this->getParamsByEntity($call);
+                    $object->{$call->value}(...$params);
+                }
+            }
+            $this->deps[$name] = $object;
+        }
+        return $this->deps[$name];
     }
 
     protected function getParamsByEntity(Entity $entity): array {
         $params = [];
         foreach ($entity->attributes as $name) {
-            $params[] = $this->parameters[$name] ?? $name;
+            $param    = $this->getDependeny($name);
+            $params[] = $param === null ? $name : $param;
         }
         return $params;
     }

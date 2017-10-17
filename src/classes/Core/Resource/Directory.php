@@ -66,6 +66,10 @@ class Directory implements Core\Interfaces\Resource, \IteratorAggregate
         return null;
     }
 
+    public function create() {
+        return !file_exists($this->dir) && mkdir($this->dir, 0755, true);
+    }
+
     public function exists($path): bool {
         $file = $this->select($path);
         return $file && file_exists($file);

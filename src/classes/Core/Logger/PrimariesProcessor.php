@@ -23,9 +23,8 @@ class PrimariesProcessor
      */
     public function __invoke(array $record): array {
         $record['extra']['primaries'] = [];
-        foreach (Core\Action::getActionStack() as $action) {
-            $record['extra']['primaries'][$action->getActionId()] =
-                $action->getAuth()->getId();
+        foreach (\Combi\Action::getActivedList() as $actionId => $action) {
+            $record['extra']['primaries'][$actionId] = $action->auth()->id();
         }
         return $record;
     }
