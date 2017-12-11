@@ -27,11 +27,11 @@ trait ToArray {
             if (is_object($value) && $value instanceof Core\Interfaces\Arrayable) {
                 $value = $value->toArray();
             } elseif (is_array($value)) {
-                foreach ($value as $key => $unit) {
+                foreach ($value as $i => $unit) {
                     if (!is_object($unit) || !($unit instanceof Core\Interfaces\Arrayable)) {
                         break;
                     }
-                    $value[$key] = $unit->toArray();
+                    $value[$i] = $unit->toArray();
                 }
             }
 
