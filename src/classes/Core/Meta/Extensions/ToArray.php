@@ -26,6 +26,13 @@ trait ToArray {
             // 完全展开
             if (is_object($value) && $value instanceof Core\Interfaces\Arrayable) {
                 $value = $value->toArray();
+            } elseif (is_array($value)) {
+                foreach ($value as $key => $unit) {
+                    if (!is_object($value) || !($value instanceof Core\Interfaces\Arrayable)) {
+                        break;
+                    }
+                    $value[$key] = $unit->toArray();
+                }
             }
 
             // 过滤器
