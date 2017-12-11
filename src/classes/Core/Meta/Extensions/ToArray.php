@@ -28,7 +28,7 @@ trait ToArray {
                 $value = $value->toArray();
             } elseif (is_array($value)) {
                 foreach ($value as $key => $unit) {
-                    if (!is_object($value) || !($value instanceof Core\Interfaces\Arrayable)) {
+                    if (!is_object($unit) || !($unit instanceof Core\Interfaces\Arrayable)) {
                         break;
                     }
                     $value[$key] = $unit->toArray();
