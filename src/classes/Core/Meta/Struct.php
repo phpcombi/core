@@ -190,9 +190,18 @@ abstract class Struct
             }
 
             // 展开所有对象进行confirm
-            is_object($value)
-                && $value instanceof Core\Interfaces\Confirmable
-                    && $value->confirm($includeDeprecated);
+            if (is_object($value)
+                && $value instanceof Core\Interfaces\Confirmable) {
+                $value->confirm($includeDeprecated);
+            } elseif (is_array($value)) {
+                foreach ($value as $i => $unit) {
+                    if (!is_object($value)
+                        || !($value instanceof Core\Interfaces\Confirmable)) {
+                        break;
+                    }
+                    $value[$i] = $unit->toArray();
+                }
+            }
 
             // 赋回
             $this->set($key, $value);
