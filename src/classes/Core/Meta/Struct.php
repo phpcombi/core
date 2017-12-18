@@ -190,18 +190,7 @@ abstract class Struct
             }
 
             // 展开所有对象进行confirm
-            if (is_object($value)
-                && $value instanceof Core\Interfaces\Confirmable) {
-                $value->confirm($includeDeprecated);
-            } elseif (is_array($value)) {
-                foreach ($value as $i => $unit) {
-                    if (!is_object($value)
-                        || !($value instanceof Core\Interfaces\Confirmable)) {
-                        break;
-                    }
-                    $value[$i] = $unit->toArray();
-                }
-            }
+            $value = $this->_confirmChildren($value, $includeDeprecated);
 
             // 赋回
             $this->set($key, $value);
@@ -210,6 +199,19 @@ abstract class Struct
         // 整体confirm勾子
         $this->afterConfirm();
         return $this;
+    }
+
+    protected function _confirmChildren($value, bool $includeDeprecated = false) {
+        if (is_object($value)
+            && $value instanceof Core\Interfaces\Confirmable)
+        {
+            $value->confirm($includeDeprecated);
+        } elseif (is_array($value)) {
+            foreach ($value as $i => $unit) {
+                $value[$i] = $this->_confirmChildren($unit);
+            }
+        }
+        return $value;
     }
 
     /**
