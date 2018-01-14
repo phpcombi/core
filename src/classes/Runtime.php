@@ -52,7 +52,7 @@ class Runtime extends Core\Meta\Collection {
      */
     private static $_bootloads = [];
 
-    public static function main(): Package {
+    public static function main(): ?Package {
         return self::$_main_package;
     }
 
