@@ -226,9 +226,9 @@ class Config extends Meta\Collection
      * 这里可支持数组所有深度的覆盖合并。
      *
      * @param array $items
-     * @return self
+     * @return parent
      */
-    public function replace(array $items): self {
+    public function replace(array $items): parent {
         $ac = new ArrayCover($this->_data);
         $this->_data = $ac($items);
         return $this;
