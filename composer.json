@@ -2,7 +2,7 @@
     "name": "combi/core",
     "description": "combi core libs",
     "keywords": ["framework", "core", "libs"],
-    "license": "MPL2.0",
+    "license": "MPL-2.0",
     "authors": [
         {
             "name": "Andares Merigold",
